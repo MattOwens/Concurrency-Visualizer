@@ -105,6 +105,5 @@ public aspect MonitorDataCapture {
 		syncEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(syncEvent);
-		
 	}
 }

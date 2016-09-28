@@ -32,5 +32,9 @@ public class MonitorEvent extends Event {
     public MonitorEventType getEventType() {
     	return eventType;
     }
+    
+    public String toString() {
+    	return super.toString() + "-" + eventType + "-" + timeout + "-" + nanos;
+    }
 	
 }
