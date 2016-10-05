@@ -4,15 +4,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.json.simple.JSONValue;
+
 public class EventQueue {
 	
-	private static ConcurrentLinkedQueue<Event> eventQueue;
+	private static ConcurrentLinkedQueue<JSONSerializable> eventQueue;
 	private static File outputFile;
 	private static BufferedWriter writer;
 	
 	static {
-		eventQueue = new ConcurrentLinkedQueue<Event>();
+		eventQueue = new ConcurrentLinkedQueue<JSONSerializable>();
 		outputFile = new File("test_output.txt");
 		try {
 			writer = new BufferedWriter(new FileWriter(outputFile.getAbsoluteFile()));
@@ -31,9 +35,11 @@ public class EventQueue {
 						timesWithoutEvents = 0;
 
 						while(!eventQueue.isEmpty()) {
-							Event event = eventQueue.remove();
+							JSONSerializable event = eventQueue.remove();
 							try {
-								writer.write(event.toString() + "\n");
+								//writer.write(event.toString() + "\n");
+								Map<String, Object> eventMap = event.collapseToMap();
+								writer.write(JSONValue.toJSONString(eventMap) + "\n");
 							}
 							catch(IOException e) { }
 						}

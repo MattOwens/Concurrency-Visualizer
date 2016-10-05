@@ -22,7 +22,7 @@ public class SemaphoreExample {
 						if(i % 2 == 0) {
 							try {
 								s.acquire();
-								//Thread.sleep(r.nextInt(500));
+								Thread.sleep(r.nextInt(500));
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -33,7 +33,7 @@ public class SemaphoreExample {
 							int numPermits = r.nextInt(5);
 							try {
 								s.acquire(numPermits);
-								//Thread.sleep(r.nextInt(500));
+								Thread.sleep(r.nextInt(500));
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -52,14 +52,19 @@ public class SemaphoreExample {
 								}
 							}
 						}
-						System.out.println(Thread.currentThread().getName() + " finishing iteration " + i + " of the loop");
 					}
-					return;
+					System.out.println(Thread.currentThread().getName() + " finishing the loop. ");
 				}
 				
 			});
 			t.setName("ExampleThread." + i);
 			t.start();
+			try {
+				t.join(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

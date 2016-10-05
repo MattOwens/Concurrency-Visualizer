@@ -1,5 +1,6 @@
 package us.mattowens.concurrencyvisualizer.datacapture.semaphore;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
@@ -13,17 +14,29 @@ public class SemaphoreEvent extends Event {
 	
 	
 	
-	public SemaphoreEvent(SemaphoreEventType eventType) {
-		super();
-		
+	public SemaphoreEvent(String semaphoreDescription, SemaphoreEventType eventType) {
+		super(semaphoreDescription);
 		this.eventType = eventType;
 	}
 	
 	@Override
 	public String toString() {
-		return super.toString() + "-" + eventType + "-" + permits + "-" + timeout + "-" + timeoutUnit;
+		return super.toString() + "-" + eventType + "-" + permits + "-" + 
+				timeout + "-" + timeoutUnit;
 	}
 
+	@Override
+	public Map<String, Object> collapseToMap() {
+		Map<String, Object> eventMap = super.collapseToMap();
+		
+		eventMap.put("EventType", eventType);
+		eventMap.put("Permits", permits);
+		eventMap.put("Timeout", timeout);
+		eventMap.put("TimeoutUnit", timeoutUnit);
+		
+		return eventMap;
+	}
+	
 	public SemaphoreEventType getEventType() {
 		return eventType;
 	}

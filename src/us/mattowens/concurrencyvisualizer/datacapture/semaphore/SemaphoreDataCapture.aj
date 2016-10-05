@@ -70,7 +70,8 @@ public aspect SemaphoreDataCapture {
 		JavaSemaphore newSemaphore = new JavaSemaphore(permits);
 		semaphoreStates.put(s, newSemaphore);
 		
-		SemaphoreEvent createEvent = new SemaphoreEvent(SemaphoreEventType.Create);
+		SemaphoreEvent createEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.Create);
 		createEvent.setPermits(permits);
 		
 		EventQueue.addEvent(createEvent);
@@ -83,7 +84,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	after(Semaphore s) : acquire(s) {
-		SemaphoreEvent acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.Acquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		acquireEvent.setPermits(1);
 		
@@ -100,7 +102,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	after(Semaphore s, int permits) : acquireMany(s, permits) {
-		SemaphoreEvent acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.Acquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		acquireEvent.setPermits(permits);
 		
@@ -117,12 +120,14 @@ public aspect SemaphoreDataCapture {
 		
 		
 		if(success) {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.Acquire);
 			JavaSemaphore semaState = semaphoreStates.get(s);
 			semaState.permitsAcquired(1);
 		}
 		else {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.TryAcquireFailure);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.TryAcquireFailure);
 		}
 		
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
@@ -144,11 +149,13 @@ public aspect SemaphoreDataCapture {
 		SemaphoreEvent acquireEvent;
 
 		if(success) {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.Acquire);
 			semaState.permitsAcquired(1);
 		}
 		else {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.TryAcquireFailure);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.TryAcquireFailure);
 			acquireEvent.setTimeout(timeout);
 			acquireEvent.setTimeoutUnit(unit);
 		}
@@ -163,13 +170,15 @@ public aspect SemaphoreDataCapture {
 		SemaphoreEvent acquireEvent;
 		
 		if(success) {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+			acquireEvent = new SemaphoreEvent(s.toString(), 
+					SemaphoreEventType.Acquire);
 			
 			JavaSemaphore semaState = semaphoreStates.get(s);
 			semaState.permitsAcquired(permits);
 		}
 		else {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.TryAcquireFailure);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.TryAcquireFailure);
 		}
 		
 		acquireEvent.setPermits(permits);
@@ -193,13 +202,15 @@ public aspect SemaphoreDataCapture {
 		semaState.removeThreadFromWaitingQueue(Thread.currentThread());
 		
 		if(success) {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.Acquire);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.Acquire);
 			acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 			acquireEvent.setPermits(permits);
 			semaState.permitsAcquired(permits);
 		}
 		else {
-			acquireEvent = new SemaphoreEvent(SemaphoreEventType.AcquireTimeout);
+			acquireEvent = new SemaphoreEvent(s.toString(),
+					SemaphoreEventType.AcquireTimeout);
 			acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 			acquireEvent.setPermits(permits);
 			acquireEvent.setTimeout(timeout);
@@ -210,7 +221,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	before(Semaphore s) : release(s) {
-		SemaphoreEvent releaseEvent = new SemaphoreEvent(SemaphoreEventType.Release);
+		SemaphoreEvent releaseEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.Release);
 		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		releaseEvent.setPermits(1);
 		
@@ -220,7 +232,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	before(Semaphore s, int permits) : releaseMany(s, permits) {
-		SemaphoreEvent releaseEvent = new SemaphoreEvent(SemaphoreEventType.Release);
+		SemaphoreEvent releaseEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.Release);
 		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		releaseEvent.setPermits(permits);
 		
@@ -230,7 +243,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	after(Semaphore s, int reduction) : reducePermits(s, reduction) {
-		SemaphoreEvent reductionEvent = new SemaphoreEvent(SemaphoreEventType.PermitReduction);
+		SemaphoreEvent reductionEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.PermitReduction);
 		reductionEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		reductionEvent.setPermits(reduction);
 		
@@ -240,7 +254,8 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	after(Semaphore s) : drainPermits(s) {
-		SemaphoreEvent drainEvent = new SemaphoreEvent(SemaphoreEventType.DrainPermits);
+		SemaphoreEvent drainEvent = new SemaphoreEvent(s.toString(),
+				SemaphoreEventType.DrainPermits);
 		drainEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(drainEvent);
