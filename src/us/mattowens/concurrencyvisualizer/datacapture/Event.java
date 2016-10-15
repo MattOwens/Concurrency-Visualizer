@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
@@ -20,7 +19,7 @@ public class Event  implements JSONSerializable {
 		Thread currentThread = Thread.currentThread();
 		threadId = currentThread.getId();
 		threadName = currentThread.getName();
-		timestamp = currentTime;		
+		this.setTimestamp(currentTime);		
 		this.objectDescription = objectDescription;
 		className = this.getClass().getName();
 		className = className.substring(className.lastIndexOf(".")+1);

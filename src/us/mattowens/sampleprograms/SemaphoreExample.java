@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.sampleprograms;
+package us.mattowens.sampleprograms;
 
 import java.util.Random;
 import java.util.concurrent.Semaphore;

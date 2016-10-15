@@ -53,7 +53,7 @@ public class EventQueue {
 					}
 					else {
 						timesWithoutEvents++;
-						if(timesWithoutEvents == 10) {
+						if(timesWithoutEvents >= 5) {
 							System.out.println("No more events - returning");
 							try {
 								writer.flush();
@@ -75,7 +75,7 @@ public class EventQueue {
 				}
 			}
 		});
-		
+		outputThread.setName("Output Thread");
 		outputThread.start();
 		
 		
