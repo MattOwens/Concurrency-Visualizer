@@ -20,7 +20,8 @@ public class AbstractOwnableSynchronizerEvent extends Event {
 		Map<String, Object> eventMap = super.collapseToMap();
 		
 		eventMap.put("EventType", eventType);
-
+		eventMap.put("ThreadName", threadName);
+		
 		return eventMap;
 	}
 

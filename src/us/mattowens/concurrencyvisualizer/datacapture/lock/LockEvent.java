@@ -24,6 +24,10 @@ public class LockEvent extends Event {
 		Map<String, Object> eventMap = super.collapseToMap();
 		
 		eventMap.put("EventType", eventType);
+		eventMap.put("ConditionDescription", conditionDescription);
+		eventMap.put("HasAccess", hasAccess);
+		eventMap.put("Timeout", timeout);
+		eventMap.put("TimeUnit", timeUnit);
 
 		
 		return eventMap;
