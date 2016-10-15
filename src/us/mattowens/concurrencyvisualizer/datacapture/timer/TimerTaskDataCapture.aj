@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.timer;
+package us.mattowens.concurrencyvisualizer.datacapture.timer;
 
 import java.util.TimerTask;
 
