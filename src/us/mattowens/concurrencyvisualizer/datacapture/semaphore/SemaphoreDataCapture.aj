@@ -78,111 +78,98 @@ public aspect SemaphoreDataCapture {
 	}
 	
 	before(Semaphore s) : acquire(s) {
-		//Event acquireEvent = buildBasicEvent();
-		//acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		//semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
+		
+		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(Semaphore s) : acquire(s) {
 		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(),
-				SemaphoreEventType.Acquire);
+				SemaphoreEventType.AfterAcquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setPermits(1);
 		
-		JavaSemaphore semaState = semaphoreStates.get(s);
-		semaState.permitsAcquired(1);
-		semaState.removeThreadFromWaitingQueue(Thread.currentThread());
+		//JavaSemaphore semaState = semaphoreStates.get(s);
+		//semaState.permitsAcquired(1);
+		//semaState.removeThreadFromWaitingQueue(Thread.currentThread());
 		
 		EventQueue.addEvent(acquireEvent);
 
 	}
 	
 	before(Semaphore s, int permits) : acquireMany(s, permits) {
-		semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setPermits(permits);
+		//semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
+		
+		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(Semaphore s, int permits) : acquireMany(s, permits) {
 		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(),
-				SemaphoreEventType.Acquire);
+				SemaphoreEventType.AfterAcquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		acquireEvent.setPermits(permits);
 		
-		JavaSemaphore semaState = semaphoreStates.get(s);
-		semaState.permitsAcquired(permits);
-		semaState.removeThreadFromWaitingQueue(Thread.currentThread());
+		//JavaSemaphore semaState = semaphoreStates.get(s);
+		//semaState.permitsAcquired(permits);
+		//semaState.removeThreadFromWaitingQueue(Thread.currentThread());
 		
 		EventQueue.addEvent(acquireEvent);
 
 	}
 	
-	after(Semaphore s) returning(boolean success) : tryAcquire(s) {
-		SemaphoreEvent acquireEvent;
-		
-		
-		if(success) {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.Acquire);
-			JavaSemaphore semaState = semaphoreStates.get(s);
-			semaState.permitsAcquired(1);
-		}
-		else {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.TryAcquireFailure);
-		}
-		
+	before(Semaphore s) : tryAcquire(s) {
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeTryAcquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setPermits(1);
+		
+		EventQueue.addEvent(acquireEvent);
+	}
+	
+	after(Semaphore s) returning(boolean success) : tryAcquire(s) {
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.AfterTryAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setTryAcquireSuccessful(success);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	before(Semaphore s, long timeout, TimeUnit unit) : tryAcquireTimeout(s, timeout, unit) {
-		semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeTryAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setTimeout(timeout);
+		acquireEvent.setTimeoutUnit(unit);
+		
+		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(Semaphore s, long timeout, TimeUnit unit) returning(boolean success) 
 			: tryAcquireTimeout(s, timeout, unit) {
 		
-		JavaSemaphore semaState = semaphoreStates.get(s);
-		semaState.removeThreadFromWaitingQueue(Thread.currentThread());
-		
-		SemaphoreEvent acquireEvent;
-
-		if(success) {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.Acquire);
-			semaState.permitsAcquired(1);
-		}
-		else {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.TryAcquireFailure);
-			acquireEvent.setTimeout(timeout);
-			acquireEvent.setTimeoutUnit(unit);
-		}
-		
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.AfterTryAcquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setPermits(1);
+		acquireEvent.setTryAcquireSuccessful(success);
+		acquireEvent.setTimeout(timeout);
+		acquireEvent.setTimeoutUnit(unit);
+		
+		EventQueue.addEvent(acquireEvent);
+	}
+	
+	before(Semaphore s, int permits) : tryAcquireMany(s, permits) {
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeTryAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setPermits(permits);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(Semaphore s, int permits) returning(boolean success) : tryAcquireMany(s, permits) {
-		SemaphoreEvent acquireEvent;
-		
-		if(success) {
-			acquireEvent = new SemaphoreEvent(s.toString(), 
-					SemaphoreEventType.Acquire);
-			
-			JavaSemaphore semaState = semaphoreStates.get(s);
-			semaState.permitsAcquired(permits);
-		}
-		else {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.TryAcquireFailure);
-		}
-		
-		acquireEvent.setPermits(permits);
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.AfterTryAcquire);
 		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setTryAcquireSuccessful(success);
+
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -190,32 +177,24 @@ public aspect SemaphoreDataCapture {
 	before(Semaphore s, int permits, long timeout, TimeUnit unit) :
 		tryAcquireManyTimeout(s, permits, timeout, unit) {
 		
-		semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());	
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.BeforeTryAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setTimeout(timeout);
+		acquireEvent.setTimeoutUnit(unit);
+		acquireEvent.setPermits(permits);
+		
+		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(Semaphore s, int permits, long timeout, TimeUnit unit) returning(boolean success) :
 		tryAcquireManyTimeout(s, permits, timeout, unit) {
 		
-		SemaphoreEvent acquireEvent;
-		
-		JavaSemaphore semaState = semaphoreStates.get(s);
-		semaState.removeThreadFromWaitingQueue(Thread.currentThread());
-		
-		if(success) {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.Acquire);
-			acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-			acquireEvent.setPermits(permits);
-			semaState.permitsAcquired(permits);
-		}
-		else {
-			acquireEvent = new SemaphoreEvent(s.toString(),
-					SemaphoreEventType.AcquireTimeout);
-			acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-			acquireEvent.setPermits(permits);
-			acquireEvent.setTimeout(timeout);
-			acquireEvent.setTimeoutUnit(unit);
-		}
+		SemaphoreEvent acquireEvent = new SemaphoreEvent(s.toString(), SemaphoreEventType.AfterTryAcquire);
+		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		acquireEvent.setTryAcquireSuccessful(success);
+		acquireEvent.setTimeout(timeout);
+		acquireEvent.setTimeoutUnit(unit);
+		acquireEvent.setPermits(permits);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -224,9 +203,8 @@ public aspect SemaphoreDataCapture {
 		SemaphoreEvent releaseEvent = new SemaphoreEvent(s.toString(),
 				SemaphoreEventType.Release);
 		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		releaseEvent.setPermits(1);
 		
-		semaphoreStates.get(s).permitsReleased(1);
+		//semaphoreStates.get(s).permitsReleased(1);
 		
 		EventQueue.addEvent(releaseEvent);
 	}
@@ -237,7 +215,7 @@ public aspect SemaphoreDataCapture {
 		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		releaseEvent.setPermits(permits);
 		
-		semaphoreStates.get(s).permitsReleased(permits);
+		//semaphoreStates.get(s).permitsReleased(permits);
 		
 		EventQueue.addEvent(releaseEvent);
 	}
@@ -248,9 +226,7 @@ public aspect SemaphoreDataCapture {
 		reductionEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		reductionEvent.setPermits(reduction);
 		
-		EventQueue.addEvent(reductionEvent);
-		//Need to do some state tracking here
-		
+		EventQueue.addEvent(reductionEvent);		
 	}
 	
 	after(Semaphore s) : drainPermits(s) {

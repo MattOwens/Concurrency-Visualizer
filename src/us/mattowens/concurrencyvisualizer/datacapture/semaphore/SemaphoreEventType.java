@@ -3,9 +3,12 @@ package us.mattowens.concurrencyvisualizer.datacapture.semaphore;
 public enum SemaphoreEventType {
 	Create,
 	Release,
-	Acquire,
-	AcquireTimeout,
-	TryAcquireFailure,
+	BeforeAcquire,
+	AfterAcquire,
+	BeforeAcquireTimeout,
+	AfterAcquireTimeout,
+	BeforeTryAcquire,
+	AfterTryAcquire,
 	PermitReduction,
 	DrainPermits
 }

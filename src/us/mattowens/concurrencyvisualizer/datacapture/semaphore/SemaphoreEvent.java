@@ -11,12 +11,14 @@ public class SemaphoreEvent extends Event {
 	private int permits;
 	private long timeout;
 	private TimeUnit timeoutUnit;
+	private boolean tryAcquireSuccessful;
 	
 	
 	
 	public SemaphoreEvent(String semaphoreDescription, SemaphoreEventType eventType) {
 		super(semaphoreDescription);
 		this.eventType = eventType;
+		this.permits = 1;
 	}
 	
 	@Override
@@ -33,6 +35,7 @@ public class SemaphoreEvent extends Event {
 		eventMap.put("Permits", permits);
 		eventMap.put("Timeout", timeout);
 		eventMap.put("TimeoutUnit", timeoutUnit);
+		eventMap.put("TryAcquireSuccessful", tryAcquireSuccessful);
 		
 		return eventMap;
 	}
@@ -63,5 +66,19 @@ public class SemaphoreEvent extends Event {
 
 	public void setTimeoutUnit(TimeUnit timeoutUnit) {
 		this.timeoutUnit = timeoutUnit;
+	}
+
+	public boolean isTryAcquireSuccessful() {
+		return tryAcquireSuccessful;
+	}
+
+	public void setTryAcquireSuccessful(boolean tryAcquireSuccessful) {
+		this.tryAcquireSuccessful = tryAcquireSuccessful;
+	}
+
+	public void setEventType(SemaphoreEventType eventType) {
+		this.eventType = eventType;
 	}	
+	
+	
 }
