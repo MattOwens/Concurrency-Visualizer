@@ -6,7 +6,7 @@ import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect CallableDataCapture {
 
-	pointcut callPointcut(Callable c) :
+	 pointcut callPointcut(Callable c) :
 		call(Object Callable.call()) &&
 		target(c);
 	
@@ -18,9 +18,9 @@ public aspect CallableDataCapture {
 		EventQueue.addEvent(callableEvent);
 	}
 	
-	after(Callable c) returning(Object result) : callPointcut(c) {
+	after(Callable c)  returning(Object result) : callPointcut(c) {
 		CallableEvent callableEvent = new CallableEvent(c.toString(),
-				CallableEventType.BeforeCall);
+				CallableEventType.AfterCall);
 		callableEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		callableEvent.setResult(result);
 		

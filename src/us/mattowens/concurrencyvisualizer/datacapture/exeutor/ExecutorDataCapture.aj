@@ -22,7 +22,7 @@ public aspect ExecutorDataCapture {
 	
 	after(Executor e, Runnable r) : execute(e, r) {
 		ExecutorEvent executeEvent = new ExecutorEvent(e.toString(), 
-				ExecutorEventType.BeforeExecute);
+				ExecutorEventType.AfterExecute);
 		executeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		executeEvent.setRunnable(r.toString());
 		
