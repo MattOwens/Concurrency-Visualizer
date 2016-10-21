@@ -1,90 +1,84 @@
 package us.mattowens.concurrencyvisualizer.datacapture;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Map;
+
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.json.simple.JSONValue;
 
-public class EventQueue {
+public final class EventQueue {
 	
-	private static ConcurrentLinkedQueue<JSONSerializable> eventQueue;
-	private static File outputFile;
-	private static BufferedWriter writer;
+	private static final EventQueue singletonEventQueue = new EventQueue();
+	private static boolean eventOutputStarted = false;
 	
-	static {
-		eventQueue = new ConcurrentLinkedQueue<JSONSerializable>();
-		outputFile = new File("test_output.txt");
-		try {
-			writer = new BufferedWriter(new FileWriter(outputFile.getAbsoluteFile()));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Thread outputThread = new Thread(new Runnable() {
-			
-			public void run() {
-				int timesWithoutEvents = 0;
-				while(true) {
-										
-					if(!eventQueue.isEmpty()) {
-						timesWithoutEvents = 0;
-
-						while(!eventQueue.isEmpty()) {
-							JSONSerializable event = eventQueue.remove();
-							try {
-								//writer.write(event.toString() + "\n");
-								Map<String, Object> eventMap = event.collapseToMap();
-								writer.write(JSONValue.toJSONString(eventMap) + "\n");
-							}
-							catch(IOException e) { }
-						}
-						
-						try {
-							writer.flush();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					else {
-						timesWithoutEvents++;
-						if(timesWithoutEvents >= 5) {
-							System.out.println("No more events - returning");
-							try {
-								writer.flush();
-								writer.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							return;
-						}
-					}
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			}
-		});
-		outputThread.setName("Output Thread");
-		outputThread.start();
-		
-		
+	private  ConcurrentLinkedQueue<Event> eventQueue;
+	private  ArrayList<OutputAdapter> outputAdapters;
+	private  Thread outputThread;
+	
+	
+	private EventQueue() {
+		eventQueue = new ConcurrentLinkedQueue<Event>();
+		outputAdapters = new ArrayList<OutputAdapter>();
 	}
 	
 	public static void addEvent(Event newEvent) {
-		eventQueue.add(newEvent);
+		singletonEventQueue.eventQueue.add(newEvent);
 	}
 	
+	public static void startEventOutput() {
+		singletonEventQueue.startOutputThread();
+	}
+	
+	public static void stopEventOutput() {
+		singletonEventQueue.outputThread.interrupt();
+	}
+	
+	public static void addOutputAdapter(OutputAdapter adapter) {
+		if(eventOutputStarted) {
+			throw new IllegalStateException("EventQueue : Cannot add output adapter after data collection has started");
+		}
+		
+		singletonEventQueue.outputAdapters.add(adapter);
+	}
+	
+	private void startOutputThread() {
+		outputThread = new Thread(new EventOutputThread());
+		outputThread.setName("Output Thread");
+		outputThread.start();
+	}
+	
+	class EventOutputThread implements Runnable {
 
-
+		@Override
+		public void run() {
+			while(true) {
+				
+				
+				while(!eventQueue.isEmpty()) {
+					Event event = eventQueue.remove();
+					
+					for(OutputAdapter adapter : outputAdapters) {
+						adapter.sendEvent(event);
+					}
+				}
+					
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {	
+					for(OutputAdapter adapter : outputAdapters) {
+						adapter.cleanup();
+					}
+					System.out.println("Event Queue Output thread ending");
+					return;
+				}
+				
+				if(Thread.interrupted()) {
+					for(OutputAdapter adapter : outputAdapters) {
+						adapter.cleanup();
+					}
+					System.out.println("Event Queue Output thread ending");
+					return;
+				}	
+			}
+		}
+	}
 }

@@ -5,12 +5,13 @@ import java.util.LinkedHashMap;
 
 public class Event  implements JSONSerializable {
 	
-	private String threadName;
-	private long threadId;
-	private String objectDescription;
-	private long timestamp;
-	private String joinPointName;
-	private String className;
+	protected String threadName;
+	protected long threadId;
+	protected String objectDescription;
+	protected long timestamp;
+	protected String joinPointName;
+	protected String className;
+	protected Map<String, Object> eventMap;
 	
 	public Event(String objectDescription) {
 		//Measure time first to hopefully be more accurate
@@ -23,6 +24,7 @@ public class Event  implements JSONSerializable {
 		this.objectDescription = objectDescription;
 		className = this.getClass().getName();
 		className = className.substring(className.lastIndexOf(".")+1);
+		eventMap = new LinkedHashMap<String, Object>();
 	}
 	
 	public String getThreadName() {
@@ -58,14 +60,11 @@ public class Event  implements JSONSerializable {
 
 	@Override
 	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = new LinkedHashMap<String, Object>();
-		
 		eventMap.put("Timestamp", timestamp);
 		eventMap.put("EventClass", className);
 		eventMap.put("ThreadId", threadId);
 		eventMap.put("ThreadName", threadName);
 		eventMap.put("TargetDescription", objectDescription);
-		eventMap.put("JoinPointName", joinPointName);
 		
 		return eventMap;
 	}
