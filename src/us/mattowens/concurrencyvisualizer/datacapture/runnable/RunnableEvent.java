@@ -1,7 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.runnable;
 
-import java.util.Map;
-
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
 public class RunnableEvent extends Event {
@@ -10,19 +8,15 @@ public class RunnableEvent extends Event {
 	
 	public RunnableEvent(String runnable, RunnableEventType eventType) {
 		super(runnable);
-		this.eventType = eventType;
-	}
-
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 	
 	public RunnableEventType getEventType() {
 		return eventType;
+	}
+	
+	public void setEventType(RunnableEventType eventType) {
+		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 }

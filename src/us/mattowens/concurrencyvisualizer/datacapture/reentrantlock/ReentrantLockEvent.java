@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.reentrantlock;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -17,22 +16,7 @@ public class ReentrantLockEvent extends Event {
 	
 	public ReentrantLockEvent(String lockDescription, ReentrantLockEventType eventType) {
 		super(lockDescription);
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("IsFair", isFair);
-		eventMap.put("IsLocked", isLocked);
-		eventMap.put("HasLock", hasLock);
-		eventMap.put("Timeout", timeout);
-		eventMap.put("TimeUnit", unit);
-		eventMap.put("NewCondition", newCondition);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public ReentrantLockEventType getEventType() {
@@ -41,6 +25,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setEventType(ReentrantLockEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public boolean isFair() {
@@ -49,6 +34,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setFair(boolean isFair) {
 		this.isFair = isFair;
+		eventMap.put("IsFair", isFair);
 	}
 
 	public boolean isLocked() {
@@ -57,14 +43,16 @@ public class ReentrantLockEvent extends Event {
 
 	public void setLocked(boolean isLocked) {
 		this.isLocked = isLocked;
+		eventMap.put("IsLocked", isLocked);
 	}
 
-	public boolean isHasLock() {
+	public boolean hasLock() {
 		return hasLock;
 	}
 
 	public void setHasLock(boolean hasLock) {
 		this.hasLock = hasLock;
+		eventMap.put("HasLock", hasLock);
 	}
 
 	public long getTimeout() {
@@ -73,6 +61,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("Timeout", timeout);
 	}
 
 	public TimeUnit getUnit() {
@@ -81,6 +70,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setUnit(TimeUnit unit) {
 		this.unit = unit;
+		eventMap.put("TimeoutUnit", unit);
 	}
 
 	public String getNewCondition() {
@@ -89,6 +79,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setNewCondition(String newCondition) {
 		this.newCondition = newCondition;
+		eventMap.put("NewCondition", newCondition);
 	}
 	
 	

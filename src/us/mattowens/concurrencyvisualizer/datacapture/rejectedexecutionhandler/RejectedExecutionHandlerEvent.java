@@ -1,7 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.rejectedexecutionhandler;
 
-import java.util.Map;
-
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
 public class RejectedExecutionHandlerEvent extends Event {
@@ -14,18 +12,7 @@ public class RejectedExecutionHandlerEvent extends Event {
 			RejectedExecutionHandlerEventType eventType) {
 		super(handler);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Runnable", runnable);
-		eventMap.put("ThreadPoolExecutor", threadPoolExecutor);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public RejectedExecutionHandlerEventType getEventType() {
@@ -34,6 +21,7 @@ public class RejectedExecutionHandlerEvent extends Event {
 
 	public void setEventType(RejectedExecutionHandlerEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public String getRunnable() {
@@ -42,6 +30,7 @@ public class RejectedExecutionHandlerEvent extends Event {
 
 	public void setRunnable(String runnable) {
 		this.runnable = runnable;
+		eventMap.put("Runnable", runnable);
 	}
 
 	public String getThreadPoolExecutor() {
@@ -50,6 +39,7 @@ public class RejectedExecutionHandlerEvent extends Event {
 
 	public void setThreadPoolExecutor(String threadPoolExecutor) {
 		this.threadPoolExecutor = threadPoolExecutor;
+		eventMap.put("ThreadPoolExecutor", threadPoolExecutor);
 	}
 	
 	

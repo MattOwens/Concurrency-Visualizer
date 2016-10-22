@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.forkjoinworkerthreadfactory;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -14,18 +13,7 @@ public class ForkJoinWorkerThreadFactoryEvent extends Event {
 			ForkJoinWorkerThreadFactoryEventType eventType) {
 		super(factory);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("ForkJoinPool", forkJoinPool);
-		eventMap.put("ForkJoinWorkerThread", forkJoinWorkerThread);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public ForkJoinWorkerThreadFactoryEventType getEventType() {
@@ -34,6 +22,7 @@ public class ForkJoinWorkerThreadFactoryEvent extends Event {
 
 	public void setEventType(ForkJoinWorkerThreadFactoryEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public String getForkJoinPool() {
@@ -42,6 +31,7 @@ public class ForkJoinWorkerThreadFactoryEvent extends Event {
 
 	public void setForkJoinPool(String forkJoinPool) {
 		this.forkJoinPool = forkJoinPool;
+		eventMap.put("ForkJoinPool", forkJoinPool);
 	}
 
 	public String getForkJoinWorkerThread() {
@@ -50,6 +40,7 @@ public class ForkJoinWorkerThreadFactoryEvent extends Event {
 
 	public void setForkJoinWorkerThread(String forkJoinWorkerThread) {
 		this.forkJoinWorkerThread = forkJoinWorkerThread;
+		eventMap.put("ForkJoinWorkerThread", forkJoinWorkerThread);
 	}
 	
 	

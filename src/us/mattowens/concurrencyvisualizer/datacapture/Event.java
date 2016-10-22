@@ -24,7 +24,7 @@ public class Event  implements JSONSerializable {
 		this.objectDescription = objectDescription;
 		className = this.getClass().getName();
 		className = className.substring(className.lastIndexOf(".")+1);
-		eventMap = new LinkedHashMap<String, Object>();
+		setUpEventMap();
 	}
 	
 	public String getThreadName() {
@@ -50,22 +50,21 @@ public class Event  implements JSONSerializable {
 	}
 	public void setJoinPointName(String joinPointName) {
 		this.joinPointName = joinPointName;
-	}
-	
-	@Override
-	public String toString() {
-		return timestamp + "-" + this.getClass().getName() + "-" + threadId + "-" + threadName 
-				+ "-" + objectDescription + "-" + joinPointName;
+		eventMap.put("JoinPointName", joinPointName);
 	}
 
 	@Override
 	public Map<String, Object> collapseToMap() {
+		return eventMap;
+	}
+	
+	private void setUpEventMap() {
+		eventMap = new LinkedHashMap<String, Object>();
+
 		eventMap.put("Timestamp", timestamp);
 		eventMap.put("EventClass", className);
 		eventMap.put("ThreadId", threadId);
 		eventMap.put("ThreadName", threadName);
 		eventMap.put("TargetDescription", objectDescription);
-		
-		return eventMap;
 	}
 }

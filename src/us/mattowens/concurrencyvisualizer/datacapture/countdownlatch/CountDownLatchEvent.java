@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.countdownlatch;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
@@ -16,20 +15,7 @@ public class CountDownLatchEvent extends Event {
 	public CountDownLatchEvent(String latch, CountDownLatchEventType eventType) {
 		super(latch);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Count", count);
-		eventMap.put("Successful", successful);
-		eventMap.put("Timeout", timeout);
-		eventMap.put("TimeUnit", timeUnit);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public CountDownLatchEventType getEventType() {
@@ -38,6 +24,7 @@ public class CountDownLatchEvent extends Event {
 
 	public void setEventType(CountDownLatchEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public int getCount() {
@@ -46,6 +33,7 @@ public class CountDownLatchEvent extends Event {
 
 	public void setCount(int count) {
 		this.count = count;
+		eventMap.put("Count", count);
 	}
 
 	public boolean isSuccessful() {
@@ -54,6 +42,7 @@ public class CountDownLatchEvent extends Event {
 
 	public void setSuccessful(boolean successful) {
 		this.successful = successful;
+		eventMap.put("Successful", successful);
 	}
 
 	public long getTimeout() {
@@ -62,6 +51,7 @@ public class CountDownLatchEvent extends Event {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("Timeout", timeout);
 	}
 
 	public TimeUnit getTimeUnit() {
@@ -70,6 +60,7 @@ public class CountDownLatchEvent extends Event {
 
 	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
+		eventMap.put("TimeUnit", timeUnit);
 	}
 
 	

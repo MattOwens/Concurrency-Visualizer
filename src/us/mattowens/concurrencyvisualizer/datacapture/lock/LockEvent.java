@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.lock;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
@@ -16,21 +15,7 @@ public class LockEvent extends Event {
 	public LockEvent(String lockDescription, LockEventType eventType) {
 		super(lockDescription);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("ConditionDescription", conditionDescription);
-		eventMap.put("HasAccess", hasAccess);
-		eventMap.put("Timeout", timeout);
-		eventMap.put("TimeUnit", timeUnit);
-
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public LockEventType getEventType() {
@@ -39,6 +24,7 @@ public class LockEvent extends Event {
 
 	public void setEventType(LockEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public String getConditionDescription() {
@@ -47,14 +33,16 @@ public class LockEvent extends Event {
 
 	public void setConditionDescription(String conditionDescription) {
 		this.conditionDescription = conditionDescription;
+		eventMap.put("ConditionDescription", conditionDescription);
 	}
 
-	public boolean isHasAccess() {
+	public boolean hasAccess() {
 		return hasAccess;
 	}
 
 	public void setHasAccess(boolean hasAccess) {
 		this.hasAccess = hasAccess;
+		eventMap.put("HasAccess", hasAccess);
 	}
 
 	public long getTimeout() {
@@ -63,6 +51,7 @@ public class LockEvent extends Event {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("Timeout", timeout);
 	}
 
 	public TimeUnit getTimeUnit() {
@@ -71,6 +60,7 @@ public class LockEvent extends Event {
 
 	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
+		eventMap.put("TimeUnit", timeUnit);
 	}
 	
 	

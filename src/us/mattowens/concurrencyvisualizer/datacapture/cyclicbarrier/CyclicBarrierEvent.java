@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.cyclicbarrier;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
@@ -17,22 +16,9 @@ public class CyclicBarrierEvent extends Event {
 	public CyclicBarrierEvent(String barrier, CyclicBarrierEventType eventType) {
 		super(barrier);
 		
-		this.eventType = eventType;
+		setEventType(eventType);
 	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Timeout", timeout);
-		eventMap.put("TimeUnit", timeoutUnit);
-		eventMap.put("Parties", parties);
-		eventMap.put("Runnable", runnable);
-		eventMap.put("ArrivalIndex", arrivalIndex);
-		
-		return eventMap;
-	}
+
 
 	public CyclicBarrierEventType getEventType() {
 		return eventType;
@@ -40,6 +26,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setEventType(CyclicBarrierEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public int getParties() {
@@ -48,6 +35,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setParties(int parties) {
 		this.parties = parties;
+		eventMap.put("Parties", parties);
 	}
 
 	public String getRunnable() {
@@ -56,6 +44,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setRunnable(String runnable) {
 		this.runnable = runnable;
+		eventMap.put("Runnable", runnable);
 	}
 
 	public long getTimeout() {
@@ -64,6 +53,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("Timeout", timeout);
 	}
 
 	public TimeUnit getTimeoutUnit() {
@@ -72,6 +62,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setTimeoutUnit(TimeUnit timeoutUnit) {
 		this.timeoutUnit = timeoutUnit;
+		eventMap.put("TimeoutUnit", timeoutUnit);
 	}
 
 	public int getArrivalIndex() {
@@ -80,6 +71,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setArrivalIndex(int arrivalIndex) {
 		this.arrivalIndex = arrivalIndex;
+		eventMap.put("ArrivalIndex", arrivalIndex);
 	}
 	
 	

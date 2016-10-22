@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.threadfactory;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -13,17 +12,7 @@ public class ThreadFactoryEvent extends Event {
 	public ThreadFactoryEvent(String factory, ThreadFactoryEventType eventType) {
 		super(factory);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Runnable", runnable);
-		eventMap.put("Thread", thread);
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public ThreadFactoryEventType getEventType() {
@@ -32,6 +21,7 @@ public class ThreadFactoryEvent extends Event {
 
 	public void setEventType(ThreadFactoryEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public String getRunnable() {
@@ -40,6 +30,7 @@ public class ThreadFactoryEvent extends Event {
 
 	public void setRunnable(String runnable) {
 		this.runnable = runnable;
+		eventMap.put("Runnable", runnable);
 	}
 
 	public String getThread() {
@@ -48,6 +39,7 @@ public class ThreadFactoryEvent extends Event {
 
 	public void setThread(String thread) {
 		this.thread = thread;
+		eventMap.put("Thread", thread);
 	}
 
 	

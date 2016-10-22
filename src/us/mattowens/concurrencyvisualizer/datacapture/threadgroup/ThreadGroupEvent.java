@@ -5,20 +5,27 @@ import us.mattowens.concurrencyvisualizer.datacapture.Event;
 public class ThreadGroupEvent extends Event {
 	
 	private int maxPriority;
-	private boolean isDameon;
+	private boolean isDaemon;
 	private ThreadGroupEventType eventType;
 	private String parentName;
 	
 	public ThreadGroupEvent(String name, ThreadGroupEventType eventType) {
 		super(name);
+		setEventType(eventType);
 	}
 
+	public void setEventType(ThreadGroupEventType eventType) {
+		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
+	}
 	public void setMaxPriority(int maxPriority) {
 		this.maxPriority = maxPriority;
+		eventMap.put("MaxPriority", maxPriority);
 	}
 
-	public void setDameon(boolean isDameon) {
-		this.isDameon = isDameon;
+	public void setDameon(boolean isDaemon) {
+		this.isDaemon = isDaemon;
+		eventMap.put("IsDaemon", isDaemon);
 	}
 
 	public int getMaxPriority() {
@@ -26,7 +33,7 @@ public class ThreadGroupEvent extends Event {
 	}
 
 	public boolean isDameon() {
-		return isDameon;
+		return isDaemon;
 	}
 
 	public ThreadGroupEventType getEventType() {
@@ -35,6 +42,7 @@ public class ThreadGroupEvent extends Event {
 	
 	public void setParentName(String name) {
 		parentName = name;
+		eventMap.put("ParentName", parentName);
 	}
 	
 	public String getParentName() {

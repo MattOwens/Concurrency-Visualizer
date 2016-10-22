@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.future;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -11,16 +10,15 @@ public class FutureEvent extends Event {
 	public FutureEvent(String future, FutureEventType eventType) {
 		super(future);
 		
-		this.eventType = eventType;
+		setEventType(eventType);
 	}
 	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
+	public FutureEventType getEventType() {
+		return eventType;
+	}
+	
+	public void setEventType(FutureEventType eventType) {
+		this.eventType = eventType;
 		eventMap.put("EventType", eventType);
-
-		
-		return eventMap;
 	}
 }

@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.object;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -12,15 +11,24 @@ public class MonitorEvent extends Event {
     public MonitorEvent(String objectDescription, MonitorEventType eventType) {
     	super(objectDescription);
     	
-    	this.eventType = eventType;
+    	setEventType(eventType);
     }
 
+    public MonitorEventType getEventType() {
+    	return eventType;
+    }
+    
+    public void setEventType(MonitorEventType eventType) {
+    	this.eventType = eventType;
+    	eventMap.put("EventType", eventType);
+    }
 	public long getTimeout() {
 		return timeout;
 	}
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("TimeoutMillis", timeout);
 	}
 
 	public int getNanos() {
@@ -29,25 +37,6 @@ public class MonitorEvent extends Event {
 
 	public void setNanos(int nanos) {
 		this.nanos = nanos;
+		eventMap.put("TimeoutNanos", nanos);
 	}
-    
-    public MonitorEventType getEventType() {
-    	return eventType;
-    }
-    
-    public String toString() {
-    	return super.toString() + "-" + eventType + "-" + timeout + "-" + nanos;
-    }
-    
-    @Override
-    public Map<String, Object> collapseToMap() {
-    	Map<String, Object> eventMap = super.collapseToMap();
-    	
-    	eventMap.put("EventType", eventType);
-    	eventMap.put("TimeoutMillis", timeout);
-    	eventMap.put("TimeoutNanos", nanos);
-    	
-    	return eventMap;
-    }
-	
 }

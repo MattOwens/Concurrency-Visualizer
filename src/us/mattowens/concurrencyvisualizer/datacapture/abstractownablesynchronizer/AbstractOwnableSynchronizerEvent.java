@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.abstractownablesynchronizer;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -12,17 +11,7 @@ public class AbstractOwnableSynchronizerEvent extends Event {
 	public AbstractOwnableSynchronizerEvent(String synchronizerDescription, 
 			AbstractOwnableSynchronizerEventType eventType) {
 		super(synchronizerDescription);
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("ThreadName", threadName);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public AbstractOwnableSynchronizerEventType getEventType() {
@@ -31,6 +20,7 @@ public class AbstractOwnableSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractOwnableSynchronizerEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 	
 	public String getThreadName() {
@@ -39,6 +29,7 @@ public class AbstractOwnableSynchronizerEvent extends Event {
 	
 	public void setThreadName(String threadName) {
 		this.threadName = threadName;
+		eventMap.put("ThreadName", threadName);
 	}
 	
 	

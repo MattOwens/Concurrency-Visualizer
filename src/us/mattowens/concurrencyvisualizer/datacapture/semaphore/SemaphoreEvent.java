@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.semaphore;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
@@ -17,31 +16,17 @@ public class SemaphoreEvent extends Event {
 	
 	public SemaphoreEvent(String semaphoreDescription, SemaphoreEventType eventType) {
 		super(semaphoreDescription);
-		this.eventType = eventType;
-		this.permits = 1;
-	}
-	
-	@Override
-	public String toString() {
-		return super.toString() + "-" + eventType + "-" + permits + "-" + 
-				timeout + "-" + timeoutUnit;
-	}
-
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Permits", permits);
-		eventMap.put("Timeout", timeout);
-		eventMap.put("TimeoutUnit", timeoutUnit);
-		eventMap.put("TryAcquireSuccessful", tryAcquireSuccessful);
-		
-		return eventMap;
+		setEventType(eventType);
+		setPermits(1);
 	}
 	
 	public SemaphoreEventType getEventType() {
 		return eventType;
+	}
+	
+	public void setEventType(SemaphoreEventType eventType) {
+		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public int getPermits() {
@@ -50,6 +35,7 @@ public class SemaphoreEvent extends Event {
 
 	public void setPermits(int permits) {
 		this.permits = permits;
+		eventMap.put("Permits", permits);
 	}
 
 	public long getTimeout() {
@@ -58,6 +44,7 @@ public class SemaphoreEvent extends Event {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+		eventMap.put("Timeout", timeout);
 	}
 
 	public TimeUnit getTimeoutUnit() {
@@ -66,6 +53,7 @@ public class SemaphoreEvent extends Event {
 
 	public void setTimeoutUnit(TimeUnit timeoutUnit) {
 		this.timeoutUnit = timeoutUnit;
+		eventMap.put("TimeoutUnit", timeoutUnit);
 	}
 
 	public boolean isTryAcquireSuccessful() {
@@ -74,11 +62,6 @@ public class SemaphoreEvent extends Event {
 
 	public void setTryAcquireSuccessful(boolean tryAcquireSuccessful) {
 		this.tryAcquireSuccessful = tryAcquireSuccessful;
+		eventMap.put("TryAcquireSuccessful", tryAcquireSuccessful);
 	}
-
-	public void setEventType(SemaphoreEventType eventType) {
-		this.eventType = eventType;
-	}	
-	
-	
 }

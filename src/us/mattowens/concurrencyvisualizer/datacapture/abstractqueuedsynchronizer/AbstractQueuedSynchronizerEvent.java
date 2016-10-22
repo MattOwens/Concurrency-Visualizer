@@ -46,6 +46,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractQueuedSynchronizerEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 

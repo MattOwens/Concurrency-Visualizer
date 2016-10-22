@@ -3,7 +3,6 @@ package us.mattowens.concurrencyvisualizer.datacapture.condition;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
-import java.util.Map;
 
 public class ConditionEvent extends Event {
 
@@ -18,22 +17,7 @@ public class ConditionEvent extends Event {
 	public ConditionEvent(String conditionDescription, ConditionEventType eventType) {
 		super(conditionDescription);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Time", time);
-		eventMap.put("TimeUnit", timeUnit);
-		eventMap.put("NanosTimeout", nanosTimeout);
-		eventMap.put("Deadline", deadline);
-		eventMap.put("TimeRemaining", timeRemaining);
-		eventMap.put("HasAccess", hasAccess);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public ConditionEventType getEventType() {
@@ -42,6 +26,7 @@ public class ConditionEvent extends Event {
 
 	public void setEventType(ConditionEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public long getTime() {
@@ -50,6 +35,7 @@ public class ConditionEvent extends Event {
 
 	public void setTime(long time) {
 		this.time = time;
+		eventMap.put("Time", time);
 	}
 
 	public TimeUnit getTimeUnit() {
@@ -58,6 +44,7 @@ public class ConditionEvent extends Event {
 
 	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
+		eventMap.put("TimeUnit", timeUnit);
 	}
 
 	public long getNanosTimeout() {
@@ -66,6 +53,7 @@ public class ConditionEvent extends Event {
 
 	public void setNanosTimeout(long nanosTimeout) {
 		this.nanosTimeout = nanosTimeout;
+		eventMap.put("NanosTimeout", nanosTimeout);
 	}
 
 	public Date getDeadline() {
@@ -74,10 +62,12 @@ public class ConditionEvent extends Event {
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
+		eventMap.put("Deadline", deadline);
 	}
 	
 	public void setTimeRemaining(long timeRemaining) {
 		this.timeRemaining = timeRemaining;
+		eventMap.put("TimeRemaining", timeRemaining);
 	}
 	
 	public long getTimeRemaining() {
@@ -90,6 +80,7 @@ public class ConditionEvent extends Event {
 
 	public void setHasAccess(boolean hasAccess) {
 		this.hasAccess = hasAccess;
+		eventMap.put("HasAccess", hasAccess);
 	}
 	
 	

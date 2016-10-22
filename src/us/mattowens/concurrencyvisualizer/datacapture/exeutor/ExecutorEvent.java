@@ -10,7 +10,7 @@ public class ExecutorEvent extends Event {
 	public ExecutorEvent(String executor, ExecutorEventType eventType) {
 		super(executor);
 		
-		this.eventType = eventType;
+		setEventType(eventType);
 	}
 
 	public ExecutorEventType getEventType() {
@@ -19,6 +19,7 @@ public class ExecutorEvent extends Event {
 
 	public void setEventType(ExecutorEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public String getRunnable() {
@@ -27,6 +28,7 @@ public class ExecutorEvent extends Event {
 
 	public void setRunnable(String runnable) {
 		this.runnable = runnable;
+		eventMap.put("Runnable", runnable);
 	}
 	
 	

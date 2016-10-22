@@ -2,7 +2,6 @@ package us.mattowens.concurrencyvisualizer.datacapture.timer;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import java.util.Date;
-import java.util.Map;
 
 public class TimerEvent extends Event {
 	private TimerEventType eventType;
@@ -15,24 +14,8 @@ public class TimerEvent extends Event {
 	
 	public TimerEvent(String timer, TimerEventType type) {
 		super(timer);
-		eventType = type;
+		setEventType(type);
 		
-	}
-
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("StartTime", startTime);
-		eventMap.put("TaskDescription", taskDescription);
-		eventMap.put("Delay", delay);
-		eventMap.put("Period", period);
-		eventMap.put("IsDaemon", isDaemon);
-		eventMap.put("NumPurged", numPurged);
-		
-		return eventMap;
 	}
 	
 	public TimerEventType getEventType() {
@@ -41,6 +24,7 @@ public class TimerEvent extends Event {
 
 	public void setEventType(TimerEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public Date getStartTime() {
@@ -49,6 +33,7 @@ public class TimerEvent extends Event {
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
+		eventMap.put("StartTime", startTime);
 	}
 
 	public String getTaskDescription() {
@@ -57,6 +42,7 @@ public class TimerEvent extends Event {
 
 	public void setTaskDescription(String taskDescription) {
 		this.taskDescription = taskDescription;
+		eventMap.put("TaskDescription", taskDescription);
 	}
 
 	public long getDelay() {
@@ -65,6 +51,7 @@ public class TimerEvent extends Event {
 
 	public void setDelay(long delay) {
 		this.delay = delay;
+		eventMap.put("Delay", delay);
 	}
 
 	public long getPeriod() {
@@ -73,6 +60,7 @@ public class TimerEvent extends Event {
 
 	public void setPeriod(long period) {
 		this.period = period;
+		eventMap.put("Period", period);
 	}
 
 	public boolean isDaemon() {
@@ -81,6 +69,7 @@ public class TimerEvent extends Event {
 
 	public void setDaemon(boolean isDaemon) {
 		this.isDaemon = isDaemon;
+		eventMap.put("IsDaemon", isDaemon);
 	}
 
 	public int getNumPurged() {
@@ -89,8 +78,6 @@ public class TimerEvent extends Event {
 
 	public void setNumPurged(int numPurged) {
 		this.numPurged = numPurged;
+		eventMap.put("NumPurged", numPurged);
 	}
-	
-	
-
 }

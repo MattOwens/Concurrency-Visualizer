@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.abstractqueuedlongsynchronizer;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -19,23 +18,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 	public AbstractQueuedLongSynchronizerEvent(String synchronizer, AbstractQueuedLongSynchronizerEventType eventType) {
 		super(synchronizer);
 		
-		this.eventType = eventType;
-	}
-
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Arg", arg);
-		eventMap.put("Successful", successful);
-		eventMap.put("Expect", expect);
-		eventMap.put("Update", update);
-		eventMap.put("NewState", newState);
-		eventMap.put("TryAcquireResult", tryAcquireResult);
-		eventMap.put("NanosTimeout", nanosTimeout);
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 	
 
@@ -46,6 +29,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractQueuedLongSynchronizerEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 
@@ -56,6 +40,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setArg(long arg) {
 		this.arg = arg;
+		eventMap.put("Arg", arg);
 	}
 
 
@@ -66,6 +51,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setSuccessful(boolean successful) {
 		this.successful = successful;
+		eventMap.put("Successful", successful);
 	}
 
 
@@ -76,6 +62,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setExpect(long expect) {
 		this.expect = expect;
+		eventMap.put("Expect", expect);
 	}
 
 
@@ -86,6 +73,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setUpdate(long update) {
 		this.update = update;
+		eventMap.put("Update", update);
 	}
 
 
@@ -96,6 +84,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setNewState(long newState) {
 		this.newState = newState;
+		eventMap.put("NewState", newState);
 	}
 
 
@@ -106,6 +95,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setTryAcquireResult(long tryAcquireResult) {
 		this.tryAcquireResult = tryAcquireResult;
+		eventMap.put("TryAcquireResult", tryAcquireResult);
 	}
 
 
@@ -116,6 +106,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setNanosTimeout(long nanosTimeout) {
 		this.nanosTimeout = nanosTimeout;
+		eventMap.put("NanosTimeout", nanosTimeout);
 	}
 	
 	

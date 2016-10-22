@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.recursiveaction;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -12,18 +11,7 @@ public class RecursiveActionEvent extends Event {
 	public RecursiveActionEvent(String action, RecursiveActionEventType eventType) {
 		super(action);
 		
-		this.eventType = eventType;
-	}
-	
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("CompletedNormally", completedNormally);
-
-		
-		return eventMap;
+		setEventType(eventType);
 	}
 
 	public RecursiveActionEventType getEventType() {
@@ -32,6 +20,7 @@ public class RecursiveActionEvent extends Event {
 
 	public void setEventType(RecursiveActionEventType eventType) {
 		this.eventType = eventType;
+		eventMap.put("EventType", eventType);
 	}
 
 	public boolean isCompletedNormally() {
@@ -40,6 +29,7 @@ public class RecursiveActionEvent extends Event {
 
 	public void setCompletedNormally(boolean completedNormally) {
 		this.completedNormally = completedNormally;
+		eventMap.put("CompletedNormally", completedNormally);
 	}
 	
 	
