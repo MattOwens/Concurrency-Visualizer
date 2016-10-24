@@ -29,7 +29,7 @@ public class AbstractQueuedLongSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractQueuedLongSynchronizerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 

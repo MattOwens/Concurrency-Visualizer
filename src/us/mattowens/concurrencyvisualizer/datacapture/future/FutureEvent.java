@@ -19,6 +19,6 @@ public class FutureEvent extends Event {
 	
 	public void setEventType(FutureEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 }

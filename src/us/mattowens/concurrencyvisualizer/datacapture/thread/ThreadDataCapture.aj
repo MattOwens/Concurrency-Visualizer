@@ -6,107 +6,107 @@ public aspect ThreadDataCapture {
 	
 	pointcut create() :
 		call(Thread.new()) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createTarget(Runnable r) :
 		call(Thread.new(Runnable)) &&
 		args(r) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createTargetName(Runnable r, String name) :
 		call(Thread.new(Runnable, String)) &&
 		args(r, name) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createName(String name) :
 		call(Thread.new(String)) &&
 		args(name) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createGroupTarget(ThreadGroup g, Runnable r) :
 		call(Thread.new(ThreadGroup, Runnable)) &&
 		args(g, r) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createGroupTargetName(ThreadGroup g, Runnable r, String name) :
 		(call(Thread.new(ThreadGroup, Runnable, String)) ||
 		 call(Thread.new(ThreadGroup, Runnable, String, long))) &&
 		args(g, r, name) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createGroupName(ThreadGroup g, String name) :
 		call(Thread.new(ThreadGroup, String)) &&
 		args(g, name) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	
 	pointcut interrupt(Thread t) :
 		call(void Thread.interrupt()) &&
 		target(t) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut interrupted() :
 		call(boolean Thread.interrupted()) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut isInterrupted(Thread t) :
 		call(boolean Thread.isInterrupted()) &&
 		target(t) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut join(Thread t) :
 		call(void Thread.join()) &&
 		target(t) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut joinTimeout(Thread t, long millis) :
 		call(void Thread.join(long)) &&
 		target(t) &&
 		args(millis) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut joinFiner(Thread t, long millis, int nanos) :
 		call(void Thread.join(long, int)) &&
 		target(t) &&
 		args(millis, nanos) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut setDaemon(Thread t, boolean on) :
 		call(void Thread.setDaemon(boolean)) &&
 		target(t) &&
 		args(on) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut setName(Thread t, String name) :
 		call(void Thread.setName(String)) &&
 		target(t) &&
 		args(name) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut setPriority(Thread t, int newPriority) :
 		call(void Thread.setPriority(int)) &&
 		target(t) &&
 		args(newPriority) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut sleep(long millis) :
 		call(void Thread.sleep(long)) &&
 		args(millis) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut sleepFiner(long millis, int nanos) :
 		call(void Thread.sleep(long, int)) &&
 		args(millis, nanos) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut start(Thread t) :
 		call(void Thread.start()) &&
 		target(t) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut yield() :
 		call(void Thread.yield()) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	
 	after() returning(Thread t) : create() {

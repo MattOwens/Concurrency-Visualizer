@@ -21,7 +21,7 @@ public class RejectedExecutionHandlerEvent extends Event {
 
 	public void setEventType(RejectedExecutionHandlerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public String getRunnable() {

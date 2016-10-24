@@ -25,7 +25,7 @@ public class ReentrantLockEvent extends Event {
 
 	public void setEventType(ReentrantLockEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public boolean isFair() {

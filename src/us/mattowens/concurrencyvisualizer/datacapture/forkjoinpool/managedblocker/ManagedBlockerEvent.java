@@ -20,7 +20,7 @@ public class ManagedBlockerEvent extends Event {
 
 	public void setEventType(ManagedBlockerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public boolean isBlockingUnnecessary() {

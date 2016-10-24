@@ -17,6 +17,6 @@ public class RunnableEvent extends Event {
 	
 	public void setEventType(RunnableEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 }

@@ -15,7 +15,7 @@ public class TimerTaskEvent extends Event {
 	
 	public void setEventType(TimerTaskEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 	
 	public TimerTaskEventType getEventType() {

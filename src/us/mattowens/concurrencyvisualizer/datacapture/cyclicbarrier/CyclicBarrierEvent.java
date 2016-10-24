@@ -26,7 +26,7 @@ public class CyclicBarrierEvent extends Event {
 
 	public void setEventType(CyclicBarrierEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public int getParties() {

@@ -22,7 +22,7 @@ public class ForkJoinWorkerThreadFactoryEvent extends Event {
 
 	public void setEventType(ForkJoinWorkerThreadFactoryEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public String getForkJoinPool() {

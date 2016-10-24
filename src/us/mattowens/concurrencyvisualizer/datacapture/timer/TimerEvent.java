@@ -24,7 +24,7 @@ public class TimerEvent extends Event {
 
 	public void setEventType(TimerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public Date getStartTime() {

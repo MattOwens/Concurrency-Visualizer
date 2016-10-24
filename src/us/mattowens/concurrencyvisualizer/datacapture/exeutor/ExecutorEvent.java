@@ -19,7 +19,7 @@ public class ExecutorEvent extends Event {
 
 	public void setEventType(ExecutorEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public String getRunnable() {

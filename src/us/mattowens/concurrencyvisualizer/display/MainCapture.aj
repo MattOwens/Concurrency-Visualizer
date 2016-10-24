@@ -5,6 +5,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import us.mattowens.concurrencyvisualizer.datacapture.*;
+import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
 
 public aspect MainCapture {
 	
@@ -14,24 +15,31 @@ public aspect MainCapture {
 		execution(void main(String[]));
 	
 	before() : main() {
+
+		try {
+			FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
+			EventQueue.addOutputAdapter(fileOutputAdapter);
+			
+			FileInputAdapter fileInputAdapter = new FileInputAdapter("UpdatedTestOutput.txt");
+			InputEventQueue.setInputAdapter(fileInputAdapter);
+			fileInputAdapter.startReading();
+		} catch (IOException e) {
+			// TODO Show user an error message about this
+			e.printStackTrace();
+		}
+		
 		mainWindow = new ConcurrencyVisualizerMainWindow();
-		//mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e)
 		    {
 		        EventQueue.stopEventOutput();
+		        InputEventQueue.stopEventInput();
 		        System.exit(0);
 		    }
 		});
 		mainWindow.setVisible(true);
 		
-		try {
-			FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
-			EventQueue.addOutputAdapter(fileOutputAdapter);
-		} catch (IOException e) {
-			// TODO Show user an error message about this
-			e.printStackTrace();
-		}
+
 		
 		EventQueue.startEventOutput();
 	}

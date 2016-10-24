@@ -26,7 +26,7 @@ public class ThreadEvent extends Event {
 
 	public void setEventType(ThreadEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public void setNewPriority(int newPriority) {

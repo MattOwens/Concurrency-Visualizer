@@ -20,7 +20,7 @@ public class RecursiveActionEvent extends Event {
 
 	public void setEventType(RecursiveActionEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public boolean isCompletedNormally() {

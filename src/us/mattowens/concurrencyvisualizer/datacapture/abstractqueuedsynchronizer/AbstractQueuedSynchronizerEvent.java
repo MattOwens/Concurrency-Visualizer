@@ -1,6 +1,5 @@
 package us.mattowens.concurrencyvisualizer.datacapture.abstractqueuedsynchronizer;
 
-import java.util.Map;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
@@ -22,23 +21,6 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 		this.eventType = eventType;
 	}
 
-	@Override
-	public Map<String, Object> collapseToMap() {
-		Map<String, Object> eventMap = super.collapseToMap();
-		
-		eventMap.put("EventType", eventType);
-		eventMap.put("Arg", arg);
-		eventMap.put("Successful", successful);
-		eventMap.put("Expect", expect);
-		eventMap.put("Update", update);
-		eventMap.put("NewState", newState);
-		eventMap.put("TryAcquireResult", tryAcquireResult);
-		eventMap.put("NanosTimeout", nanosTimeout);
-		
-		return eventMap;
-	}
-	
-
 	public AbstractQueuedSynchronizerEventType getEventType() {
 		return eventType;
 	}
@@ -46,7 +28,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractQueuedSynchronizerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 
@@ -67,6 +49,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setSuccessful(boolean successful) {
 		this.successful = successful;
+		eventMap.put("Successful", successful);
 	}
 
 
@@ -77,6 +60,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setExpect(int expect) {
 		this.expect = expect;
+		eventMap.put("Expect", expect);
 	}
 
 
@@ -87,6 +71,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setUpdate(int update) {
 		this.update = update;
+		eventMap.put("Update", update);
 	}
 
 
@@ -97,6 +82,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setNewState(int newState) {
 		this.newState = newState;
+		eventMap.put("NewState", newState);
 	}
 
 
@@ -107,6 +93,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setTryAcquireResult(int tryAcquireResult) {
 		this.tryAcquireResult = tryAcquireResult;
+		eventMap.put("TryAcquireResult", tryAcquireResult);
 	}
 
 
@@ -117,6 +104,7 @@ public class AbstractQueuedSynchronizerEvent extends Event {
 
 	public void setNanosTimeout(long nanosTimeout) {
 		this.nanosTimeout = nanosTimeout;
+		eventMap.put("NanosTimeout", nanosTimeout);
 	}
 	
 	

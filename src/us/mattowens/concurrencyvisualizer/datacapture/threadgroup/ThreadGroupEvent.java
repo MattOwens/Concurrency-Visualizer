@@ -16,7 +16,7 @@ public class ThreadGroupEvent extends Event {
 
 	public void setEventType(ThreadGroupEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 	public void setMaxPriority(int maxPriority) {
 		this.maxPriority = maxPriority;

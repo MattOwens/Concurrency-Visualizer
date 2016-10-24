@@ -20,7 +20,7 @@ public class AbstractOwnableSynchronizerEvent extends Event {
 
 	public void setEventType(AbstractOwnableSynchronizerEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 	
 	public String getThreadName() {

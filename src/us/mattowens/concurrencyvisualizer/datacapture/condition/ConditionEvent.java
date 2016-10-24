@@ -26,7 +26,7 @@ public class ConditionEvent extends Event {
 
 	public void setEventType(ConditionEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public long getTime() {

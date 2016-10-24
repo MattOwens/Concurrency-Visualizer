@@ -9,4 +9,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
+	public ConcurrencyVisualizerMainWindow() {
+		
+	}
 }

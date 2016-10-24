@@ -26,7 +26,7 @@ public class SemaphoreEvent extends Event {
 	
 	public void setEventType(SemaphoreEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public int getPermits() {

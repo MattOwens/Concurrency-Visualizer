@@ -20,7 +20,7 @@ public class CallableEvent extends Event {
 
 	public void setEventType(CallableEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType);
+		eventMap.put("EventType", eventType.toString());
 	}
 
 	public Object getResult() {

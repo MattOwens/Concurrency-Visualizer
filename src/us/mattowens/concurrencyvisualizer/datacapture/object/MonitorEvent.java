@@ -20,7 +20,7 @@ public class MonitorEvent extends Event {
     
     public void setEventType(MonitorEventType eventType) {
     	this.eventType = eventType;
-    	eventMap.put("EventType", eventType);
+    	eventMap.put("EventType", eventType.toString());
     }
 	public long getTimeout() {
 		return timeout;
