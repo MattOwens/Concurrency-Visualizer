@@ -3,9 +3,11 @@ package us.mattowens.concurrencyvisualizer.display;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import us.mattowens.concurrencyvisualizer.datacapture.*;
-import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
+import us.mattowens.concurrencyvisualizer.display.inputadapters.*;
 
 public aspect MainCapture {
 	
@@ -17,12 +19,21 @@ public aspect MainCapture {
 	before() : main() {
 
 		try {
-			FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
+			/*FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
 			EventQueue.addOutputAdapter(fileOutputAdapter);
 			
 			FileInputAdapter fileInputAdapter = new FileInputAdapter("UpdatedTestOutput.txt");
 			InputEventQueue.setInputAdapter(fileInputAdapter);
 			fileInputAdapter.startReading();
+			*/
+			ServerSocket ss = new ServerSocket(0);
+			Socket outSocket = new Socket(ss.getInetAddress(), ss.getLocalPort());
+			SocketOutputAdapter socketOutputAdapter = new SocketOutputAdapter(outSocket);
+			EventQueue.addOutputAdapter(socketOutputAdapter);
+			SocketInputAdapter socketInputAdapter = new SocketInputAdapter(ss.accept());
+			InputEventQueue.setInputAdapter(socketInputAdapter);
+			socketInputAdapter.startReading();
+			ss.close();
 		} catch (IOException e) {
 			// TODO Show user an error message about this
 			e.printStackTrace();
