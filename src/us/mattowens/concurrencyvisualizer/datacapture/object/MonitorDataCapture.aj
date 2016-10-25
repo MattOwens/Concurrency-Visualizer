@@ -34,7 +34,7 @@ public aspect MonitorDataCapture {
 	before(Object o) : wait(o) {
 		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(beforeEvent);
 	}
@@ -42,7 +42,7 @@ public aspect MonitorDataCapture {
 	after(Object o) : wait(o) {
 		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(afterEvent);
 	}
@@ -50,7 +50,7 @@ public aspect MonitorDataCapture {
 	before(Object o, long timeout) : waitTimeout(o, timeout) {
 		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		beforeEvent.setTimeout(timeout);
 		
 		EventQueue.addEvent(beforeEvent);	
@@ -59,7 +59,7 @@ public aspect MonitorDataCapture {
 	after(Object o, long timeout) : waitTimeout(o, timeout) {
 		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		afterEvent.setTimeout(timeout);
 		
 		EventQueue.addEvent(afterEvent);
@@ -68,7 +68,7 @@ public aspect MonitorDataCapture {
 	before(Object o, long timeout, int nanos) : waitFinerTimeout(o, timeout, nanos) {
 		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		beforeEvent.setTimeout(timeout);
 		beforeEvent.setNanos(nanos);
 		
@@ -78,7 +78,7 @@ public aspect MonitorDataCapture {
 	after(Object o, long timeout, int nanos) : waitFinerTimeout(o, timeout, nanos) {
 		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		afterEvent.setTimeout(timeout);
 		afterEvent.setNanos(nanos);
 		
@@ -88,7 +88,7 @@ public aspect MonitorDataCapture {
 	after(Object o) : notify(o) {
 		MonitorEvent notifyEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.Notify);
-		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(notifyEvent);
 	}
@@ -96,7 +96,7 @@ public aspect MonitorDataCapture {
 	after(Object o) : notifyAll(o) {
 		MonitorEvent notifyEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.NotifyAll);
-		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(notifyEvent);
 	}
@@ -104,7 +104,7 @@ public aspect MonitorDataCapture {
 	before(Object o) : synchronizedMethod(o) {
 		MonitorEvent syncEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.BeforeSynchronized);
-		syncEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		syncEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(syncEvent);
 	}
@@ -112,7 +112,7 @@ public aspect MonitorDataCapture {
 	after(Object o) : synchronizedMethod(o) {
 		MonitorEvent syncEvent = new MonitorEvent(o.toString(),
 				MonitorEventType.AfterSynchronized);
-		syncEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		syncEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		
 		EventQueue.addEvent(syncEvent);
 	}

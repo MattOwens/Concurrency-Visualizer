@@ -72,6 +72,7 @@ public aspect SemaphoreDataCapture {
 		
 		SemaphoreEvent createEvent = new SemaphoreEvent(s.toString(),
 				SemaphoreEventType.Create);
+		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
 		createEvent.setPermits(permits);
 		
 		EventQueue.addEvent(createEvent);

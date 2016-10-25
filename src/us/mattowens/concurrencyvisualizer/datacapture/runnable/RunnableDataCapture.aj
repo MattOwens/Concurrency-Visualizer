@@ -6,12 +6,12 @@ public aspect RunnableDataCapture {
 
 	pointcut create() :
 		call(Runnable.new()) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut run(Runnable r) :
 		execution(void Runnable.run()) &&
 		target(r) &&
-		!within(us.mattowens.concurrencyvisualizer.datacapture..*);
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	after() returning(Runnable r) : create() {
 		RunnableEvent createEvent = new RunnableEvent(r.toString(), RunnableEventType.Create);
