@@ -14,15 +14,15 @@ public class Buffer {
 	public synchronized String getItem() {
 		while(isEmpty()) {
 			try {
-				System.out.println(Thread.currentThread().getName() +
-						" waiting to get item.");
+				//System.out.println(Thread.currentThread().getName() +
+				//		" waiting to get item.");
 				wait();
-				System.out.println(Thread.currentThread().getName() +
-						" woken up.");
+				//System.out.println(Thread.currentThread().getName() +
+				//		" woken up.");
 			}
 			catch(InterruptedException e) { }
 		}
-		System.out.println(Thread.currentThread().getName() + " getting item.");
+		//System.out.println(Thread.currentThread().getName() + " getting item.");
 		notifyAll();
 		return items[currentItem--];
 	}
@@ -31,14 +31,14 @@ public class Buffer {
 		
 		while(isFull()) {
 			try {
-				System.out.println(Thread.currentThread().getName() +
-						" waiting to put item.");
+			//	System.out.println(Thread.currentThread().getName() +
+			//			" waiting to put item.");
 				wait();
-				System.out.println(Thread.currentThread().getName() +
-						" woken up.");
+			//	System.out.println(Thread.currentThread().getName() +
+			//			" woken up.");
 			} catch (InterruptedException e) { }
 		}
-		System.out.println(Thread.currentThread().getName() + " putting item.");
+		//System.out.println(Thread.currentThread().getName() + " putting item.");
 		items[++currentItem] = item;
 		notifyAll();
 	}

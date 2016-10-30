@@ -29,7 +29,9 @@ public final class EventQueue {
 	}
 	
 	public static void stopEventOutput() {
-		singletonEventQueue.outputThread.interrupt();
+		if(singletonEventQueue.outputThread != null) {
+			singletonEventQueue.outputThread.interrupt();
+		}
 	}
 	
 	public static void addOutputAdapter(OutputAdapter adapter) {

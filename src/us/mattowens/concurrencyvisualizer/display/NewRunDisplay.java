@@ -1,11 +1,10 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +13,7 @@ import javax.swing.*;
 
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
+import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
 
 public class NewRunDisplay extends JFrame {
 
@@ -21,89 +21,113 @@ public class NewRunDisplay extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final ConcurrencyVisualizerRunMode[] availableRunModes = 
+		{ConcurrencyVisualizerRunMode.ReadAll, 
+	     ConcurrencyVisualizerRunMode.OnDelay,
+		 ConcurrencyVisualizerRunMode.StepThrough
+		};
 	
-	private ConcurrencyVisualizerMainWindow mainWindow;
+	private JTextField filePathTextField;
+	private JComboBox<ConcurrencyVisualizerRunMode> runModeComboBox;
 	
 	public static void main(String[] args) {
 		NewRunDisplay newRunDisplay = new NewRunDisplay();
+		newRunDisplay.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		newRunDisplay.setVisible(true);
 		
 	}
 	
 	public NewRunDisplay() {
 		Container contentPane = getContentPane();
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+		contentPane.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
 		
-		JCheckBox fileOutputCheckBox = new JCheckBox();
-		fileOutputCheckBox.setText("Enable file output");
-		contentPane.add(fileOutputCheckBox);
+		JLabel filePathLabel = new JLabel("Data File:");
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		contentPane.add(filePathLabel, constraints);
 		
-		JTextField filePathTextField = new JTextField(50);
-		contentPane.add(filePathTextField);
+		filePathTextField = new JTextField();
+		constraints.weightx = 0.5;
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		contentPane.add(filePathTextField, constraints);
 		
 		JButton browseButton = new JButton("Browse");
-		contentPane.add(browseButton);
+		constraints.weightx = 0.25;
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		browseButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				int fcReturnValue = fileChooser.showOpenDialog(browseButton);
+				
+				if(fcReturnValue == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					filePathTextField.setText(selectedFile.getAbsolutePath());
+				}
+			}
+		});
+		contentPane.add(browseButton, constraints);
+		
+		JLabel runModeLabel = new JLabel("Run Mode:");
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		contentPane.add(runModeLabel, constraints);
+		
+		runModeComboBox = new JComboBox<ConcurrencyVisualizerRunMode>(availableRunModes);
+		constraints.weightx = 0.75;
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		contentPane.add(runModeComboBox, constraints);
 		
 		JButton runButton = new JButton("Run");
+		constraints.weightx = 0.34;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					runProgram();
 				} catch (Exception e1) {
-					// TODO Show user error message
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(runButton.getRootPane(), e1.getStackTrace(), "Exception", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		contentPane.add(runButton);
+		contentPane.add(runButton, constraints);
 		
 		JButton cancelButton = new JButton("Cancel");
-		contentPane.add(cancelButton);
+		constraints.weightx = 0.34;
+		constraints.gridx = 2;
+		constraints.gridy = 2;
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		contentPane.add(cancelButton, constraints);
 		
 		pack();
-		
 	}
 	
-	private void runProgram() throws Exception {
+	private void runProgram() throws IOException, InterruptedException {
+		FileInputAdapter fileInputAdapter = new FileInputAdapter(filePathTextField.getText());
+		InputEventQueue.setInputAdapter(fileInputAdapter);
+		fileInputAdapter.startReading();
 		
-		mainWindow = new ConcurrencyVisualizerMainWindow();
-		mainWindow.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e)
-		    {
-		        EventQueue.stopEventOutput();
-		        System.exit(0);
-		    }
-		});
-		mainWindow.setVisible(true);
+		ConcurrencyVisualizerRunMode runMode = availableRunModes[runModeComboBox.getSelectedIndex()];
 		
-		try {
-			FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
-			EventQueue.addOutputAdapter(fileOutputAdapter);
-		} catch (IOException e) {
-			// TODO Show user an error message about this
-			e.printStackTrace();
+		if(runMode == ConcurrencyVisualizerRunMode.ReadAll || runMode == ConcurrencyVisualizerRunMode.OnDelay) {
+			fileInputAdapter.waitForDataLoaded();
 		}
-		EventQueue.startEventOutput();
 		
-		Process compilation = Runtime.getRuntime().exec("C:\\aspectj1.8\\bin\\ajc.bat -inpath" +
-				"F:\\matthew\\Documents\\Sync\\2016 Fall\\Synchronization Methods\\Concurrency Visualizer\\src\\us\\mattowens\\sampleprograms\\" +
-				"-outpath F:\\matthew\\Documents\\Sync\\2016 Fall\\Synchronization Methods\\Concurrency Visualizer\\src\\us\\mattowens\\datacapture\\");
-		
-		printLines("stdout:", compilation.getInputStream());
-		printLines("stderr:", compilation.getErrorStream());
-		compilation.waitFor();
-		Process run = Runtime.getRuntime().exec("java ProducerConsumerDriver");
+		ConcurrencyVisualizerMainWindow mainWindow = 
+				new ConcurrencyVisualizerMainWindow(
+						availableRunModes[runModeComboBox.getSelectedIndex()]);
+		mainWindow.setVisible(true);
+		this.setVisible(false);
 	}
-	
-	  private static void printLines(String name, InputStream ins) throws Exception {
-		    String line = null;
-		    BufferedReader in = new BufferedReader(
-		        new InputStreamReader(ins));
-		    while ((line = in.readLine()) != null) {
-		        System.out.println(name + " " + line);
-		    }
-		  }
-	
-	
-
 }

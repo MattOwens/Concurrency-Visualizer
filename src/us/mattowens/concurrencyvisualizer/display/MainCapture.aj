@@ -14,18 +14,12 @@ public aspect MainCapture {
 	private ConcurrencyVisualizerMainWindow mainWindow;
 
 	pointcut main() :
-		execution(void main(String[]));
+		execution(void main(String[])) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	before() : main() {
 
 		try {
-			/*FileOutputAdapter fileOutputAdapter = new FileOutputAdapter("UpdatedTestOutput.txt");
-			EventQueue.addOutputAdapter(fileOutputAdapter);
-			
-			FileInputAdapter fileInputAdapter = new FileInputAdapter("UpdatedTestOutput.txt");
-			InputEventQueue.setInputAdapter(fileInputAdapter);
-			fileInputAdapter.startReading();
-			*/
 			ServerSocket ss = new ServerSocket(0);
 			Socket outSocket = new Socket(ss.getInetAddress(), ss.getLocalPort());
 			SocketOutputAdapter socketOutputAdapter = new SocketOutputAdapter(outSocket);
@@ -39,15 +33,7 @@ public aspect MainCapture {
 			e.printStackTrace();
 		}
 		
-		mainWindow = new ConcurrencyVisualizerMainWindow();
-		mainWindow.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e)
-		    {
-		        EventQueue.stopEventOutput();
-		        InputEventQueue.stopEventInput();
-		        System.exit(0);
-		    }
-		});
+		mainWindow = new ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode.Live);
 		mainWindow.setVisible(true);
 		
 

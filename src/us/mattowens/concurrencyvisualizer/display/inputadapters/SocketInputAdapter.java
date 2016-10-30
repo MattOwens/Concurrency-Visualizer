@@ -31,7 +31,7 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 					InputEventQueue.addEvent(displayEvent);
 				}
 			} catch(IOException e) {
-				//TODO Figure out what to do here.
+				//Happens when stream is closed
 				e.printStackTrace();
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
