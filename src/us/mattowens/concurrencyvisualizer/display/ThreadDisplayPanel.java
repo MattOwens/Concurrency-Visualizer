@@ -1,5 +1,7 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.awt.FlowLayout;
+
 import javax.swing.*;
 
 public class ThreadDisplayPanel extends JPanel {
