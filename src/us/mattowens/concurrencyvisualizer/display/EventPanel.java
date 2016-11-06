@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
-public class EventPanel extends JPanel {
+public class EventPanel extends JInternalFrame {
 
 	/**
 	 * 
@@ -19,7 +19,8 @@ public class EventPanel extends JPanel {
 	
 	
 	public EventPanel(DisplayEvent event) {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		super(event.getEventClass() + " " + event.getTargetDescription(), true, false, false, false);
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		addNewLabel("Event Class", event.getEventClass());
 		addNewLabel("Event Type", event.getEventType());
 		addNewLabel("Target", event.getTargetDescription());
@@ -34,7 +35,7 @@ public class EventPanel extends JPanel {
 			addNewLabel(mapEntry.getKey(), mapEntry.getValue());
 		}
 		//Force panel to recalculate the necessary size
-		setMaximumSize(getPreferredSize());
+		//setMaximumSize(getPreferredSize());
 		setMinimumSize(getPreferredSize());
 	}
 	

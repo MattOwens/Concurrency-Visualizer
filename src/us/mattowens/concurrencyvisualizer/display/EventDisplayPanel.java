@@ -1,10 +1,16 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.*;
 
-public class EventDisplayPanel extends JPanel {
+public class EventDisplayPanel extends JInternalFrame {
 
 	/**
 	 * 
@@ -13,17 +19,27 @@ public class EventDisplayPanel extends JPanel {
 	
 	//Stores ThreadDisplayPanel Objects by ThreadId
 	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanels;
+	private ConcurrentHashMap<JLabel, DisplayEvent> eventPanels;
+
 	
-	//Amount to delay between 
+	//Amount to delay between events
 	private long displayDelay = 100;
 	
 	private Thread eventLoaderThread;
 	
+	private JDesktopPane contentPane;
+	
+	
 
 	
 	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
+		super("ConcurrencyVisualizer", false, false, false, false);
 		threadPanels = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		eventPanels = new ConcurrentHashMap<JLabel, DisplayEvent>();
+		contentPane = new JDesktopPane();
+		contentPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+		setContentPane(new JScrollPane(contentPane));
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 		
 		if(runMode == ConcurrencyVisualizerRunMode.Live) {
 			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader(this));
@@ -77,8 +93,9 @@ public class EventDisplayPanel extends JPanel {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				add(new JSeparator(SwingConstants.VERTICAL));
-				add(newThreadPanel);
+				newThreadPanel.setVisible(true);
+				contentPane.add(new JSeparator(SwingConstants.VERTICAL));
+				contentPane.add(newThreadPanel);
 			}
 		});
 	}
@@ -87,10 +104,45 @@ public class EventDisplayPanel extends JPanel {
 	private void addDisplayEvent(DisplayEvent newEvent) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				EventPanel eventPanel = new EventPanel(newEvent);
-				threadPanels.get(newEvent.getThreadId()).addEventPanel(eventPanel);
-				revalidate();
-				repaint();
+				JLabel eventLabel = new JLabel(newEvent.getJoinPointName() + "@" + newEvent.getTargetDescription());
+				//EventPanel eventPanel = new EventPanel(newEvent);
+				eventLabel.addMouseListener(new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						EventPanel eventPanel = new EventPanel(eventPanels.get(arg0.getSource()));
+						threadPanels.get(newEvent.getThreadId()).addEventPanel(eventPanel, arg0.getLocationOnScreen());
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
+				eventPanels.put(eventLabel, newEvent);
+				//threadPanels.get(newEvent.getThreadId()).addEventPanel(eventPanel);
+				threadPanels.get(newEvent.getThreadId()).addLabel(eventLabel);
+				contentPane.revalidate();
+				contentPane.repaint();
 			}
 		});
 	}
