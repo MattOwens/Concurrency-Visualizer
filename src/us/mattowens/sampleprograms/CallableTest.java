@@ -19,7 +19,6 @@ public class CallableTest implements Callable<Integer> {
 		Thread t = new Thread(task);
 		t.start();
 		
-		Integer i = task.get();
 	}
 
 }

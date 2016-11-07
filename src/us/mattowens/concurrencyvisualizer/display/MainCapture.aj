@@ -1,13 +1,13 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import us.mattowens.concurrencyvisualizer.datacapture.*;
-import us.mattowens.concurrencyvisualizer.display.inputadapters.*;
+import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
+import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.SocketOutputAdapter;
+import us.mattowens.concurrencyvisualizer.display.inputadapters.SocketInputAdapter;
 
 public aspect MainCapture {
 	

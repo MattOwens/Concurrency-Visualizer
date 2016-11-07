@@ -20,11 +20,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private EventDisplayPanel displayPanel;
-	private ConcurrencyVisualizerRunMode runMode;
-
 	
 	public ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode runMode) {
-		this.runMode = runMode;
 		displayPanel = new EventDisplayPanel(runMode);
 		Container contentPane = getContentPane();
 

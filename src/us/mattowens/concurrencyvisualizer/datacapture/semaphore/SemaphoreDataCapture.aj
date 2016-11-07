@@ -1,11 +1,10 @@
 package us.mattowens.concurrencyvisualizer.datacapture.semaphore;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
-
-import java.util.HashMap;
-import java.io.*;
 
 public aspect SemaphoreDataCapture {
 	

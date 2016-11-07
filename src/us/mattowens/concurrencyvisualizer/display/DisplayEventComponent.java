@@ -1,29 +1,24 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 public class DisplayEventComponent extends JComponent implements MouseListener {
 	
 	private static final long serialVersionUID = 1L;
 	private double  lineLength;
 	private boolean lineLengthSet = false;
-	private DisplayEvent event;
 
 	public DisplayEventComponent(DisplayEvent event) {
-		this.event = event;
 		addNewLabel("Event Class", event.getEventClass());
 		addNewLabel("Event Type", event.getEventType());
 		addNewLabel("Target", event.getTargetDescription());

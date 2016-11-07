@@ -2,11 +2,9 @@ package us.mattowens.sampleprograms;
 
 public class Consumer  implements Runnable {
 	private Buffer buffer;
-	private String name;
 	
 	public Consumer(String name, Buffer buffer) {
 		this.buffer = buffer;
-		this.name = name;
 	}
 	
 	@Override
@@ -18,7 +16,6 @@ public class Consumer  implements Runnable {
 	}
 	
 	private void consume(String item) {
-		//System.out.println(name + " consumed " + item);
 		try {
 			Thread.sleep(500);
 		}

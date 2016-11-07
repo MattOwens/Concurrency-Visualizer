@@ -1,18 +1,21 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
-import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
-import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
 
 public class NewRunDisplay extends JFrame {

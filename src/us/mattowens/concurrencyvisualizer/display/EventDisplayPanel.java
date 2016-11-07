@@ -38,11 +38,11 @@ public class EventDisplayPanel extends JInternalFrame {
 		setLayout(null);
 		
 		if(runMode == ConcurrencyVisualizerRunMode.Live) {
-			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader(this));
+			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader());
 		} else if (runMode == ConcurrencyVisualizerRunMode.OnDelay) {
 			eventLoaderThread = new Thread(new ReadDelayDataLoader(this));
 		} else if (runMode == ConcurrencyVisualizerRunMode.ReadAll) {
-			eventLoaderThread = new Thread(new ReadAllDataLoader(this));
+			eventLoaderThread = new Thread(new ReadAllDataLoader());
 		}
 		
 		if(eventLoaderThread != null) {
@@ -140,11 +140,6 @@ public class EventDisplayPanel extends JInternalFrame {
 	 * This reads all of the events from the event queue in one shot
 	 */
 	class ReadAllDataLoader implements Runnable {
-		private EventDisplayPanel parentPanel;
-		public ReadAllDataLoader(EventDisplayPanel parentPanel) {
-			this.parentPanel = parentPanel;
-		}
-		
 		public void run() {
 			boolean hasEvents = true;
 			
@@ -181,11 +176,6 @@ public class EventDisplayPanel extends JInternalFrame {
 	 * This continues trying to read events until the thread is interrupted
 	 */
 	class ReadContinuouslyDataLoader implements Runnable {
-		private EventDisplayPanel parentPanel;
-		public ReadContinuouslyDataLoader(EventDisplayPanel parentPanel) {
-			this.parentPanel = parentPanel;
-		}
-		
 		public void run() {
 			
 			while(true) {

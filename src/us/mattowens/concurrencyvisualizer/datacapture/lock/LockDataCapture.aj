@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public aspect LockDataCapture {
 
 	pointcut lockPointcut(Lock l) :
-		call(void Lock.lock()) &&
+		call(void java.util.concurrent.locks.Lock.lock()) &&
 		target(l);
 	
 	pointcut lockInterruptibly(Lock l) :

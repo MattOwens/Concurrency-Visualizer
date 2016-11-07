@@ -1,9 +1,10 @@
 package us.mattowens.concurrencyvisualizer.display.inputadapters;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+import org.json.simple.parser.ParseException;
 
 import us.mattowens.concurrencyvisualizer.display.DisplayEvent;
 import us.mattowens.concurrencyvisualizer.display.InputEventQueue;

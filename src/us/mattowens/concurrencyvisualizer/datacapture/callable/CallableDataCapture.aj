@@ -1,12 +1,8 @@
 package us.mattowens.concurrencyvisualizer.datacapture.callable;
 
-import java.util.concurrent.Callable;
-
-import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
-
 public aspect CallableDataCapture {
 
-	 pointcut callPointcut(Callable c) :
+	 /*pointcut callPointcut(Callable c) :
 		call(Object Callable.call()) &&
 		target(c);
 	
@@ -25,5 +21,5 @@ public aspect CallableDataCapture {
 		callableEvent.setResult(result);
 		
 		EventQueue.addEvent(callableEvent);
-	}
+	}*/
 }

@@ -26,23 +26,23 @@ public class ThreadEvent extends Event {
 
 	public void setEventType(ThreadEventType eventType) {
 		this.eventType = eventType;
-		eventMap.put("EventType", eventType.toString());
+		eventMap.put("EventType", this.eventType.toString());
 	}
 
 	public void setNewPriority(int newPriority) {
 		this.newPriority = newPriority;
-		eventMap.put("NewPriority", newPriority);
+		eventMap.put("NewPriority", this.newPriority);
 	}
 
 
 	public void setMillis(long sleepMillis) {
 		this.millis = sleepMillis;
-		eventMap.put("SleepMillis", sleepMillis);
+		eventMap.put("SleepMillis", millis);
 	}
 
 	public void setNanos(int sleepNanos) {
 		this.nanos = sleepNanos;
-		eventMap.put("SleepNanos", sleepNanos);
+		eventMap.put("SleepNanos", nanos);
 	}
 	
 	public int getNanos() {
@@ -51,7 +51,7 @@ public class ThreadEvent extends Event {
 	
 	public void setNewName(String newName) {
 		this.newName = newName;
-		eventMap.put("NewName", newName);
+		eventMap.put("NewName", this.newName);
 	}
 	
 	public String getNewName() {
@@ -60,12 +60,12 @@ public class ThreadEvent extends Event {
 	
 	public void setRunnable(String runnable) {
 		this.runnable = runnable;
-		eventMap.put("Runnable", runnable);
+		eventMap.put("Runnable", this.runnable);
 	}
 
 	public void setThreadGroup(String threadGroup) {
 		this.threadGroup = threadGroup;
-		eventMap.put("ThreadGroup", threadGroup);
+		eventMap.put("ThreadGroup", this.threadGroup);
 	}
 	
 	public void setIsDaemon(boolean on) {
@@ -79,7 +79,7 @@ public class ThreadEvent extends Event {
 	
 	public void setIsInterrupted(boolean interrupted) {
 		this.isInterrupted = interrupted;
-		eventMap.put("Interrupted", interrupted);
+		eventMap.put("Interrupted", isInterrupted);
 	}
 	
 	public boolean getIsInterrupted() {
