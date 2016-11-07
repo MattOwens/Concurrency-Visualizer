@@ -64,6 +64,7 @@ public aspect TimerDataCapture {
 	
 	after() returning(Timer t) : create() {
 		TimerEvent createEvent = new TimerEvent(t.toString(), TimerEventType.Create);
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
