@@ -26,8 +26,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	public ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode runMode) {
 		this.runMode = runMode;
 		displayPanel = new EventDisplayPanel(runMode);
-		Container contentPane = getContentPane();//new JDesktopPane();
-		//setContentPane(contentPane);
+		Container contentPane = getContentPane();
+
 		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
 		JToolBar toolBar = new JToolBar("Execution Control");
@@ -66,8 +66,10 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		}
 		toolBar.setVisible(true);
 		contentPane.add(toolBar);
+		
+		JScrollPane scrollPane = new JScrollPane(displayPanel);
 		displayPanel.setVisible(true);
-		contentPane.add(displayPanel);
+		contentPane.add(scrollPane);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		addWindowListener(new WindowAdapter() {

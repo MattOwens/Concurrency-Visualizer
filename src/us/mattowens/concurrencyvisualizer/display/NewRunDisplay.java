@@ -93,6 +93,7 @@ public class NewRunDisplay extends JFrame {
 				try {
 					runProgram();
 				} catch (Exception e1) {
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(runButton.getRootPane(), e1.getStackTrace(), "Exception", JOptionPane.ERROR_MESSAGE);
 				}
 			}

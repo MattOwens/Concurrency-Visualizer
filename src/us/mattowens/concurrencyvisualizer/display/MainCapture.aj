@@ -20,6 +20,8 @@ public aspect MainCapture {
 	before() : main() {
 
 		try {
+			FileOutputAdapter outputAdapter = new FileOutputAdapter("single_thread_test_output.txt");
+			EventQueue.addOutputAdapter(outputAdapter);
 			ServerSocket ss = new ServerSocket(0);
 			Socket outSocket = new Socket(ss.getInetAddress(), ss.getLocalPort());
 			SocketOutputAdapter socketOutputAdapter = new SocketOutputAdapter(outSocket);

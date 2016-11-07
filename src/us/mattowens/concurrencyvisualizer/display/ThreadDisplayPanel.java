@@ -1,9 +1,9 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.Component;
-import java.awt.Point;
+import java.awt.Dimension;
+import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JInternalFrame;
 
 public class ThreadDisplayPanel extends JInternalFrame {
 
@@ -11,37 +11,43 @@ public class ThreadDisplayPanel extends JInternalFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private double currentYPosition;
+	private long lastTimeStamp;
+	private ArrayList<DisplayEventComponent> events = new ArrayList<DisplayEventComponent>();
+
 	
-	private int locationY = 0;
-	
+
+
 	public ThreadDisplayPanel(long threadId, String threadName) {
-		super("Id: " + threadId + " Name: " + threadName, true, true, false, false);
-		JDesktopPane contentPane = new JDesktopPane();
-		setContentPane(contentPane);
-		//setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		super("Thread: " + threadId + "-" + threadName, false, false, false, false);
 		setLayout(null);
+		currentYPosition = 0.0;
+		lastTimeStamp = 0;
 	}
 	
-	public void addEventPanel(EventPanel eventPanel, Point location) {
-		//add(new JSeparator(SwingConstants.HORIZONTAL));
-		eventPanel.setVisible(true);
-		eventPanel.setLocation(location);
-		eventPanel.setSize(eventPanel.getPreferredSize());
+	/**
+	 * Adds a new event panel to the thread display
+	 * @param eventPanel The event panel to add
+	 * @param timestamp The timestamp of the new event
+	 * @return The height that must be added to the thread display panel to accommodate the new event
+	 */
+	public int addEvent(DisplayEventComponent eventPanel, long timestamp) {
+		eventPanel.setLineLength(timestampToPosition(timestamp) - timestampToPosition(lastTimeStamp));
+		Dimension size = eventPanel.getPreferredSize();
+		lastTimeStamp = timestamp;
+		eventPanel.setBounds(0, (int)currentYPosition, getWidth(), size.height);
 		add(eventPanel);
-		System.out.println("Added event panel");
-	}
-	
-	public void addLabel(JLabel label) {
-		label.setLocation(0, locationY);
-		label.setSize(label.getPreferredSize());
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(label);
-		locationY += label.getHeight();
-		setMinimumSize(getPreferredSize());
-	}
-	
-	public void addLabel(JButton label) {
-		add(label);
+		events.add(eventPanel);
+		
+		eventPanel.repaint();
+		
+		revalidate();
+		repaint();
+		currentYPosition = timestampToPosition(lastTimeStamp);
+		return size.height;
 	}
 
+	public static double timestampToPosition(long timestamp) {
+		return timestamp * 0.000001 + 10;
+	}
 }

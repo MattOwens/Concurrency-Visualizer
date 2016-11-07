@@ -1,11 +1,8 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.HashMap;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.*;
@@ -16,30 +13,29 @@ public class EventDisplayPanel extends JInternalFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final int THREAD_PANEL_WIDTH = 300;
+	private static final int DEFAULT_THREAD_PANEL_HEIGHT = 400;
 	
 	//Stores ThreadDisplayPanel Objects by ThreadId
 	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanels;
-	private ConcurrentHashMap<JLabel, DisplayEvent> eventPanels;
+	private ConcurrentHashMap<Long, Integer> threadPanelMinimumHeights;
+	private JDesktopPane contentPane;
+	private int numThreadPanels = 0;
+	
 
 	
 	//Amount to delay between events
 	private long displayDelay = 100;
 	
-	private Thread eventLoaderThread;
-	
-	private JDesktopPane contentPane;
-	
-	
-
+	private Thread eventLoaderThread;	
 	
 	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
-		super("ConcurrencyVisualizer", false, false, false, false);
+		super("Concurrency Visualizer", false, false, false, false);
 		threadPanels = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
-		eventPanels = new ConcurrentHashMap<JLabel, DisplayEvent>();
+		threadPanelMinimumHeights = new ConcurrentHashMap<Long, Integer>();
 		contentPane = new JDesktopPane();
-		contentPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		setContentPane(new JScrollPane(contentPane));
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
+		setContentPane(contentPane);
+		setLayout(null);
 		
 		if(runMode == ConcurrencyVisualizerRunMode.Live) {
 			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader(this));
@@ -50,7 +46,6 @@ public class EventDisplayPanel extends JInternalFrame {
 		}
 		
 		if(eventLoaderThread != null) {
-			System.out.println("Starting loader thread");
 			eventLoaderThread.start();
 		}
 
@@ -89,13 +84,18 @@ public class EventDisplayPanel extends JInternalFrame {
 	//Adds a new column to the display for the thread name and id in the DisplayEvent fromEvent
 	private void addNewThread(DisplayEvent fromEvent) {
 		ThreadDisplayPanel newThreadPanel = new ThreadDisplayPanel(fromEvent.getThreadId(), fromEvent.getThreadName());
+		newThreadPanel.setVisible(true);
 		threadPanels.put(fromEvent.getThreadId(), newThreadPanel);
+		threadPanelMinimumHeights.put(fromEvent.getThreadId(), DEFAULT_THREAD_PANEL_HEIGHT);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				newThreadPanel.setVisible(true);
-				contentPane.add(new JSeparator(SwingConstants.VERTICAL));
+				newThreadPanel.setBounds(numThreadPanels * THREAD_PANEL_WIDTH, 0, THREAD_PANEL_WIDTH, DEFAULT_THREAD_PANEL_HEIGHT);
+				numThreadPanels++;
 				contentPane.add(newThreadPanel);
+				setPanelSize();
+				revalidate();
+				repaint();
 			}
 		});
 	}
@@ -104,47 +104,34 @@ public class EventDisplayPanel extends JInternalFrame {
 	private void addDisplayEvent(DisplayEvent newEvent) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JLabel eventLabel = new JLabel(newEvent.getJoinPointName() + "@" + newEvent.getTargetDescription());
-				//EventPanel eventPanel = new EventPanel(newEvent);
-				eventLabel.addMouseListener(new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent arg0) {
-						EventPanel eventPanel = new EventPanel(eventPanels.get(arg0.getSource()));
-						threadPanels.get(newEvent.getThreadId()).addEventPanel(eventPanel, arg0.getLocationOnScreen());
-					}
-
-					@Override
-					public void mouseEntered(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mouseExited(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mousePressed(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mouseReleased(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-				});
-				eventPanels.put(eventLabel, newEvent);
-				//threadPanels.get(newEvent.getThreadId()).addEventPanel(eventPanel);
-				threadPanels.get(newEvent.getThreadId()).addLabel(eventLabel);
-				contentPane.revalidate();
-				contentPane.repaint();
+				DisplayEventComponent eventPanel = new DisplayEventComponent(newEvent);
+				long threadId = newEvent.getThreadId();
+				ThreadDisplayPanel threadPanel = threadPanels.get(threadId);
+				int addedHeight = threadPanel.addEvent(eventPanel, newEvent.getTimestamp());
+				int newMinimumHeight = threadPanelMinimumHeights.get(threadId) + addedHeight;
+				threadPanelMinimumHeights.put(threadId, newMinimumHeight);
+				Rectangle bounds = threadPanel.getBounds();
+				threadPanel.setBounds(bounds.x, bounds.y, bounds.width, newMinimumHeight);
+				setPanelSize();
+				revalidate();
+				repaint();
 			}
 		});
+	}
+	
+	//Returns the required height of the tallest thread panel
+	private int getMinimumHeight() {
+		int max = 0;
+		for(Integer height : threadPanelMinimumHeights.values()) {
+			if(height > max) {
+				max = height;
+			}
+		}
+		return max;
+	}
+	
+	private void setPanelSize() {
+		setPreferredSize(new Dimension(numThreadPanels * THREAD_PANEL_WIDTH + 10, getMinimumHeight() + 10));
 	}
 	
 
