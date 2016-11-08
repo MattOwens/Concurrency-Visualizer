@@ -1,5 +1,6 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,17 +9,21 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 public class DisplayEventComponent extends JComponent implements MouseListener {
-	
+	private static Random random = new Random();
 	private static final long serialVersionUID = 1L;
 	private double  lineLength;
 	private boolean lineLengthSet = false;
-
+	private DisplayEvent event;
+	
 	public DisplayEventComponent(DisplayEvent event) {
+		this.event = event;
+		setOpaque(false);
 		addNewLabel("Event Class", event.getEventClass());
 		addNewLabel("Event Type", event.getEventType());
 		addNewLabel("Target", event.getTargetDescription());
@@ -38,7 +43,7 @@ public class DisplayEventComponent extends JComponent implements MouseListener {
 	public void setLineLength(double lineLength) {
 		this.lineLength = lineLength;
 		lineLengthSet = true;
-		setPreferredSize(new Dimension(200, (int)lineLength + 22));
+		setPreferredSize(new Dimension(200, (int)lineLength + 6));
 	}
 	
 	private void addNewLabel(String key, Object value) {
@@ -50,6 +55,10 @@ public class DisplayEventComponent extends JComponent implements MouseListener {
 			this.add(fieldLabel);
 		}
 	}
+	
+	private static Color getRandomColor() {
+		return new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+	}
 
 	
 	@Override
@@ -57,6 +66,8 @@ public class DisplayEventComponent extends JComponent implements MouseListener {
 		super.paintComponent(g);
 		//System.out.println("Width: " + getWidth() + " height: " + getHeight());
 		Graphics2D g2D = (Graphics2D) g;
+		
+		//g2D.setColor(getRandomColor());
 		
 		if(lineLengthSet) {
 			double midpoint = (double)getWidth()/2.0;
@@ -67,10 +78,11 @@ public class DisplayEventComponent extends JComponent implements MouseListener {
 		double startX = getWidth()/4;
 		double width = getWidth()/2;
 		
-		//System.out.println("StartX: " + startX + " width: " + width);
-		Rectangle2D.Double rectangle = new Rectangle2D.Double(startX,lineLength,width,20.0);
+		g2D.draw(new Line2D.Double(startX, lineLength, startX+width, lineLength));
+		g2D.draw(new Line2D.Double(startX+width, lineLength, startX+width+5, lineLength - 10));
+		g2D.drawString(event.getEventType() + "@" + event.getTargetDescription(), (float)(startX+width-200), (float)(lineLength-10));
 		//g2D.fill(rectangle);
-		g2D.draw(rectangle);
+		//g2D.draw(rectangle);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class ThreadDisplayPanel extends JInternalFrame {
 
 
 	public ThreadDisplayPanel(long threadId, String threadName) {
-		super("Thread: " + threadId + "-" + threadName, false, false, false, false);
+		super("Thread: " + threadId + "-" + threadName, true, false, false, false);
 		setLayout(null);
 		currentYPosition = 0.0;
 		lastTimeStamp = 0;
@@ -29,22 +29,26 @@ public class ThreadDisplayPanel extends JInternalFrame {
 	 * Adds a new event panel to the thread display
 	 * @param eventPanel The event panel to add
 	 * @param timestamp The timestamp of the new event
-	 * @return The height that must be added to the thread display panel to accommodate the new event
+	 * @return The new minimum height necessary for the thread panel
 	 */
 	public int addEvent(DisplayEventComponent eventPanel, long timestamp) {
-		eventPanel.setLineLength(timestampToPosition(timestamp) - timestampToPosition(lastTimeStamp));
+		double lineLength = timestampToPosition(timestamp - lastTimeStamp);
+		//Add event to display
+		eventPanel.setLineLength(timestampToPosition(timestamp - lastTimeStamp));
 		Dimension size = eventPanel.getPreferredSize();
-		lastTimeStamp = timestamp;
 		eventPanel.setBounds(0, (int)currentYPosition, getWidth(), size.height);
 		add(eventPanel);
 		events.add(eventPanel);
-		
 		eventPanel.repaint();
-		
 		revalidate();
 		repaint();
-		currentYPosition = timestampToPosition(lastTimeStamp);
-		return size.height;
+		
+		//Setup for next event
+		lastTimeStamp = timestamp;
+		int newMinimumHeight = (int) (currentYPosition + size.height) + 10;
+		System.out.println("CurrentYPosition: " + currentYPosition +   " lineLength: " + lineLength + " preferredHeight: " + newMinimumHeight + " actual height: " + getHeight());
+		currentYPosition = timestampToPosition(timestamp);
+		return newMinimumHeight;
 	}
 
 	public static double timestampToPosition(long timestamp) {

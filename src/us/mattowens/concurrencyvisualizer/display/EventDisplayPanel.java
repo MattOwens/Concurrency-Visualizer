@@ -2,7 +2,7 @@ package us.mattowens.concurrencyvisualizer.display;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-
+import java.beans.PropertyVetoException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.*;
@@ -107,11 +107,12 @@ public class EventDisplayPanel extends JInternalFrame {
 				DisplayEventComponent eventPanel = new DisplayEventComponent(newEvent);
 				long threadId = newEvent.getThreadId();
 				ThreadDisplayPanel threadPanel = threadPanels.get(threadId);
-				int addedHeight = threadPanel.addEvent(eventPanel, newEvent.getTimestamp());
-				int newMinimumHeight = threadPanelMinimumHeights.get(threadId) + addedHeight;
+				int newMinimumHeight = threadPanel.addEvent(eventPanel, newEvent.getTimestamp());
 				threadPanelMinimumHeights.put(threadId, newMinimumHeight);
 				Rectangle bounds = threadPanel.getBounds();
 				threadPanel.setBounds(bounds.x, bounds.y, bounds.width, newMinimumHeight);
+				threadPanel.revalidate();
+				threadPanel.repaint();
 				setPanelSize();
 				revalidate();
 				repaint();
