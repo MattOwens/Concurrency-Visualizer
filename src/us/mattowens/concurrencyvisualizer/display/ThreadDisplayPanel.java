@@ -1,57 +1,75 @@
 package us.mattowens.concurrencyvisualizer.display;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-import javax.swing.JInternalFrame;
+public class ThreadDisplayPanel {
 
-public class ThreadDisplayPanel extends JInternalFrame {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private double currentYPosition;
-	private long lastTimeStamp;
-	private ArrayList<DisplayEventComponent> events = new ArrayList<DisplayEventComponent>();
-
-	
-
+	private int leftBound, rightBound;
+	private long threadId;
+	private String threadName, displayName;
+	private ArrayList<DisplayEvent> events;
 
 	public ThreadDisplayPanel(long threadId, String threadName) {
-		super("Thread: " + threadId + "-" + threadName, true, false, false, false);
-		setLayout(null);
-		currentYPosition = 0.0;
-		lastTimeStamp = 0;
+		this.threadId = threadId;
+		this.threadName = threadName;
+		displayName = String.format("Thread %d: %s", threadId, threadName);
+		events = new ArrayList<DisplayEvent>();
+	}
+	
+	public long getId() {
+		return threadId;
+	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public String getName() {
+		return threadName;
+	}
+	
+	public void addEvent(DisplayEvent nextEvent) {
+		events.add(nextEvent);
+	}
+	
+	public void setBounds(int left, int right) {
+		leftBound = left;
+		rightBound = right;
+	}
+	
+	public int getLeftBound() {
+		return leftBound;
+	}
+	
+	public int getRightBound() {
+		return rightBound;
 	}
 	
 	/**
-	 * Adds a new event panel to the thread display
-	 * @param eventPanel The event panel to add
-	 * @param timestamp The timestamp of the new event
-	 * @return The new minimum height necessary for the thread panel
+	 * Returns the timestamp of the most recent event in this thread. Relies
+	 * on the assumption that events are added in the order they occurred.
+	 * @return Timestamp of the most recent event occurring in this thread
 	 */
-	public int addEvent(DisplayEventComponent eventPanel, long timestamp) {
-		double lineLength = timestampToPosition(timestamp - lastTimeStamp);
-		//Add event to display
-		eventPanel.setLineLength(timestampToPosition(timestamp - lastTimeStamp));
-		Dimension size = eventPanel.getPreferredSize();
-		eventPanel.setBounds(0, (int)currentYPosition, getWidth(), size.height);
-		add(eventPanel);
-		events.add(eventPanel);
-		eventPanel.repaint();
-		revalidate();
-		repaint();
-		
-		//Setup for next event
-		lastTimeStamp = timestamp;
-		int newMinimumHeight = (int) (currentYPosition + size.height) + 10;
-		System.out.println("CurrentYPosition: " + currentYPosition +   " lineLength: " + lineLength + " preferredHeight: " + newMinimumHeight + " actual height: " + getHeight());
-		currentYPosition = timestampToPosition(timestamp);
-		return newMinimumHeight;
+	public long getMostRecentTimestamp() {
+		if(events.size() == 0) {
+			throw new IllegalStateException("ThreadPanel contains no events");
+		}
+		return events.get(events.size()-1).getTimestamp();
 	}
-
-	public static double timestampToPosition(long timestamp) {
-		return timestamp * 0.000001 + 10;
+	
+	public long getFirstTimeStamp() {
+		if(events.size() == 0) {
+			throw new IllegalStateException("ThreadPanel contains no events");
+		}
+		return events.get(0).getTimestamp();
+	}
+	
+	public Iterator<DisplayEvent> getEventsIterator() {
+		return events.listIterator();
+	}
+	
+	public int getMidPoint() {
+		return (leftBound+rightBound)/2;
 	}
 }

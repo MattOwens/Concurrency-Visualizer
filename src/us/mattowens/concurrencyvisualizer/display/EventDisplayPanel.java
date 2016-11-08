@@ -1,40 +1,49 @@
 package us.mattowens.concurrencyvisualizer.display;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.beans.PropertyVetoException;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
 
-public class EventDisplayPanel extends JInternalFrame {
+public class EventDisplayPanel extends JPanel implements MouseListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final int THREAD_PANEL_WIDTH = 300;
-	private static final int DEFAULT_THREAD_PANEL_HEIGHT = 400;
-	
-	//Stores ThreadDisplayPanel Objects by ThreadId
-	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanels;
-	private ConcurrentHashMap<Long, Integer> threadPanelMinimumHeights;
-	private JDesktopPane contentPane;
-	private int numThreadPanels = 0;
 	
 
+
+	//Stores ThreadDisplayPanel Objects by ThreadId
+	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanelsMap;
+	private CopyOnWriteArrayList<ThreadDisplayPanel> threadPanelsList;
+	
+	/*
+	 * This set of variables is controlled by the scroll bars at the top of the screen
+	 */
 	
 	//Amount to delay between events
 	private long displayDelay = 100;
 	
+	//Factor relating timestamp to spacing
+	private double spacingScalar = 0.00001;
+	
+	//Width of thread panels
+	private int threadPanelWidth = 300;
+	
 	private Thread eventLoaderThread;	
 	
 	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
-		super("Concurrency Visualizer", false, false, false, false);
-		threadPanels = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
-		threadPanelMinimumHeights = new ConcurrentHashMap<Long, Integer>();
-		contentPane = new JDesktopPane();
-		setContentPane(contentPane);
+		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
+		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
 		setLayout(null);
 		
 		if(runMode == ConcurrencyVisualizerRunMode.Live) {
@@ -51,8 +60,73 @@ public class EventDisplayPanel extends JInternalFrame {
 
 	}
 	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		Graphics2D g2 = (Graphics2D) g;
+		
+		for(ThreadDisplayPanel threadPanel : threadPanelsList) {
+			drawRightBoundLine(g2, threadPanel);
+			drawThreadNameBox(g2, threadPanel);
+			drawEventMarkers(g2, threadPanel);
+		}
+	}
+	
+	private void drawEventMarkers(Graphics2D g2, ThreadDisplayPanel threadPanel) {
+		Iterator<DisplayEvent> events = threadPanel.getEventsIterator();
+		DisplayEvent previousEvent = null, nextEvent;
+		
+		while(events.hasNext()) {
+			nextEvent = events.next();
+			
+			if(previousEvent != null) {
+				Line2D.Double connectingLine = new Line2D.Double(threadPanel.getMidPoint(),
+						timestampToPosition(previousEvent.getTimestamp()), threadPanel.getMidPoint(), 
+						timestampToPosition(nextEvent.getTimestamp()));
+				g2.draw(connectingLine);
+			}
+			
+			double threadPanelWidth = threadPanel.getRightBound() - threadPanel.getLeftBound();
+			double rectangleWidth = threadPanelWidth/2;
+			double rectangleHeight = 5;
+			double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
+			double rectangleY = timestampToPosition(nextEvent.getTimestamp()) -2.5;
+			
+			g2.draw(new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight));
+			
+			previousEvent = nextEvent;
+		}
+		
+	}
+
+	private void drawThreadNameBox(Graphics2D g2, ThreadDisplayPanel threadPanel) {
+		double threadPanelWidth = threadPanel.getRightBound() - threadPanel.getLeftBound();
+		double rectangleWidth = threadPanelWidth/2;
+		double rectangleHeight = 30;
+		double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
+		double rectangleY = timestampToPosition(threadPanel.getFirstTimeStamp()) - 20;
+		
+		Rectangle2D.Double nameBox = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
+		g2.draw(nameBox);
+		int stringWidth = g2.getFontMetrics().stringWidth(threadPanel.getDisplayName());
+		int labelXPosition = (int)(rectangleX + (rectangleWidth - stringWidth)/2);
+		g2.drawString(threadPanel.getDisplayName(), labelXPosition, (int)rectangleY+15);
+	}
+
+	private void drawRightBoundLine(Graphics2D g2, ThreadDisplayPanel threadPanel) {
+		Line2D.Double boundaryLine = new Line2D.Double(threadPanel.getRightBound(), 0, 
+				threadPanel.getRightBound(), getMinimumHeight());
+		g2.draw(boundaryLine);
+	}
+
 	public void setDisplayDelay(long delay) {
 		displayDelay = delay;
+	}
+	
+	public void setSpacingScalar(double scalar) {
+		spacingScalar = scalar;
+		refreshDisplay();
 	}
 	
 	public void showEventInputDone() {
@@ -73,7 +147,7 @@ public class EventDisplayPanel extends JInternalFrame {
 			return false;
 		}
 		
-		if(!threadPanels.containsKey(nextEvent.getThreadId())) {
+		if(!threadPanelsMap.containsKey(nextEvent.getThreadId())) {
 			addNewThread(nextEvent);
 		}
 		addDisplayEvent(nextEvent);
@@ -84,35 +158,46 @@ public class EventDisplayPanel extends JInternalFrame {
 	//Adds a new column to the display for the thread name and id in the DisplayEvent fromEvent
 	private void addNewThread(DisplayEvent fromEvent) {
 		ThreadDisplayPanel newThreadPanel = new ThreadDisplayPanel(fromEvent.getThreadId(), fromEvent.getThreadName());
-		newThreadPanel.setVisible(true);
-		threadPanels.put(fromEvent.getThreadId(), newThreadPanel);
-		threadPanelMinimumHeights.put(fromEvent.getThreadId(), DEFAULT_THREAD_PANEL_HEIGHT);
+		int numThreads = threadPanelsList.size();
+		newThreadPanel.setBounds(threadPanelWidth * numThreads, threadPanelWidth * (numThreads +1));
+		threadPanelsMap.put(fromEvent.getThreadId(), newThreadPanel);
+		threadPanelsList.add(newThreadPanel);
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				newThreadPanel.setBounds(numThreadPanels * THREAD_PANEL_WIDTH, 0, THREAD_PANEL_WIDTH, DEFAULT_THREAD_PANEL_HEIGHT);
-				numThreadPanels++;
-				contentPane.add(newThreadPanel);
-				setPanelSize();
-				revalidate();
-				repaint();
-			}
-		});
+		refreshDisplay();
 	}
 	
 	//Adds a new event to the display
 	private void addDisplayEvent(DisplayEvent newEvent) {
+		long threadId = newEvent.getThreadId();
+		ThreadDisplayPanel threadPanel = threadPanelsMap.get(threadId);
+		threadPanel.addEvent(newEvent);
+
+		refreshDisplay();
+	}
+	
+	//Returns the required height of the tallest thread panel
+	private int getMinimumHeight() {
+		long maxTimestamp = 0;
+		for(ThreadDisplayPanel threadPanel : threadPanelsList) {
+			long timestamp = threadPanel.getMostRecentTimestamp();
+			if(timestamp > maxTimestamp) {
+				maxTimestamp = timestamp;
+			}
+		}
+		return (int)timestampToPosition(maxTimestamp);
+	}
+	
+	private void setPanelSize() {
+		setPreferredSize(new Dimension(threadPanelsList.size() * threadPanelWidth + 10, getMinimumHeight() + 10));
+	}
+	
+	private double timestampToPosition(long timestamp) {
+		return timestamp * spacingScalar;
+	}
+	
+	private void refreshDisplay() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				DisplayEventComponent eventPanel = new DisplayEventComponent(newEvent);
-				long threadId = newEvent.getThreadId();
-				ThreadDisplayPanel threadPanel = threadPanels.get(threadId);
-				int newMinimumHeight = threadPanel.addEvent(eventPanel, newEvent.getTimestamp());
-				threadPanelMinimumHeights.put(threadId, newMinimumHeight);
-				Rectangle bounds = threadPanel.getBounds();
-				threadPanel.setBounds(bounds.x, bounds.y, bounds.width, newMinimumHeight);
-				threadPanel.revalidate();
-				threadPanel.repaint();
 				setPanelSize();
 				revalidate();
 				repaint();
@@ -120,22 +205,40 @@ public class EventDisplayPanel extends JInternalFrame {
 		});
 	}
 	
-	//Returns the required height of the tallest thread panel
-	private int getMinimumHeight() {
-		int max = 0;
-		for(Integer height : threadPanelMinimumHeights.values()) {
-			if(height > max) {
-				max = height;
-			}
-		}
-		return max;
-	}
-	
-	private void setPanelSize() {
-		setPreferredSize(new Dimension(numThreadPanels * THREAD_PANEL_WIDTH + 10, getMinimumHeight() + 10));
-	}
-	
 
+	
+	/*
+	 * Mouse listener methods
+	 */
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}	
 	
 	/*
 	 * This reads all of the events from the event queue in one shot
@@ -196,4 +299,6 @@ public class EventDisplayPanel extends JInternalFrame {
 			}
 		}
 	}
+
+
 }

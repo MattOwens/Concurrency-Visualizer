@@ -61,6 +61,16 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 			});
 			toolBar.add(delayTimeSlider);
 		}
+		
+		JLabel scalingLabel = new JLabel("Time Scaling:");
+		toolBar.add(scalingLabel);
+		JSlider scalingSlider = new JSlider(JSlider.HORIZONTAL, 10000, 1000000, 100000);
+		toolBar.add(scalingSlider);
+		scalingSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				displayPanel.setSpacingScalar(1.0/(double)scalingSlider.getValue());
+			}
+		});
 		toolBar.setVisible(true);
 		contentPane.add(toolBar);
 		
