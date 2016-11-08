@@ -3,15 +3,19 @@ package us.mattowens.concurrencyvisualizer.display;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class EventDisplayPanel extends JPanel implements MouseListener {
 
@@ -25,6 +29,9 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	//Stores ThreadDisplayPanel Objects by ThreadId
 	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanelsMap;
 	private CopyOnWriteArrayList<ThreadDisplayPanel> threadPanelsList;
+	
+	//Used by mouse listener to track mouse clicks
+	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
 	
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
@@ -45,6 +52,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
 		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
 		setLayout(null);
+		addMouseListener(this);
 		
 		if(runMode == ConcurrencyVisualizerRunMode.Live) {
 			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader());
@@ -63,7 +71,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+		eventRectangles = new HashMap<Rectangle2D, DisplayEvent>();
 		Graphics2D g2 = (Graphics2D) g;
 		
 		for(ThreadDisplayPanel threadPanel : threadPanelsList) {
@@ -93,7 +101,9 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 			double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
 			double rectangleY = timestampToPosition(nextEvent.getTimestamp()) -2.5;
 			
-			g2.draw(new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight));
+			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
+			eventRectangles.put(eventRectangle, nextEvent);
+			g2.draw(eventRectangle);
 			
 			previousEvent = nextEvent;
 		}
@@ -211,9 +221,18 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	 * Mouse listener methods
 	 */
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseClicked(MouseEvent e) {
+		Point clickPoint = e.getPoint();
 		
+		for(Rectangle2D rectangle : eventRectangles.keySet()) {
+			if(rectangle.contains(clickPoint)) {
+				DisplayEventFrame eventFrame = new DisplayEventFrame(eventRectangles.get(rectangle));
+				Dimension size = eventFrame.getPreferredSize();
+				eventFrame.setVisible(true);
+				eventFrame.setBounds(clickPoint.x + 10, clickPoint.y + 10, size.width, size.height);
+				add(eventFrame);
+			}
+		}
 	}
 
 	@Override
