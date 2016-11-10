@@ -71,6 +71,18 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 				displayPanel.setSpacingScalar(1.0/(double)scalingSlider.getValue());
 			}
 		});
+		
+		JLabel widthLabel = new JLabel("Column Width:");
+		toolBar.add(widthLabel);
+		JSlider widthSlider = new JSlider(JSlider.HORIZONTAL, 200, 1000, 300);
+		widthSlider.setMajorTickSpacing(100);
+		widthSlider.setPaintTicks(true);
+		widthSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				displayPanel.setThreadPanelWidth(widthSlider.getValue());
+			}
+		});
+		toolBar.add(widthSlider);
 		toolBar.setVisible(true);
 		contentPane.add(toolBar);
 		

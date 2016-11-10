@@ -139,6 +139,15 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		refreshDisplay();
 	}
 	
+	public void setThreadPanelWidth(int width) {
+		threadPanelWidth = width;
+		for(int threadNum = 0; threadNum < threadPanelsList.size(); threadNum++) {
+			ThreadDisplayPanel threadPanel = threadPanelsList.get(threadNum);
+			threadPanel.setBounds(threadPanelWidth * threadNum, threadPanelWidth * (threadNum +1));
+		}
+		refreshDisplay();
+	}
+	
 	public void showEventInputDone() {
 		EventDisplayPanel panel = this;
 		SwingUtilities.invokeLater(new Runnable() {
