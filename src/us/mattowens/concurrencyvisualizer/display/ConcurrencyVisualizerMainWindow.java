@@ -24,18 +24,75 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private ConcurrencyVisualizerRunMode runMode;
 	private EventDisplayPanel displayPanel;
+	private JToolBar toolBar;
 	
 	public ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode runMode) {
+		this.runMode = runMode;
 		displayPanel = new EventDisplayPanel(runMode);
 		Container contentPane = getContentPane();
-
 		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		
+		createMenuBar();
+		
+		createToolBar();
+		
+		JScrollPane scrollPane = new JScrollPane(displayPanel);
+		displayPanel.setVisible(true);
+		contentPane.add(scrollPane);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
+		addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e)
+		    {
+		        EventQueue.stopEventOutput();
+		        InputEventQueue.stopEventInput();
+		        System.exit(0);
+		    }
+		});
+	}
+
+	private void createToolBar() {
+		toolBar = new JToolBar("Execution Control");
+		
+		JLabel scalingLabel = new JLabel("Time Scaling:");
+		toolBar.add(scalingLabel);
+		JSlider scalingSlider = new JSlider(JSlider.HORIZONTAL, 10000, 1000000, 100000);
+		toolBar.add(scalingSlider);
+		scalingSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				displayPanel.setSpacingScalar(1.0/(double)scalingSlider.getValue());
+			}
+		});
+		
+		JLabel widthLabel = new JLabel("Column Width:");
+		toolBar.add(widthLabel);
+		JSlider widthSlider = new JSlider(JSlider.HORIZONTAL, 200, 1000, 300);
+		widthSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				displayPanel.setThreadPanelWidth(widthSlider.getValue());
+			}
+		});
+		toolBar.add(widthSlider);
+		
+		
+		if(runMode == ConcurrencyVisualizerRunMode.StepThrough) {
+			addStepThroughControls();
+		} else if(runMode == ConcurrencyVisualizerRunMode.OnDelay) {
+			addDelayControls();
+		}
+		
+
+		toolBar.setVisible(true);
+		
+		getContentPane().add(toolBar);
+	}
+
+	private void createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu helpMenu = new JMenu("Help");
 		
-		helpMenu.setMnemonic(KeyEvent.VK_H);
 		JMenuItem aboutMenuItem = new JMenuItem("About");
 		aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -60,79 +117,40 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		
 		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
-		
-		
-		JToolBar toolBar = new JToolBar("Execution Control");
-		
-		if(runMode == ConcurrencyVisualizerRunMode.StepThrough) {
-			JButton nextEventButton = new JButton();
-			nextEventButton.setActionCommand("Show next event");
-			nextEventButton.setText("Next");
-			toolBar.add(nextEventButton);
-			nextEventButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					boolean eventAdded = displayPanel.addNextEvent();
-					
-					if(!eventAdded) {
-						displayPanel.showEventInputDone();
-						nextEventButton.setEnabled(false);
-					}
-				}
-			});
-		} else if(runMode == ConcurrencyVisualizerRunMode.OnDelay) {
-			JLabel sliderLabel = new JLabel("Delay in ms:");
-			toolBar.add(sliderLabel);
-			JSlider delayTimeSlider = new JSlider(JSlider.HORIZONTAL, 0, 2000, 100);
-			delayTimeSlider.setMajorTickSpacing(500);
-			delayTimeSlider.setMinorTickSpacing(100);
-			delayTimeSlider.setPaintTicks(true);
-			delayTimeSlider.setPaintLabels(true);
-			delayTimeSlider.setSnapToTicks(true);
-			delayTimeSlider.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent arg0) {
-					displayPanel.setDisplayDelay(delayTimeSlider.getValue());
-				}
+	}
+
+	private void addDelayControls() {
+		JLabel sliderLabel = new JLabel("Delay in ms:");
+		toolBar.add(sliderLabel);
+		JSlider delayTimeSlider = new JSlider(JSlider.HORIZONTAL, 0, 2000, 100);
+		delayTimeSlider.setMajorTickSpacing(500);
+		delayTimeSlider.setMinorTickSpacing(100);
+		delayTimeSlider.setPaintTicks(true);
+		delayTimeSlider.setPaintLabels(true);
+		delayTimeSlider.setSnapToTicks(true);
+		delayTimeSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				displayPanel.setDisplayDelay(delayTimeSlider.getValue());
+			}
+			
+		});
+		toolBar.add(delayTimeSlider);
+	}
+
+	private void addStepThroughControls() {
+		JButton nextEventButton = new JButton();
+		nextEventButton.setActionCommand("Show next event");
+		nextEventButton.setText("Next");
+		toolBar.add(nextEventButton);
+		nextEventButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean eventAdded = displayPanel.addNextEvent();
 				
-			});
-			toolBar.add(delayTimeSlider);
-		}
-		
-		JLabel scalingLabel = new JLabel("Time Scaling:");
-		toolBar.add(scalingLabel);
-		JSlider scalingSlider = new JSlider(JSlider.HORIZONTAL, 10000, 1000000, 100000);
-		toolBar.add(scalingSlider);
-		scalingSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				displayPanel.setSpacingScalar(1.0/(double)scalingSlider.getValue());
+				if(!eventAdded) {
+					displayPanel.showEventInputDone();
+					nextEventButton.setEnabled(false);
+				}
 			}
-		});
-		
-		JLabel widthLabel = new JLabel("Column Width:");
-		toolBar.add(widthLabel);
-		JSlider widthSlider = new JSlider(JSlider.HORIZONTAL, 200, 1000, 300);
-		widthSlider.setMajorTickSpacing(100);
-		widthSlider.setPaintTicks(true);
-		widthSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				displayPanel.setThreadPanelWidth(widthSlider.getValue());
-			}
-		});
-		toolBar.add(widthSlider);
-		toolBar.setVisible(true);
-		contentPane.add(toolBar);
-		
-		JScrollPane scrollPane = new JScrollPane(displayPanel);
-		displayPanel.setVisible(true);
-		contentPane.add(scrollPane);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-		addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e)
-		    {
-		        EventQueue.stopEventOutput();
-		        InputEventQueue.stopEventInput();
-		        System.exit(0);
-		    }
 		});
 	}
 	
