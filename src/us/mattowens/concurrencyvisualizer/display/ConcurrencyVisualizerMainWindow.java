@@ -1,10 +1,15 @@
 package us.mattowens.concurrencyvisualizer.display;
 
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +31,37 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		Container contentPane = getContentPane();
 
 		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-
+		
+		JMenuBar menuBar = new JMenuBar();
+		JMenu helpMenu = new JMenu("Help");
+		
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		JMenuItem aboutMenuItem = new JMenuItem("About");
+		aboutMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWebPage("http://mattowens.us/concurrency-visualizer/");
+			}
+		});
+		helpMenu.add(aboutMenuItem);
+		JMenuItem userGuideMenuItem = new JMenuItem("User Guide");
+		userGuideMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWebPage("http://mattowens.us/concurrency-visualizer-user-guide/");
+			}
+		});
+		helpMenu.add(userGuideMenuItem);
+		JMenuItem sourceMenuItem = new JMenuItem("Source");
+		sourceMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWebPage("http://github.com/MattOwens/Concurrency-Visualizer");
+			}
+		});
+		helpMenu.add(sourceMenuItem);
+		
+		menuBar.add(helpMenu);
+		setJMenuBar(menuBar);
+		
+		
 		JToolBar toolBar = new JToolBar("Execution Control");
 		
 		if(runMode == ConcurrencyVisualizerRunMode.StepThrough) {
@@ -99,6 +134,24 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		        System.exit(0);
 		    }
 		});
+	}
+	
+	private void openWebPage(String url) {
+		if(Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+				try {
+					desktop.browse(new URI(url));
+				} catch (IOException | URISyntaxException e1) {
+					showWebPageError(url);
+				}
+		} else {
+			showWebPageError(url);
+		}
+	}
+	
+	private void showWebPageError(String url) {
+		JOptionPane.showMessageDialog(this,  "Could not open requested resource.  Please visit " + url + ".",
+				"Help Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	@Override
