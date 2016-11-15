@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -233,15 +234,30 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		Point clickPoint = e.getPoint();
 		
+	
+		ArrayList<DisplayEvent> coveringEvents = getEventsCoveringPoint(clickPoint);
+		
+		if(coveringEvents.size() > 0) {
+			ZoomedExecutionFrame zoomedFrame = new ZoomedExecutionFrame(coveringEvents);
+			zoomedFrame.setVisible(true);
+		}
+	}
+
+	private ArrayList<DisplayEvent> getEventsCoveringPoint(Point clickPoint) {
+		ArrayList<DisplayEvent> eventsCovering = new ArrayList<DisplayEvent>();
+		
 		for(Rectangle2D rectangle : eventRectangles.keySet()) {
 			if(rectangle.contains(clickPoint)) {
-				DisplayEventFrame eventFrame = new DisplayEventFrame(eventRectangles.get(rectangle));
-				Dimension size = eventFrame.getPreferredSize();
-				eventFrame.setVisible(true);
-				eventFrame.setBounds(clickPoint.x + 10, clickPoint.y + 10, size.width, size.height);
-				add(eventFrame);
+				//DisplayEventFrame eventFrame = new DisplayEventFrame(eventRectangles.get(rectangle));
+				//Dimension size = eventFrame.getPreferredSize();
+				//eventFrame.setVisible(true);
+				//eventFrame.setBounds(clickPoint.x + 10, clickPoint.y + 10, size.width, size.height);
+				//add(eventFrame);
+				eventsCovering.add(eventRectangles.get(rectangle));
 			}
 		}
+		
+		return eventsCovering;
 	}
 
 	@Override
