@@ -113,7 +113,6 @@ public class NewRunDisplay extends JFrame {
 			}
 		});
 		contentPane.add(cancelButton, constraints);
-		
 		pack();
 	}
 	

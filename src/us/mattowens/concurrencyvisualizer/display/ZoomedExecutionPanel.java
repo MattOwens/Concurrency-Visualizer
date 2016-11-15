@@ -44,7 +44,8 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		long firstEventTimestamp = events.get(0).getTimestamp();
 		for(DisplayEvent event : events) {
 			
-			String eventLabel = event.getJoinPointName() + "@" + event.getTargetDescription();
+			String eventLabel = event.getJoinPointName() + "(" +
+					event.getEventType() + ")@" + event.getTargetDescription();
 			int displayWidth = g.getFontMetrics().stringWidth(eventLabel);
 			if(displayWidth > maxWidth) {
 				maxWidth = displayWidth;

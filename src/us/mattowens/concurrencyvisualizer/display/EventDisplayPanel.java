@@ -1,5 +1,6 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +37,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
 	
 	private long maxTimestamp;
+	private EventColors eventColors;
 	
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
@@ -54,6 +57,12 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
 		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
 		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
+		try {
+			eventColors = new EventColors("EventColors.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setLayout(null);
 		addMouseListener(this);
 		
@@ -110,7 +119,6 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		
 		while(events.hasNext()) {
 			nextEvent = events.next();
-			
 			if(previousEvent != null) {
 				Line2D.Double connectingLine = new Line2D.Double(threadPanel.getMidPoint(),
 						timestampToPosition(previousEvent.getTimestamp()), threadPanel.getMidPoint(), 
@@ -126,9 +134,11 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 			
 			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
 			eventRectangles.put(eventRectangle, nextEvent);
+			g2.setColor(eventColors.getColor(nextEvent.getEventClass()));
 			g2.draw(eventRectangle);
 			
 			previousEvent = nextEvent;
+			g2.setColor(Color.BLACK);
 		}
 		
 	}
