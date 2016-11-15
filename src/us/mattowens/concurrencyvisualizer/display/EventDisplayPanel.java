@@ -24,7 +24,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	private static final int timeMarkerWidth = 20;
 
 
 	//Stores ThreadDisplayPanel Objects by ThreadId
@@ -33,6 +33,8 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	
 	//Used by mouse listener to track mouse clicks
 	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
+	
+	private long maxTimestamp;
 	
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
@@ -80,6 +82,26 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 			drawThreadNameBox(g2, threadPanel);
 			drawEventMarkers(g2, threadPanel);
 		}
+		
+		drawTimeMarkers(g2);
+	}
+	
+	private void drawTimeMarkers(Graphics2D g2) {
+		double yPositionNeeded = timestampToPosition(maxTimestamp);
+		Line2D.Double markerLine = new Line2D.Double(5, 0, 
+				5, yPositionNeeded);
+		g2.draw(markerLine);
+		
+		int position = 0;
+		do {
+			position += 100;
+			Line2D.Double tick = new Line2D.Double(2.5, position, 7.5, position);
+			g2.draw(tick);
+			
+			double timestampInMillis = Math.round((double)positionToTimestamp(position)/1000000.0);
+			String label = String.valueOf(timestampInMillis) + "ms";
+			g2.drawString(label, 8, position);
+		} while(yPositionNeeded > position);
 	}
 	
 	private void drawEventMarkers(Graphics2D g2, ThreadDisplayPanel threadPanel) {
@@ -100,7 +122,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 			double rectangleWidth = threadPanelWidth/2;
 			double rectangleHeight = 5;
 			double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
-			double rectangleY = timestampToPosition(nextEvent.getTimestamp()) -2.5;
+			double rectangleY = timestampToPosition(nextEvent.getTimestamp()) - 2.5;
 			
 			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
 			eventRectangles.put(eventRectangle, nextEvent);
@@ -144,7 +166,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		threadPanelWidth = width;
 		for(int threadNum = 0; threadNum < threadPanelsList.size(); threadNum++) {
 			ThreadDisplayPanel threadPanel = threadPanelsList.get(threadNum);
-			threadPanel.setBounds(threadPanelWidth * threadNum, threadPanelWidth * (threadNum +1));
+			threadPanel.setBounds(timeMarkerWidth + threadPanelWidth * threadNum, threadPanelWidth * (threadNum +1));
 		}
 		refreshDisplay();
 	}
@@ -170,6 +192,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		if(!threadPanelsMap.containsKey(nextEvent.getThreadId())) {
 			addNewThread(nextEvent);
 		}
+		maxTimestamp = nextEvent.getTimestamp();
 		addDisplayEvent(nextEvent);
 		return true;
 	}
@@ -179,7 +202,8 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	private void addNewThread(DisplayEvent fromEvent) {
 		ThreadDisplayPanel newThreadPanel = new ThreadDisplayPanel(fromEvent.getThreadId(), fromEvent.getThreadName());
 		int numThreads = threadPanelsList.size();
-		newThreadPanel.setBounds(threadPanelWidth * numThreads, threadPanelWidth * (numThreads +1));
+		newThreadPanel.setBounds(timeMarkerWidth + threadPanelWidth * numThreads, 
+				timeMarkerWidth + threadPanelWidth * (numThreads +1));
 		threadPanelsMap.put(fromEvent.getThreadId(), newThreadPanel);
 		threadPanelsList.add(newThreadPanel);
 		
@@ -208,11 +232,16 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	}
 	
 	private void setPanelSize() {
-		setPreferredSize(new Dimension(threadPanelsList.size() * threadPanelWidth + 10, getMinimumHeight() + 10));
+		setPreferredSize(new Dimension(threadPanelsList.size() * threadPanelWidth + timeMarkerWidth+ 10, 
+				getMinimumHeight() + 10));
 	}
 	
 	private double timestampToPosition(long timestamp) {
 		return timestamp * spacingScalar;
+	}
+	
+	private long positionToTimestamp(int position) {
+		return (long) (position/spacingScalar);
 	}
 	
 	private void refreshDisplay() {
@@ -248,11 +277,6 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		
 		for(Rectangle2D rectangle : eventRectangles.keySet()) {
 			if(rectangle.contains(clickPoint)) {
-				//DisplayEventFrame eventFrame = new DisplayEventFrame(eventRectangles.get(rectangle));
-				//Dimension size = eventFrame.getPreferredSize();
-				//eventFrame.setVisible(true);
-				//eventFrame.setBounds(clickPoint.x + 10, clickPoint.y + 10, size.width, size.height);
-				//add(eventFrame);
 				eventsCovering.add(eventRectangles.get(rectangle));
 			}
 		}

@@ -54,7 +54,6 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 			g.drawString(eventLabel, 10, eventYLocation);
 			
 			Rectangle2D eventHitBox = new Rectangle2D.Double(0, eventYLocation - 12, displayWidth + 30, 15);
-			((Graphics2D)g).draw(eventHitBox);
 			eventsByRectangle.put(eventHitBox, event);
 		}
 		
