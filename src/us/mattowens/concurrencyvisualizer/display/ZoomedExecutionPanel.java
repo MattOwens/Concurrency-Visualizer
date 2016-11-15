@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 	private ArrayList<DisplayEvent> events;
 	private HashMap<Rectangle2D, DisplayEvent> eventsByRectangle;
 	private double timeScalingMultiplier;
+	private long firstEventTimestamp;
 	
 	public ZoomedExecutionPanel(ArrayList<DisplayEvent> events) {
 		this.events = events;
@@ -41,7 +43,7 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		int maxWidth = 0;
 		int eventYLocation = 0;;
 		
-		long firstEventTimestamp = events.get(0).getTimestamp();
+		firstEventTimestamp = events.get(0).getTimestamp();
 		for(DisplayEvent event : events) {
 			
 			String eventLabel = event.getJoinPointName() + "(" +
@@ -52,14 +54,35 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 			}
 			
 			eventYLocation = (int)(timeScalingMultiplier * (event.getTimestamp()-firstEventTimestamp)) + 20;
-			g.drawString(eventLabel, 10, eventYLocation);
+			g.drawString(eventLabel, 100, eventYLocation);
 			
-			Rectangle2D eventHitBox = new Rectangle2D.Double(0, eventYLocation - 12, displayWidth + 30, 15);
+			Rectangle2D eventHitBox = new Rectangle2D.Double(0, eventYLocation - 12, displayWidth + 50, 15);
 			eventsByRectangle.put(eventHitBox, event);
 		}
 		
+		drawTimeMarkers((Graphics2D) g);
+		
 		//Set preferred size so all drawn text is visible
-		setPreferredSize(new Dimension(maxWidth + 20,  eventYLocation + 20));
+		setPreferredSize(new Dimension(maxWidth + 120,  eventYLocation + 20));
+	}
+	
+	private void drawTimeMarkers(Graphics2D g2) {
+		long maxTimestamp = events.get(events.size() - 1).getTimestamp();
+		double yPositionNeeded = timestampToPosition(maxTimestamp);
+		Line2D.Double markerLine = new Line2D.Double(5, 0, 
+				5, yPositionNeeded + 30);
+		g2.draw(markerLine);
+		
+		int position = 0;
+		do {
+			position += 40;
+			Line2D.Double tick = new Line2D.Double(2.5, position, 7.5, position);
+			g2.draw(tick);
+			
+			double timestampInMicros = Math.round((double)positionToTimestamp(position)/1000.0);
+			String label = String.valueOf(timestampInMicros) + "us";
+			g2.drawString(label, 8, position);
+		} while(yPositionNeeded > position);
 	}
 
 	private void setScalingConstants() {
@@ -78,6 +101,14 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		
 		
 		timeScalingMultiplier = 15.0/(double)minDifference;
+	}
+	
+	private double timestampToPosition(long timestamp) {
+		return timeScalingMultiplier * (timestamp-firstEventTimestamp) + 20;
+	}
+	
+	private long positionToTimestamp(int position) {
+		return (long) ((position - 20)/timeScalingMultiplier) + firstEventTimestamp;
 	}
 
 

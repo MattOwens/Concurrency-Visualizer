@@ -22,7 +22,7 @@ public class ZoomedExecutionFrame extends JFrame {
 			ZoomedExecutionPanel panel = new ZoomedExecutionPanel(events);
 			JScrollPane scrollPane = new JScrollPane(panel);
 			add(scrollPane);
-			setSize(500, 500);
+			setSize(700, 500);
 		}
 	}
 
