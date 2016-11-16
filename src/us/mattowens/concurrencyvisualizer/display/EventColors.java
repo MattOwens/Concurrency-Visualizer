@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Reads a file containing colors for each event type.
@@ -13,9 +14,32 @@ import java.util.HashMap;
  */
 public class EventColors {
 	
-	private HashMap<String, Color> eventColors;
+	private static EventColors singletonEventColors;
 	
-	public EventColors(String colorFile) throws IOException {
+	static {
+		try {
+			singletonEventColors = new EventColors("EventColors.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static Color getColor(String eventType) {
+		if(singletonEventColors.eventColors.containsKey(eventType)) {
+			return singletonEventColors.eventColors.get(eventType);
+		}
+		return Color.BLACK;
+	}
+	
+	public static Set<String> getColorableEventTypes() {
+		return singletonEventColors.eventColors.keySet();
+	}
+	
+	private HashMap<String, Color> eventColors;
+
+	private EventColors(String colorFile) throws IOException {
 		eventColors = new HashMap<String, Color>();
 		BufferedReader colorReader = new BufferedReader(new FileReader(colorFile));
 		String line = colorReader.readLine();
@@ -35,10 +59,5 @@ public class EventColors {
 		colorReader.close();
 	}
 	
-	public Color getColor(String eventType) {
-		if(eventColors.containsKey(eventType)) {
-			return eventColors.get(eventType);
-		}
-		return Color.BLACK;
-	}
+
 }

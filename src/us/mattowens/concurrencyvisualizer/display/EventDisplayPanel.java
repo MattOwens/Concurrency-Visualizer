@@ -37,7 +37,6 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
 	
 	private long maxTimestamp;
-	private EventColors eventColors;
 	
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
@@ -57,12 +56,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
 		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
 		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
-		try {
-			eventColors = new EventColors("EventColors.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		setLayout(null);
 		addMouseListener(this);
 		
@@ -134,7 +128,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 			
 			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
 			eventRectangles.put(eventRectangle, nextEvent);
-			g2.setColor(eventColors.getColor(nextEvent.getEventClass()));
+			g2.setColor(EventColors.getColor(nextEvent.getEventClass()));
 			g2.draw(eventRectangle);
 			
 			previousEvent = nextEvent;
@@ -189,6 +183,14 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+	}
+	
+	public void showColorLegend() {
+		ColorLegendFrame legendFrame = new ColorLegendFrame();
+		legendFrame.setLocation(500, 500);
+		legendFrame.setVisible(true);
+		legendFrame.setSize(legendFrame.getPreferredSize());
+		add(legendFrame);
 	}
 	
 	//Adds the next event in the event queue to the display.  Returns true if and only if an event was added

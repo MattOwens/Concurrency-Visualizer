@@ -114,6 +114,13 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 			}
 		});
 		helpMenu.add(sourceMenuItem);
+		JMenuItem colorLegendMenuItem = new JMenuItem("Show Color Legend");
+		colorLegendMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayPanel.showColorLegend();
+			}
+		});
+		helpMenu.add(colorLegendMenuItem);
 		
 		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);

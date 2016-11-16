@@ -1,5 +1,6 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -39,7 +40,12 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		super.paintComponent(g);
 		
 		eventsByRectangle = new HashMap<Rectangle2D, DisplayEvent>();
-		
+		showEvents(g);
+		drawTimeMarkers((Graphics2D) g);
+	}
+
+
+	private void showEvents(Graphics g) {
 		int maxWidth = 0;
 		int eventYLocation = 0;;
 		
@@ -54,19 +60,20 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 			}
 			
 			eventYLocation = (int)(timeScalingMultiplier * (event.getTimestamp()-firstEventTimestamp)) + 20;
+			g.setColor(EventColors.getColor(event.getEventClass()));
 			g.drawString(eventLabel, 100, eventYLocation);
 			
 			Rectangle2D eventHitBox = new Rectangle2D.Double(0, eventYLocation - 12, displayWidth + 50, 15);
 			eventsByRectangle.put(eventHitBox, event);
 		}
 		
-		drawTimeMarkers((Graphics2D) g);
 		
 		//Set preferred size so all drawn text is visible
 		setPreferredSize(new Dimension(maxWidth + 120,  eventYLocation + 20));
 	}
 	
 	private void drawTimeMarkers(Graphics2D g2) {
+		g2.setColor(Color.BLACK);
 		long maxTimestamp = events.get(events.size() - 1).getTimestamp();
 		double yPositionNeeded = timestampToPosition(maxTimestamp);
 		Line2D.Double markerLine = new Line2D.Double(5, 0, 
@@ -80,7 +87,7 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 			g2.draw(tick);
 			
 			double timestampInMicros = Math.round((double)positionToTimestamp(position)/1000.0);
-			String label = String.valueOf(timestampInMicros) + "us";
+			String label = String.valueOf(timestampInMicros) + "\u00B5s";
 			g2.drawString(label, 8, position);
 		} while(yPositionNeeded > position);
 	}
