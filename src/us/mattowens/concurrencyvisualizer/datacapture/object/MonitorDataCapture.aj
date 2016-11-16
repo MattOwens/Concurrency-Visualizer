@@ -6,6 +6,7 @@ public aspect MonitorDataCapture {
 	
 	pointcut synchronizedMethod(Object o):
 		call(synchronized * *(..)) &&
+		!within(us.mattowens.concurrencyvisualizer..*) &&
 		target(o);
 	
 	pointcut notify(Object o):

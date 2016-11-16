@@ -1,5 +1,7 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.util.ArrayList;
+
 public class EventByThreadDisplayPanel extends EventDisplayPanel {
 
 	/**
@@ -15,6 +17,11 @@ public class EventByThreadDisplayPanel extends EventDisplayPanel {
 	@Override
 	protected String getEventGroupName(DisplayEvent fromEvent) {
 		return String.format("Thread-%d: %s", fromEvent.getThreadId(), fromEvent.getThreadName());
+	}
+
+	@Override
+	protected ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<DisplayEvent> events) {
+		return new ThreadZoomedExecutionPanel(events);
 	}
 
 }

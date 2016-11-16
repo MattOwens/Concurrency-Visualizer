@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 public abstract class EventDisplayPanel extends JPanel implements MouseListener {
@@ -56,6 +58,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	
 	protected abstract Object getEventGroupKey(DisplayEvent event);
 	protected abstract String getEventGroupName(DisplayEvent fromEvent);
+	protected abstract ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<DisplayEvent> events);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -233,8 +236,13 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 		ArrayList<DisplayEvent> coveringEvents = getEventsCoveringPoint(clickPoint);
 		
 		if(coveringEvents.size() > 0) {
-			ZoomedExecutionFrame zoomedFrame = new ZoomedExecutionFrame(coveringEvents);
-			zoomedFrame.setVisible(true);
+
+			JFrame zoomedExecutionFrame = new JFrame(getEventGroupName(coveringEvents.get(0)));
+			ZoomedExecutionPanel zoomedPanel = createZoomedExecutionPanel(coveringEvents);
+			JScrollPane scrollPane = new JScrollPane(zoomedPanel);
+			zoomedExecutionFrame.add(scrollPane);
+			zoomedExecutionFrame.setSize(700, 700);
+			zoomedExecutionFrame.setVisible(true);
 		}
 	}
 

@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
-public class ZoomedExecutionPanel extends JPanel implements MouseListener {
+public abstract class ZoomedExecutionPanel extends JPanel implements MouseListener {
 
 	/**
 	 * 
@@ -34,6 +34,7 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		setScalingConstants();
 	}
 	
+	protected abstract String getEventLabel(DisplayEvent event);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -52,8 +53,7 @@ public class ZoomedExecutionPanel extends JPanel implements MouseListener {
 		firstEventTimestamp = events.get(0).getTimestamp();
 		for(DisplayEvent event : events) {
 			
-			String eventLabel = event.getJoinPointName() + "(" +
-					event.getEventType() + ")@" + event.getTargetDescription();
+			String eventLabel = getEventLabel(event);
 			int displayWidth = g.getFontMetrics().stringWidth(eventLabel);
 			if(displayWidth > maxWidth) {
 				maxWidth = displayWidth;

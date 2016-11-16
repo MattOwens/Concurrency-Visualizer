@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.display;
+/*package us.mattowens.concurrencyvisualizer.display;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import javax.swing.JScrollPane;
 public class ZoomedExecutionFrame extends JFrame {
 	/**
 	 * 
-	 */
+	 *
 	private static final long serialVersionUID = 1L;
 	private String threadIdentifier;
 	
@@ -27,3 +27,4 @@ public class ZoomedExecutionFrame extends JFrame {
 	}
 
 }
+*/
