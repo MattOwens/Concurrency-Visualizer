@@ -3,32 +3,26 @@ package us.mattowens.concurrencyvisualizer.display;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ThreadDisplayPanel {
+public class EventGroupDisplayPanel {
 
 	private int leftBound, rightBound;
-	private long threadId;
-	private String threadName, displayName;
+	private Object key;
+	private String displayName;
 	private ArrayList<DisplayEvent> events;
 
-	public ThreadDisplayPanel(long threadId, String threadName) {
-		this.threadId = threadId;
-		this.threadName = threadName;
-		displayName = String.format("Thread %d: %s", threadId, threadName);
+	public EventGroupDisplayPanel(Object key, String displayName) {
+		this.key = key;
+		this.displayName = displayName;
 		events = new ArrayList<DisplayEvent>();
 	}
 	
-	public long getId() {
-		return threadId;
+	public Object getKey() {
+		return key;
 	}
-	
 	public String getDisplayName() {
 		return displayName;
 	}
-	
-	public String getName() {
-		return threadName;
-	}
-	
+
 	public void addEvent(DisplayEvent nextEvent) {
 		events.add(nextEvent);
 	}
@@ -44,6 +38,10 @@ public class ThreadDisplayPanel {
 	
 	public int getRightBound() {
 		return rightBound;
+	}
+	
+	public int getWidth() {
+		return rightBound - leftBound;
 	}
 	
 	/**

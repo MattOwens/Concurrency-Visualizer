@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class EventDisplayPanel extends JPanel implements MouseListener {
+public abstract class EventDisplayPanel extends JPanel implements MouseListener {
 
 	/**
 	 * 
@@ -28,8 +28,8 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 
 
 	//Stores ThreadDisplayPanel Objects by ThreadId
-	private ConcurrentHashMap<Long, ThreadDisplayPanel> threadPanelsMap;
-	private CopyOnWriteArrayList<ThreadDisplayPanel> threadPanelsList;
+	private ConcurrentHashMap<Object, EventGroupDisplayPanel> eventGroupPanelsMap;
+	private CopyOnWriteArrayList<EventGroupDisplayPanel> eventGroupPanelsList;
 	
 	//Used by mouse listener to track mouse clicks
 	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
@@ -43,16 +43,19 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	private double spacingScalar = 0.00001;
 	
 	//Width of thread panels
-	private int threadPanelWidth = 300;
+	private int groupPanelWidth = 300;
 	
 	
 	public EventDisplayPanel() {
-		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
-		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
+		eventGroupPanelsMap = new ConcurrentHashMap<Object, EventGroupDisplayPanel>();
+		eventGroupPanelsList = new CopyOnWriteArrayList<EventGroupDisplayPanel>();
 		
 		setLayout(null);
 		addMouseListener(this);
 	}
+	
+	protected abstract Object getEventGroupKey(DisplayEvent event);
+	protected abstract String getEventGroupName(DisplayEvent fromEvent);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -60,9 +63,9 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		eventRectangles = new HashMap<Rectangle2D, DisplayEvent>();
 		Graphics2D g2 = (Graphics2D) g;
 		
-		for(ThreadDisplayPanel threadPanel : threadPanelsList) {
+		for(EventGroupDisplayPanel threadPanel : eventGroupPanelsList) {
 			drawRightBoundLine(g2, threadPanel);
-			drawThreadNameBox(g2, threadPanel);
+			drawGroupDisplayName(g2, threadPanel);
 			drawEventMarkers(g2, threadPanel);
 		}
 		
@@ -87,23 +90,23 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		} while(yPositionNeeded > position);
 	}
 	
-	private void drawEventMarkers(Graphics2D g2, ThreadDisplayPanel threadPanel) {
-		Iterator<DisplayEvent> events = threadPanel.getEventsIterator();
+	private void drawEventMarkers(Graphics2D g2, EventGroupDisplayPanel groupPanel) {
+		Iterator<DisplayEvent> events = groupPanel.getEventsIterator();
 		DisplayEvent previousEvent = null, nextEvent;
 		
 		while(events.hasNext()) {
 			nextEvent = events.next();
 			if(previousEvent != null) {
-				Line2D.Double connectingLine = new Line2D.Double(threadPanel.getMidPoint(),
-						timestampToPosition(previousEvent.getTimestamp()), threadPanel.getMidPoint(), 
+				Line2D.Double connectingLine = new Line2D.Double(groupPanel.getMidPoint(),
+						timestampToPosition(previousEvent.getTimestamp()), groupPanel.getMidPoint(), 
 						timestampToPosition(nextEvent.getTimestamp()));
 				g2.draw(connectingLine);
 			}
 			
-			double threadPanelWidth = threadPanel.getRightBound() - threadPanel.getLeftBound();
-			double rectangleWidth = threadPanelWidth/2;
+			double groupPanelWidth = groupPanel.getWidth();
+			double rectangleWidth = groupPanelWidth/2;
 			double rectangleHeight = 5;
-			double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
+			double rectangleX = groupPanel.getLeftBound() + groupPanelWidth/4;
 			double rectangleY = timestampToPosition(nextEvent.getTimestamp()) - 2.5;
 			
 			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
@@ -117,21 +120,19 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		
 	}
 
-	private void drawThreadNameBox(Graphics2D g2, ThreadDisplayPanel threadPanel) {
-		double threadPanelWidth = threadPanel.getRightBound() - threadPanel.getLeftBound();
-		double rectangleWidth = threadPanelWidth/2;
-		double rectangleHeight = 30;
-		double rectangleX = threadPanel.getLeftBound() + threadPanelWidth/4;
-		double rectangleY = timestampToPosition(threadPanel.getFirstTimeStamp()) - 20;
+	private void drawGroupDisplayName(Graphics2D g2, EventGroupDisplayPanel groupPanel) {
+		double groupPanelWidth = groupPanel.getWidth();
+		double rectangleWidth = groupPanelWidth/2;
+		double rectangleX = groupPanel.getLeftBound() + groupPanelWidth/4;
+		double rectangleY = timestampToPosition(groupPanel.getFirstTimeStamp()) - 20;
 		
-		Rectangle2D.Double nameBox = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-		g2.draw(nameBox);
-		int stringWidth = g2.getFontMetrics().stringWidth(threadPanel.getDisplayName());
+
+		int stringWidth = g2.getFontMetrics().stringWidth(groupPanel.getDisplayName());
 		int labelXPosition = (int)(rectangleX + (rectangleWidth - stringWidth)/2);
-		g2.drawString(threadPanel.getDisplayName(), labelXPosition, (int)rectangleY+15);
+		g2.drawString(groupPanel.getDisplayName(), labelXPosition, (int)rectangleY+15);
 	}
 
-	private void drawRightBoundLine(Graphics2D g2, ThreadDisplayPanel threadPanel) {
+	private void drawRightBoundLine(Graphics2D g2, EventGroupDisplayPanel threadPanel) {
 		Line2D.Double boundaryLine = new Line2D.Double(threadPanel.getRightBound(), 0, 
 				threadPanel.getRightBound(), getMinimumHeight());
 		g2.draw(boundaryLine);
@@ -143,10 +144,10 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	}
 	
 	public void setGroupPanelWidth(int width) {
-		threadPanelWidth = width;
-		for(int threadNum = 0; threadNum < threadPanelsList.size(); threadNum++) {
-			ThreadDisplayPanel threadPanel = threadPanelsList.get(threadNum);
-			threadPanel.setBounds(timeMarkerWidth + threadPanelWidth * threadNum, threadPanelWidth * (threadNum +1));
+		groupPanelWidth = width;
+		for(int threadNum = 0; threadNum < eventGroupPanelsList.size(); threadNum++) {
+			EventGroupDisplayPanel threadPanel = eventGroupPanelsList.get(threadNum);
+			threadPanel.setBounds(timeMarkerWidth + groupPanelWidth * threadNum, groupPanelWidth * (threadNum +1));
 		}
 		refreshDisplay();
 	}
@@ -155,39 +156,40 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 
 	
 	public void addEvent(DisplayEvent event) {
-		if(!threadPanelsMap.containsKey(event.getThreadId())) {
-			addNewThread(event);
+		if(!eventGroupPanelsMap.containsKey(getEventGroupKey(event))) {
+			addNewEventGroup(event);
 		}
 		maxTimestamp = event.getTimestamp();
 		addDisplayEvent(event);
 	}
 	
 	//Adds a new column to the display for the thread name and id in the DisplayEvent fromEvent
-	private void addNewThread(DisplayEvent fromEvent) {
-		ThreadDisplayPanel newThreadPanel = new ThreadDisplayPanel(fromEvent.getThreadId(), fromEvent.getThreadName());
-		int numThreads = threadPanelsList.size();
-		newThreadPanel.setBounds(timeMarkerWidth + threadPanelWidth * numThreads, 
-				timeMarkerWidth + threadPanelWidth * (numThreads +1));
-		threadPanelsMap.put(fromEvent.getThreadId(), newThreadPanel);
-		threadPanelsList.add(newThreadPanel);
+	private void addNewEventGroup(DisplayEvent fromEvent) {
+		EventGroupDisplayPanel newGroupPanel = new EventGroupDisplayPanel(getEventGroupKey(fromEvent), 
+				getEventGroupName(fromEvent));
+		int numEventGroups = eventGroupPanelsList.size();
+		newGroupPanel.setBounds(timeMarkerWidth + groupPanelWidth * numEventGroups, 
+				timeMarkerWidth + groupPanelWidth * (numEventGroups +1));
+		eventGroupPanelsMap.put(getEventGroupKey(fromEvent), newGroupPanel);
+		eventGroupPanelsList.add(newGroupPanel);
 		
 		refreshDisplay();
 	}
 	
 	//Adds a new event to the display
 	private void addDisplayEvent(DisplayEvent newEvent) {
-		long threadId = newEvent.getThreadId();
-		ThreadDisplayPanel threadPanel = threadPanelsMap.get(threadId);
-		threadPanel.addEvent(newEvent);
+		Object groupKey = getEventGroupKey(newEvent);
+		EventGroupDisplayPanel groupPanel = eventGroupPanelsMap.get(groupKey);
+		groupPanel.addEvent(newEvent);
 
 		refreshDisplay();
 	}
 	
-	//Returns the required height of the tallest thread panel
+	//Returns the required height of the tallest EventGroupDisplayPanel
 	private int getMinimumHeight() {
 		long maxTimestamp = 0;
-		for(ThreadDisplayPanel threadPanel : threadPanelsList) {
-			long timestamp = threadPanel.getMostRecentTimestamp();
+		for(EventGroupDisplayPanel groupPanel : eventGroupPanelsList) {
+			long timestamp = groupPanel.getMostRecentTimestamp();
 			if(timestamp > maxTimestamp) {
 				maxTimestamp = timestamp;
 			}
@@ -196,7 +198,7 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	}
 	
 	private void setPanelSize() {
-		setPreferredSize(new Dimension(threadPanelsList.size() * threadPanelWidth + timeMarkerWidth+ 10, 
+		setPreferredSize(new Dimension(eventGroupPanelsList.size() * groupPanelWidth + timeMarkerWidth+ 10, 
 				getMinimumHeight() + 10));
 	}
 	

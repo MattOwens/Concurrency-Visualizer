@@ -96,8 +96,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	
 	private void createEventDisplay() {
-		EventDisplayPanel threadDisplayPanel = new EventDisplayPanel();
-		EventDisplayPanel targetDisplayPanel  = new EventDisplayPanel();
+		EventDisplayPanel threadDisplayPanel = new EventByThreadDisplayPanel();
+		EventDisplayPanel targetDisplayPanel  = new EventByTargetDisplayPanel();
 		displayPanels = new EventDisplayPanel[]{threadDisplayPanel, targetDisplayPanel };
 		
 		
