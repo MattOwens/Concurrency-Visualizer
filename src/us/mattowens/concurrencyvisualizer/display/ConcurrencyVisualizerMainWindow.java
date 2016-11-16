@@ -25,22 +25,15 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private ConcurrencyVisualizerRunMode runMode;
-	private EventDisplayPanel displayPanel;
+	private EventDisplayPanel[] displayPanels;
 	private JToolBar toolBar;
+	private Thread eventLoaderThread;
+	
+	//Amount to delay between events
+	private long displayDelay = 100;
 	
 	public ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode runMode) {
 		this.runMode = runMode;
-		displayPanel = new EventDisplayPanel(runMode);
-		Container contentPane = getContentPane();
-		setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-		
-		createMenuBar();
-		
-		createToolBar();
-		
-		JScrollPane scrollPane = new JScrollPane(displayPanel);
-		displayPanel.setVisible(true);
-		contentPane.add(scrollPane);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		addWindowListener(new WindowAdapter() {
@@ -51,6 +44,70 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		        System.exit(0);
 		    }
 		});
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		
+		createMenuBar();
+		
+		createToolBar();
+		
+		createEventDisplay();
+
+		startReadingEvents(runMode);
+	}
+
+
+	/*
+	 * Event control
+	 */
+	
+	private boolean addNextEvent() {
+		DisplayEvent nextEvent = InputEventQueue.getNextEvent();
+		
+		if(nextEvent == null) {
+			return false;
+		}
+		
+		addEvent(nextEvent);
+		return true;
+	}
+	
+	private void addEvent(DisplayEvent event) {
+		for(EventDisplayPanel panel : displayPanels) {
+			panel.addEvent(event);
+		}
+	}
+
+
+	private void setSpacingScalar(double newScalar) {
+		for(EventDisplayPanel panel : displayPanels) {
+			panel.setSpacingScalar(newScalar);
+		}
+	}
+	
+	private void setGroupPanelWidth(int newWidth) {
+		for(EventDisplayPanel panel : displayPanels) {
+			panel.setGroupPanelWidth(newWidth);
+		}
+	}
+
+	
+	/*
+	 * User interface creation
+	 */
+	
+	private void createEventDisplay() {
+		EventDisplayPanel threadDisplayPanel = new EventDisplayPanel();
+		EventDisplayPanel targetDisplayPanel  = new EventDisplayPanel();
+		displayPanels = new EventDisplayPanel[]{threadDisplayPanel, targetDisplayPanel };
+		
+		
+		JScrollPane threadScrollPane = new JScrollPane(threadDisplayPanel);
+		JScrollPane targetScrollPane = new JScrollPane(targetDisplayPanel);
+		
+		JTabbedPane tabPane = new JTabbedPane();
+		tabPane.addTab("Events By Thread", threadScrollPane);
+		tabPane.addTab("Events By Target", targetScrollPane);
+		add(tabPane);
 	}
 
 	private void createToolBar() {
@@ -62,7 +119,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		toolBar.add(scalingSlider);
 		scalingSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				displayPanel.setSpacingScalar(1.0/(double)scalingSlider.getValue());
+				setSpacingScalar(1.0/(double)scalingSlider.getValue());
 			}
 		});
 		
@@ -71,7 +128,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		JSlider widthSlider = new JSlider(JSlider.HORIZONTAL, 200, 1000, 300);
 		widthSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				displayPanel.setThreadPanelWidth(widthSlider.getValue());
+				setGroupPanelWidth(widthSlider.getValue());
 			}
 		});
 		toolBar.add(widthSlider);
@@ -88,7 +145,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		
 		getContentPane().add(toolBar);
 	}
-
+	
 	private void createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu helpMenu = new JMenu("Help");
@@ -117,7 +174,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		JMenuItem colorLegendMenuItem = new JMenuItem("Show Color Legend");
 		colorLegendMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayPanel.showColorLegend();
+				showColorLegend();
 			}
 		});
 		helpMenu.add(colorLegendMenuItem);
@@ -137,7 +194,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		delayTimeSlider.setSnapToTicks(true);
 		delayTimeSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
-				displayPanel.setDisplayDelay(delayTimeSlider.getValue());
+				displayDelay = delayTimeSlider.getValue();
 			}
 			
 		});
@@ -151,15 +208,20 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		toolBar.add(nextEventButton);
 		nextEventButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean eventAdded = displayPanel.addNextEvent();
+				boolean eventAdded = addNextEvent();
 				
 				if(!eventAdded) {
-					displayPanel.showEventInputDone();
+					showEventInputDone();
 					nextEventButton.setEnabled(false);
 				}
 			}
 		});
 	}
+	
+	
+	/*
+	 * Help menu helpers
+	 */
 	
 	private void openWebPage(String url) {
 		if(Desktop.isDesktopSupported()) {
@@ -177,6 +239,96 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	private void showWebPageError(String url) {
 		JOptionPane.showMessageDialog(this,  "Could not open requested resource.  Please visit " + url + ".",
 				"Help Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void showColorLegend() {
+		ColorLegendFrame legendFrame = new ColorLegendFrame();
+		legendFrame.setVisible(true);
+	}
+	
+	
+	/*
+	 * Event Reading
+	 */
+	
+	private void startReadingEvents(ConcurrencyVisualizerRunMode runMode) {
+		if(runMode == ConcurrencyVisualizerRunMode.Live) {
+			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader());
+		} else if (runMode == ConcurrencyVisualizerRunMode.OnDelay) {
+			eventLoaderThread = new Thread(new ReadDelayDataLoader());
+		} else if (runMode == ConcurrencyVisualizerRunMode.ReadAll) {
+			eventLoaderThread = new Thread(new ReadAllDataLoader());
+		}
+		
+		if(eventLoaderThread != null) {
+			eventLoaderThread.start();
+		}
+	}
+	
+	public void showEventInputDone() {
+		JFrame frame = this;
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JOptionPane.showMessageDialog(frame, "Event replay has finished.", "No More Events", 
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+	}
+	
+	/*
+	 * This reads all of the events from the event queue in one shot
+	 */
+	class ReadAllDataLoader implements Runnable {
+		public void run() {
+			boolean hasEvents = true;
+			
+			while(hasEvents) {
+				hasEvents = addNextEvent();
+			}
+		}
+	}
+	
+	/*
+	 * This reads all of the events from the event queue, pausing for a delay between each event
+	 */
+	class ReadDelayDataLoader implements Runnable {
+		public void run() {
+			boolean hasEvents = true;
+			while(hasEvents) {
+				hasEvents = addNextEvent();
+				
+				try {
+					Thread.sleep(displayDelay);
+				} catch (InterruptedException e) {
+					return;
+				}
+			}
+			showEventInputDone();
+		}
+	}
+	
+	/*
+	 * This continues trying to read events until the thread is interrupted
+	 */
+	class ReadContinuouslyDataLoader implements Runnable {
+		public void run() {
+			
+			while(true) {
+				boolean hasEvents = true;
+				
+				while(hasEvents) {
+					hasEvents = addNextEvent();
+				}
+				
+				try {
+					Thread.sleep(displayDelay);
+				} catch(InterruptedException e) {
+					return;
+				}
+				
+				if(Thread.interrupted()) return;
+			}
+		}
 	}
 	
 	@Override

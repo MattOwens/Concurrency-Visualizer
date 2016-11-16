@@ -1,10 +1,10 @@
 package us.mattowens.concurrencyvisualizer.display;
 
 import javax.swing.BoxLayout;
-import javax.swing.JInternalFrame;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class ColorLegendFrame extends JInternalFrame {
+public class ColorLegendFrame extends JFrame {
 
 	/**
 	 * 
@@ -12,7 +12,7 @@ public class ColorLegendFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 	
 	public ColorLegendFrame() {
-		super("Legend", true, true, false, false);
+		setTitle("Legend");
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		addColorLabels();
 	}

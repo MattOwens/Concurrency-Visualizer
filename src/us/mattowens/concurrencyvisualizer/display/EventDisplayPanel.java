@@ -9,14 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -41,37 +39,19 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
 	 */
-	
-	//Amount to delay between events
-	private long displayDelay = 100;
-	
 	//Factor relating timestamp to spacing
 	private double spacingScalar = 0.00001;
 	
 	//Width of thread panels
 	private int threadPanelWidth = 300;
 	
-	private Thread eventLoaderThread;	
 	
-	public EventDisplayPanel(ConcurrencyVisualizerRunMode runMode) {
+	public EventDisplayPanel() {
 		threadPanelsMap = new ConcurrentHashMap<Long, ThreadDisplayPanel>();
 		threadPanelsList = new CopyOnWriteArrayList<ThreadDisplayPanel>();
 		
 		setLayout(null);
 		addMouseListener(this);
-		
-		if(runMode == ConcurrencyVisualizerRunMode.Live) {
-			eventLoaderThread = new Thread(new ReadContinuouslyDataLoader());
-		} else if (runMode == ConcurrencyVisualizerRunMode.OnDelay) {
-			eventLoaderThread = new Thread(new ReadDelayDataLoader(this));
-		} else if (runMode == ConcurrencyVisualizerRunMode.ReadAll) {
-			eventLoaderThread = new Thread(new ReadAllDataLoader());
-		}
-		
-		if(eventLoaderThread != null) {
-			eventLoaderThread.start();
-		}
-
 	}
 	
 	@Override
@@ -156,17 +136,13 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 				threadPanel.getRightBound(), getMinimumHeight());
 		g2.draw(boundaryLine);
 	}
-
-	public void setDisplayDelay(long delay) {
-		displayDelay = delay;
-	}
 	
 	public void setSpacingScalar(double scalar) {
 		spacingScalar = scalar;
 		refreshDisplay();
 	}
 	
-	public void setThreadPanelWidth(int width) {
+	public void setGroupPanelWidth(int width) {
 		threadPanelWidth = width;
 		for(int threadNum = 0; threadNum < threadPanelsList.size(); threadNum++) {
 			ThreadDisplayPanel threadPanel = threadPanelsList.get(threadNum);
@@ -174,41 +150,17 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		}
 		refreshDisplay();
 	}
+
 	
-	public void showEventInputDone() {
-		EventDisplayPanel panel = this;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JOptionPane.showMessageDialog(panel, "Event replay has finished.", "No More Events", 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-	}
+
 	
-	public void showColorLegend() {
-		ColorLegendFrame legendFrame = new ColorLegendFrame();
-		legendFrame.setLocation(500, 500);
-		legendFrame.setVisible(true);
-		legendFrame.setSize(legendFrame.getPreferredSize());
-		add(legendFrame);
-	}
-	
-	//Adds the next event in the event queue to the display.  Returns true if and only if an event was added
-	public boolean addNextEvent() {
-		DisplayEvent nextEvent = InputEventQueue.getNextEvent();
-		
-		if(nextEvent == null) {
-			return false;
+	public void addEvent(DisplayEvent event) {
+		if(!threadPanelsMap.containsKey(event.getThreadId())) {
+			addNewThread(event);
 		}
-		
-		if(!threadPanelsMap.containsKey(nextEvent.getThreadId())) {
-			addNewThread(nextEvent);
-		}
-		maxTimestamp = nextEvent.getTimestamp();
-		addDisplayEvent(nextEvent);
-		return true;
+		maxTimestamp = event.getTimestamp();
+		addDisplayEvent(event);
 	}
-	
 	
 	//Adds a new column to the display for the thread name and id in the DisplayEvent fromEvent
 	private void addNewThread(DisplayEvent fromEvent) {
@@ -319,66 +271,4 @@ public class EventDisplayPanel extends JPanel implements MouseListener {
 		// TODO Auto-generated method stub
 		
 	}	
-	
-	/*
-	 * This reads all of the events from the event queue in one shot
-	 */
-	class ReadAllDataLoader implements Runnable {
-		public void run() {
-			boolean hasEvents = true;
-			
-			while(hasEvents) {
-				hasEvents = addNextEvent();
-			}
-		}
-	}
-	
-	/*
-	 * This reads all of the events from the event queue, pausing for a delay between each event
-	 */
-	class ReadDelayDataLoader implements Runnable {
-		private EventDisplayPanel parentPanel;
-		public ReadDelayDataLoader(EventDisplayPanel parentPanel) {
-			this.parentPanel = parentPanel;
-		}
-		public void run() {
-			boolean hasEvents = true;
-			while(hasEvents) {
-				hasEvents = addNextEvent();
-				
-				try {
-					Thread.sleep(displayDelay);
-				} catch (InterruptedException e) {
-					return;
-				}
-			}
-			parentPanel.showEventInputDone();
-		}
-	}
-	
-	/*
-	 * This continues trying to read events until the thread is interrupted
-	 */
-	class ReadContinuouslyDataLoader implements Runnable {
-		public void run() {
-			
-			while(true) {
-				boolean hasEvents = true;
-				
-				while(hasEvents) {
-					hasEvents = addNextEvent();
-				}
-				
-				try {
-					Thread.sleep(displayDelay);
-				} catch(InterruptedException e) {
-					return;
-				}
-				
-				if(Thread.interrupted()) return;
-			}
-		}
-	}
-
-
 }
