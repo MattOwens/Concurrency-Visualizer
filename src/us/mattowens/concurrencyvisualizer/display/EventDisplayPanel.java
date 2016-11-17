@@ -37,6 +37,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
 	
 	private long maxTimestamp;
+	private long minTimestamp;
 	
 	/*
 	 * This set of variables is controlled by the scroll bars at the top of the screen
@@ -44,7 +45,6 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	//Factor relating timestamp to spacing
 	private double spacingScalar = 0.00001;
 	
-	//Width of thread panels
 	private int groupPanelWidth = 300;
 	
 	
@@ -81,7 +81,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 				5, yPositionNeeded);
 		g2.draw(markerLine);
 		
-		int position = 0;
+		int position = (int) timestampToPosition(minTimestamp);
 		do {
 			position += 100;
 			Line2D.Double tick = new Line2D.Double(2.5, position, 7.5, position);
@@ -179,6 +179,9 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	
 	//Adds a new event to the display
 	private void addDisplayEvent(DisplayEvent newEvent) {
+		if(minTimestamp == 0) {
+			minTimestamp = newEvent.getTimestamp();
+		}
 		Object groupKey = getEventGroupKey(newEvent);
 		EventGroupDisplayPanel groupPanel = eventGroupPanelsMap.get(groupKey);
 		groupPanel.addEvent(newEvent);
@@ -204,11 +207,11 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	}
 	
 	private double timestampToPosition(long timestamp) {
-		return timestamp * spacingScalar;
+		return (timestamp-minTimestamp) * spacingScalar + 40;
 	}
 	
 	private long positionToTimestamp(int position) {
-		return (long) (position/spacingScalar);
+		return (long) ((position-40)/spacingScalar) + minTimestamp;
 	}
 	
 	private void refreshDisplay() {

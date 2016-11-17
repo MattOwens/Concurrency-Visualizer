@@ -18,11 +18,11 @@ public class DiningPhilosophers {
 		Philosopher philosopherD = new Philosopher(fork4, fork3);
 		Philosopher philosopherE = new Philosopher(fork5, fork4);
 		
-		Thread threadA = new Thread(philosopherA);
-		Thread threadB = new Thread(philosopherB);
-		Thread threadC = new Thread(philosopherC);
-		Thread threadD = new Thread(philosopherD);
-		Thread threadE = new Thread(philosopherE);
+		Thread threadA = new Thread(philosopherA, "Philosopher A");
+		Thread threadB = new Thread(philosopherB, "Philosopher B");
+		Thread threadC = new Thread(philosopherC, "Philosopher C");
+		Thread threadD = new Thread(philosopherD, "Philosopher D");
+		Thread threadE = new Thread(philosopherE, "Philosopher E");
 		
 		threadA.start();
 		threadB.start();

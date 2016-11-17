@@ -1,7 +1,6 @@
 package us.mattowens.concurrencyvisualizer.display;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class EventGroupDisplayPanel {
 
@@ -51,14 +50,14 @@ public class EventGroupDisplayPanel {
 	 */
 	public long getMostRecentTimestamp() {
 		if(events.size() == 0) {
-			throw new IllegalStateException("ThreadPanel contains no events");
+			return 0;
 		}
 		return events.get(events.size()-1).getTimestamp();
 	}
 	
 	public long getFirstTimeStamp() {
 		if(events.size() == 0) {
-			throw new IllegalStateException("ThreadPanel contains no events");
+			return 0;
 		}
 		return events.get(0).getTimestamp();
 	}
