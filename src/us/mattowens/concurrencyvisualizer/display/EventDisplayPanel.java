@@ -94,11 +94,9 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	}
 	
 	private void drawEventMarkers(Graphics2D g2, EventGroupDisplayPanel groupPanel) {
-		Iterator<DisplayEvent> events = groupPanel.getEventsIterator();
-		DisplayEvent previousEvent = null, nextEvent;
+		DisplayEvent previousEvent = null;
 		
-		while(events.hasNext()) {
-			nextEvent = events.next();
+		for(DisplayEvent nextEvent : groupPanel.getEventsArray()) {
 			if(previousEvent != null) {
 				Line2D.Double connectingLine = new Line2D.Double(groupPanel.getMidPoint(),
 						timestampToPosition(previousEvent.getTimestamp()), groupPanel.getMidPoint(), 

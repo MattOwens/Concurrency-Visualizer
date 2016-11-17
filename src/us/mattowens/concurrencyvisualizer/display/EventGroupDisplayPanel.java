@@ -63,8 +63,9 @@ public class EventGroupDisplayPanel {
 		return events.get(0).getTimestamp();
 	}
 	
-	public Iterator<DisplayEvent> getEventsIterator() {
-		return events.listIterator();
+	public DisplayEvent[] getEventsArray() {
+		DisplayEvent[] eventsArray = new DisplayEvent[events.size()];
+		return events.toArray(eventsArray);
 	}
 	
 	public int getMidPoint() {
