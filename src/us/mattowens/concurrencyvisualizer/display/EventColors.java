@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+import us.mattowens.concurrencyvisualizer.Logging;
+
 /**
  * Reads a file containing colors for each event type.
  * Each line of the file must be of the form:
@@ -20,8 +22,7 @@ public class EventColors {
 		try {
 			singletonEventColors = new EventColors("EventColors.txt");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logging.error(e.toString(), e);
 		}
 	}
 	

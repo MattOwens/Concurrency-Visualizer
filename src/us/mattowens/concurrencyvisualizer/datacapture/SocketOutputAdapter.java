@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.json.simple.JSONValue;
 
+import us.mattowens.concurrencyvisualizer.Logging;
+
 public class SocketOutputAdapter implements OutputAdapter {
 	
 	private Socket socket;
@@ -22,17 +24,9 @@ public class SocketOutputAdapter implements OutputAdapter {
 	@Override
 	public void sendEvent(Event eventToOutput) {
 		Map<String, Object> eventMap = eventToOutput.collapseToMap();
-		//byte[] outputMessage = JSONValue.toJSONString(eventMap).getBytes();
 		
-		//try {
-			out.println(JSONValue.toJSONString(eventMap));
-			numEventsWritten++;
-		//} catch(IOException e) {
-		//	e.printStackTrace();
-		//}
-		
-		
-
+		out.println(JSONValue.toJSONString(eventMap));
+		numEventsWritten++;
 	}
 
 	@Override
@@ -40,10 +34,9 @@ public class SocketOutputAdapter implements OutputAdapter {
 		try {
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logging.error(e.toString(), e);
 		}
-		System.out.println("Socket adapter wrote " + numEventsWritten + " events");
+		Logging.message("Socket adapter wrote {0} events", numEventsWritten);
 
 	}
 

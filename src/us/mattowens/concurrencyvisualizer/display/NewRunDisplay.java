@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
 
 public class NewRunDisplay extends JFrame {
@@ -96,8 +97,8 @@ public class NewRunDisplay extends JFrame {
 				try {
 					runProgram();
 				} catch (Exception e1) {
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(runButton.getRootPane(), e1.getStackTrace(), "Exception", JOptionPane.ERROR_MESSAGE);
+					Logging.error(e1.toString(), e1);
+					JOptionPane.showMessageDialog(runButton.getRootPane(), e1, "Exception", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});

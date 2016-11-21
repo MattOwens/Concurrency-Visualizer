@@ -4,6 +4,8 @@ package us.mattowens.concurrencyvisualizer.datacapture;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import us.mattowens.concurrencyvisualizer.Logging;
+
 
 public final class EventQueue {
 	
@@ -36,7 +38,7 @@ public final class EventQueue {
 	
 	public static void addOutputAdapter(OutputAdapter adapter) {
 		if(eventOutputStarted) {
-			throw new IllegalStateException("EventQueue : Cannot add output adapter after data collection has started");
+			Logging.warning("Output adapter added after event output started");
 		}
 		
 		singletonEventQueue.outputAdapters.add(adapter);
@@ -49,10 +51,11 @@ public final class EventQueue {
 	}
 	
 	class EventOutputThread implements Runnable {
+		private boolean continueOutput = true;
 
 		@Override
 		public void run() {
-			while(true) {
+			while(continueOutput) {
 				
 				
 				while(!eventQueue.isEmpty()) {
@@ -66,21 +69,21 @@ public final class EventQueue {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {	
-					for(OutputAdapter adapter : outputAdapters) {
-						adapter.cleanup();
-					}
-					System.out.println("Event Queue Output thread ending");
-					return;
+					cleanup();
 				}
 				
 				if(Thread.interrupted()) {
-					for(OutputAdapter adapter : outputAdapters) {
-						adapter.cleanup();
-					}
-					System.out.println("Event Queue Output thread ending");
-					return;
+					cleanup();
 				}	
 			}
+		}
+
+		private void cleanup() {
+			for(OutputAdapter adapter : outputAdapters) {
+				adapter.cleanup();
+			}
+			Logging.message("Event Queue Output thread ending");
+			continueOutput = false;
 		}
 	}
 }

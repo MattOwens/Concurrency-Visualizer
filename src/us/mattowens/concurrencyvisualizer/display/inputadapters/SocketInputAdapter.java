@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import org.json.simple.parser.ParseException;
 
+import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.display.DisplayEvent;
 import us.mattowens.concurrencyvisualizer.display.InputEventQueue;
 
@@ -13,11 +14,13 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 	private Socket socket;
 	private BufferedReader inputReader;
 	private Thread readerThread;
+	private int numEventsRead;
 	
 	public SocketInputAdapter(Socket s) throws IOException {
 		socket = s;
 		inputReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		readerThread = new Thread(this);
+		numEventsRead = 0;
 	}
 	
 	@Override
@@ -27,23 +30,25 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 			try {
 				input = inputReader.readLine();
 				if(input != null) {
+					numEventsRead++;
 					DisplayEvent displayEvent = new DisplayEvent(input);
 					InputEventQueue.addEvent(displayEvent);
 				}
 			} catch(IOException e) {
 				//Happens when stream is closed
-				e.printStackTrace();
+				Logging.warning(e.toString(), e);
+				break; //I think this should be okay
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logging.warning(e.toString(), e);
 			}
 		}
-		System.out.println("Input Socket Reader thread exiting");
+		Logging.message(String.format("SocketInputAdapter read %d events before exiting", numEventsRead));
 		cleanup();
 		
 	}
 	
 	public void startReading() {
+		Logging.message("SocketInputAdapter started");
 		readerThread.start();
 	}
 
@@ -57,7 +62,7 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 				socket.close();
 			}
 		} catch(IOException e) {
-			//TODO Decide what to do on close failures
+			Logging.error(e.toString(), e);
 		}
 	}
 

@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public class ConcurrencyVisualizerMainWindow extends JFrame {
@@ -41,6 +42,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 		    {
 		        EventQueue.stopEventOutput();
 		        InputEventQueue.stopEventInput();
+		        Logging.message("System exit");
 		        System.exit(0);
 		    }
 		});
@@ -229,6 +231,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 				try {
 					desktop.browse(new URI(url));
 				} catch (IOException | URISyntaxException e1) {
+					Logging.error(e1.toString(), e1);
 					showWebPageError(url);
 				}
 		} else {
@@ -280,6 +283,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	class ReadAllDataLoader implements Runnable {
 		public void run() {
+			Logging.message("ReadAllDataLoader started");
 			boolean hasEvents = true;
 			
 			while(hasEvents) {
@@ -294,6 +298,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	class ReadDelayDataLoader implements Runnable {
 		public void run() {
 			boolean hasEvents = true;
+			Logging.message("ReadDelayDataLoader started");
+
 			while(hasEvents) {
 				hasEvents = addNextEvent();
 				
@@ -312,7 +318,8 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	class ReadContinuouslyDataLoader implements Runnable {
 		public void run() {
-			
+			Logging.message("ReadContinuouslyDataLoader started");
+
 			while(true) {
 				boolean hasEvents = true;
 				

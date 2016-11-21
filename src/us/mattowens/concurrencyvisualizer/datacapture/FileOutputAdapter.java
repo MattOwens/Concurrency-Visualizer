@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Map;
 import org.json.simple.JSONValue;
 
+import us.mattowens.concurrencyvisualizer.Logging;
+
 public class FileOutputAdapter implements OutputAdapter {
 	
 	private BufferedWriter outputWriter;
@@ -23,7 +25,9 @@ public class FileOutputAdapter implements OutputAdapter {
 	public void sendEvent(Event eventToOutput) {
 		
 		if(outputWriter == null) {
-			throw new IllegalStateException("FileOutputAdapter Error : output writer already closed");
+			String errorMessage = "FileOutputAdapter received event after output writer closed";
+			Logging.error(errorMessage);
+			throw new IllegalStateException(errorMessage);
 		}
 		
 		Map<String, Object> eventMap = eventToOutput.collapseToMap();
@@ -31,8 +35,7 @@ public class FileOutputAdapter implements OutputAdapter {
 		try {
 			outputWriter.write(JSONValue.toJSONString(eventMap) + "\n");
 		} catch(IOException e) {
-			// TODO Decide what to do here
-			e.printStackTrace();
+			Logging.error(e.toString(), e);
 		}
 
 	}
@@ -45,8 +48,7 @@ public class FileOutputAdapter implements OutputAdapter {
 				outputWriter.flush();
 				outputWriter.close();
 			} catch (IOException e) {
-				// TODO Decide what to do here
-				e.printStackTrace();
+				Logging.error(e.toString(), e);
 			} finally {
 				outputWriter = null;
 			}
