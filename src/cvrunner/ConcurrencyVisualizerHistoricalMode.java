@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.display;
+package cvrunner;
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -17,9 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.display.ConcurrencyVisualizerMainWindow;
+import us.mattowens.concurrencyvisualizer.display.ConcurrencyVisualizerRunMode;
+import us.mattowens.concurrencyvisualizer.display.InputEventQueue;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.FileInputAdapter;
 
-public class NewRunDisplay extends JFrame {
+public class ConcurrencyVisualizerHistoricalMode extends JFrame {
 
 	/**
 	 * 
@@ -35,13 +38,13 @@ public class NewRunDisplay extends JFrame {
 	private JComboBox<ConcurrencyVisualizerRunMode> runModeComboBox;
 	
 	public static void main(String[] args) {
-		NewRunDisplay newRunDisplay = new NewRunDisplay();
+		ConcurrencyVisualizerHistoricalMode newRunDisplay = new ConcurrencyVisualizerHistoricalMode();
 		newRunDisplay.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		newRunDisplay.setVisible(true);
 		
 	}
 	
-	public NewRunDisplay() {
+	public ConcurrencyVisualizerHistoricalMode() {
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();

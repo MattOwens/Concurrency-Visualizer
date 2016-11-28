@@ -68,6 +68,7 @@ public class DiningPhilosophers {
 		
 		private void eat() {
 			try {
+				System.out.println("Eat");
 				Thread.sleep(10);
 			} catch(InterruptedException e) { }
 		}

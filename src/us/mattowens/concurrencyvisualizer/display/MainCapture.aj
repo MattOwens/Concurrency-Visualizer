@@ -20,7 +20,7 @@ public aspect MainCapture {
 	before() : main() {
 
 		try {
-			FileOutputAdapter outputAdapter = new FileOutputAdapter("SystemRunnerTest.txt");
+			FileOutputAdapter outputAdapter = new FileOutputAdapter(thisJoinPoint.getSignature().getDeclaringTypeName()+".txt");
 			EventQueue.addOutputAdapter(outputAdapter);
 			ServerSocket ss = new ServerSocket(0);
 			Socket outSocket = new Socket(ss.getInetAddress(), ss.getLocalPort());
