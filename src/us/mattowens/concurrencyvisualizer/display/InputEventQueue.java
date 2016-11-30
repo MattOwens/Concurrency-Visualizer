@@ -21,7 +21,9 @@ public class InputEventQueue {
 	}
 	
 	public static void stopEventInput() {
-		singletonEventQueue.inputAdapter.cleanup();
+		if(singletonEventQueue.inputAdapter != null) {
+			singletonEventQueue.inputAdapter.cleanup();
+		}
 	}
 	
 	public static void addEvent(DisplayEvent event) {

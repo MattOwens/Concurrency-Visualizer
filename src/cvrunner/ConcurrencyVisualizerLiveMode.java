@@ -12,12 +12,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.aspectj.tools.ajc.Main;
+
+import us.mattowens.concurrencyvisualizer.RunConfiguration;
+import us.mattowens.concurrencyvisualizer.StringConstants;
 
 public class ConcurrencyVisualizerLiveMode extends JFrame {
 
@@ -26,8 +30,13 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	
 	private JTextField sourceRootTextField;
+	private JTextField mainClassTextField;
+	private JTextField outputFilePathTextField;
+	private JCheckBox outputFileCheckBox;
+	private JCheckBox liveViewCheckBox;
 
 	public static void main(String[] args) throws IOException {
 		ConcurrencyVisualizerLiveMode liveMode = new ConcurrencyVisualizerLiveMode();
@@ -65,10 +74,40 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		});
 		contentPane.add(browseButton, constraints);
 		
+		JLabel mainClassLabel = new JLabel("Main Class (With full package name):");
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		contentPane.add(mainClassLabel, constraints);
+		
+		mainClassTextField = new JTextField();
+		constraints.weightx = 0.75;
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		contentPane.add(mainClassTextField, constraints);
+		
+		outputFileCheckBox = new JCheckBox("Save to file:");
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		contentPane.add(outputFileCheckBox, constraints);
+		
+		outputFilePathTextField = new JTextField();
+		constraints.weightx = 0.75;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		contentPane.add(outputFilePathTextField, constraints);
+		
+		liveViewCheckBox = new JCheckBox("View execution live");
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		contentPane.add(liveViewCheckBox, constraints);
+		
 		JButton runButton = new JButton("Run");
 		constraints.weightx = 0.25;
 		constraints.gridx = 2;
-		constraints.gridy = 1;
+		constraints.gridy = 4;
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -99,6 +138,8 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 	
 	private void run() throws IOException {
 		String sourceRoot = sourceRootTextField.getText();
+		String mainClass = mainClassTextField.getText();
+		String outputFile = outputFilePathTextField.getText();
 		sourceRoot = sourceRoot.replace("\\", "\\\\") +";src\\us\\mattowens\\concurrencyvisualizer";
 		System.out.println(sourceRoot);
 		
@@ -113,9 +154,21 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		Main main = new Main();
 		main.runMain(ajcArgs, false); //Run without System.exit()
 		System.out.println("Output setup finished. Starting program");
+		
+		RunConfiguration config = new RunConfiguration(StringConstants.CONFIG_FILE);
+		
+		if(outputFileCheckBox.isSelected() && !outputFile.equals("")) {
+			config.set(StringConstants.OUTFILE_KEY, outputFile);
+		}
+		
+		if(liveViewCheckBox.isSelected()) {
+			config.set(StringConstants.LIVE_VIEW, "true");
+		}
+		config.save();
+		
 		Process process = Runtime.getRuntime().exec("java -cp c:\\libraries\\*;c:\\aspectj1.8\\lib\\aspectjrt.jar;"
 				+ "c:\\aspectj1.8\\lib\\aspectjtools.jar;"
-				+ "aspectj_output.jar; us.mattowens.sampleprograms.DiningPhilosophers");
+				+ "aspectj_output.jar; " + mainClass);
 		
 		InputStream stdin = process.getErrorStream();
 		InputStreamReader isr = new InputStreamReader(stdin);
