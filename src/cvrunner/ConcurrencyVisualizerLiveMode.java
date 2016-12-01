@@ -39,7 +39,9 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 	private JCheckBox liveViewCheckBox;
 
 	public static void main(String[] args) throws IOException {
+		System.out.println(new File(".").getCanonicalPath());
 		ConcurrencyVisualizerLiveMode liveMode = new ConcurrencyVisualizerLiveMode();
+		liveMode.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		liveMode.setVisible(true);
 	}
 	
@@ -121,7 +123,7 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		contentPane.add(runButton,  constraints);
 		
 		
-		pack();
+		setSize(600,200);
 		
 	}
 	
@@ -140,11 +142,10 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		String sourceRoot = sourceRootTextField.getText();
 		String mainClass = mainClassTextField.getText();
 		String outputFile = outputFilePathTextField.getText();
-		sourceRoot = sourceRoot.replace("\\", "\\\\") +";src\\us\\mattowens\\concurrencyvisualizer";
-		System.out.println(sourceRoot);
+		sourceRoot = sourceRoot.replace("\\", "\\\\");
 		
 		String[] ajcArgs = {
-				//"-aspectpath", "src\\us\\mattowens\\concurrencyvisualizer\\",
+				"-aspectpath", "lib\\concurrency_visualizer.jar",
 				"-sourceroots", sourceRoot,
 				"-outjar", "aspectj_output.jar",
 				"-1.8", "-Xlint:ignore"
@@ -166,8 +167,7 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		}
 		config.save();
 		
-		Process process = Runtime.getRuntime().exec("java -cp c:\\libraries\\*;c:\\aspectj1.8\\lib\\aspectjrt.jar;"
-				+ "c:\\aspectj1.8\\lib\\aspectjtools.jar;"
+		Process process = Runtime.getRuntime().exec("java -cp lib\\*;lib\\aspectj1.8\\lib\\*;"
 				+ "aspectj_output.jar; " + mainClass);
 		
 		InputStream stdin = process.getErrorStream();
@@ -175,12 +175,10 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		BufferedReader br = new BufferedReader(isr);
 
 		String line = null;
-		System.out.println("<OUTPUT>");
 
 		while ( (line = br.readLine()) != null)
 		     System.out.println(line);
 
-		System.out.println("</OUTPUT>");
 		try {
 			int exitVal = process.waitFor();
 		} catch (InterruptedException e) {
