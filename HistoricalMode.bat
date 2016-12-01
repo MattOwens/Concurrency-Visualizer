@@ -1,0 +1,1 @@
+java -cp .;lib\*;lib\aspectj1.8\lib\* cvrunner.ConcurrencyVisualizerHistoricalMode
