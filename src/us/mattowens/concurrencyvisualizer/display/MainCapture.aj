@@ -1,11 +1,14 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 
 import us.mattowens.concurrencyvisualizer.RunConfiguration;
 import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.DatabaseOutputAdapter;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
 import us.mattowens.concurrencyvisualizer.datacapture.SocketOutputAdapter;
@@ -27,8 +30,14 @@ public aspect MainCapture {
 			if(config.readProperties()) {
 				String outputFileName = config.get(StringConstants.OUTFILE_KEY);
 				if(!outputFileName.equals("")) {
-					FileOutputAdapter outputAdapter = new FileOutputAdapter(outputFileName);
-					EventQueue.addOutputAdapter(outputAdapter);
+					FileOutputAdapter fileOutputAdapter = new FileOutputAdapter(outputFileName);
+					EventQueue.addOutputAdapter(fileOutputAdapter);
+				}
+				
+				String mainClass = config.get(StringConstants.MAIN_CLASS_NAME);
+				if(!mainClass.equals("")) {
+					DatabaseOutputAdapter dbOutputAdapter = new DatabaseOutputAdapter(mainClass);
+					EventQueue.addOutputAdapter(dbOutputAdapter);
 				}
 				
 				String viewLive = config.get(StringConstants.LIVE_VIEW);
@@ -49,9 +58,14 @@ public aspect MainCapture {
 				}
 			}
 			EventQueue.startEventOutput();
+			File configFile = new File(StringConstants.CONFIG_FILE);
+			configFile.deleteOnExit();
 
 		} catch (IOException e) {
 			// TODO Show user an error message about this
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

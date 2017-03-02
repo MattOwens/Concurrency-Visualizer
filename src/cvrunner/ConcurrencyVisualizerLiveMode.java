@@ -36,6 +36,7 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 	private JTextField mainClassTextField;
 	private JTextField outputFilePathTextField;
 	private JCheckBox outputFileCheckBox;
+	private JCheckBox outputDatabaseCheckBox;
 	private JCheckBox liveViewCheckBox;
 
 	public static void main(String[] args) throws IOException {
@@ -100,10 +101,16 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		constraints.gridy = 2;
 		contentPane.add(outputFilePathTextField, constraints);
 		
-		liveViewCheckBox = new JCheckBox("View execution live");
+		outputDatabaseCheckBox = new JCheckBox("Save to database");
 		constraints.weightx = 0.25;
 		constraints.gridx = 0;
 		constraints.gridy = 3;
+		contentPane.add(outputDatabaseCheckBox, constraints);
+		
+		liveViewCheckBox = new JCheckBox("View execution live");
+		constraints.weightx = 0.25;
+		constraints.gridx = 0;
+		constraints.gridy = 4;
 		contentPane.add(liveViewCheckBox, constraints);
 		
 		JButton runButton = new JButton("Run");
@@ -162,6 +169,10 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 			config.set(StringConstants.OUTFILE_KEY, outputFile);
 		}
 		
+		if(outputDatabaseCheckBox.isSelected()) {
+			config.set(StringConstants.MAIN_CLASS_NAME, mainClass);
+		}
+		
 		if(liveViewCheckBox.isSelected()) {
 			config.set(StringConstants.LIVE_VIEW, "true");
 		}
@@ -181,6 +192,7 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 
 		try {
 			int exitVal = process.waitFor();
+			System.out.println("Process finished");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

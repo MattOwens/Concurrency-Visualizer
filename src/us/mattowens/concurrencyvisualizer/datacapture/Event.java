@@ -52,6 +52,10 @@ public class Event  implements JSONSerializable {
 		this.joinPointName = joinPointName;
 		eventMap.put("JoinPointName", joinPointName);
 	}
+	
+	public String getClassName() {
+		return className;
+	}
 
 	@Override
 	public Map<String, Object> collapseToMap() {
