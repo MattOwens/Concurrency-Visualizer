@@ -6,8 +6,10 @@ import java.net.Socket;
 import org.json.simple.parser.ParseException;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.display.DisplayEvent;
 import us.mattowens.concurrencyvisualizer.display.InputEventQueue;
+import us.mattowens.concurrencyvisualizer.display.MultipleAccessInputEventQueue;
 
 public class SocketInputAdapter implements Runnable, InputAdapter {
 	
@@ -30,16 +32,22 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 			try {
 				input = inputReader.readLine();
 				if(input != null) {
+					
 					numEventsRead++;
-					DisplayEvent displayEvent = new DisplayEvent(input);
+					Event displayEvent = new Event(input, 0);
 					InputEventQueue.addEvent(displayEvent);
+					
+					//TODO: This is incredibly slow. Add some kind of buffering
+					/*MultipleAccessInputEventQueue.openForWriting();
+					MultipleAccessInputEventQueue.addEvent(displayEvent);
+					MultipleAccessInputEventQueue.closeWriting();*/
 				}
 			} catch(IOException e) {
 				//Happens when stream is closed
 				Logging.warning(e.toString(), e);
 				break; //I think this should be okay
 			} catch (ParseException e) {
-				Logging.warning(e.toString(), e);
+				Logging.exception(e);
 			}
 		}
 		Logging.message(String.format("SocketInputAdapter read %d events before exiting", numEventsRead));
@@ -48,8 +56,8 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 	}
 	
 	public void startReading() {
-		Logging.message("SocketInputAdapter started");
 		readerThread.start();
+		Logging.message("SocketInputAdapter started");
 	}
 
 	@Override

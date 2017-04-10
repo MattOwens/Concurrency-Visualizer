@@ -2,17 +2,19 @@ package us.mattowens.concurrencyvisualizer.display;
 
 import java.util.ArrayList;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+
 public class EventGroupDisplayPanel {
 
 	private int leftBound, rightBound;
 	private Object key;
 	private String displayName;
-	private ArrayList<DisplayEvent> events;
+	private ArrayList<Event> events;
 
 	public EventGroupDisplayPanel(Object key, String displayName) {
 		this.key = key;
 		this.displayName = displayName;
-		events = new ArrayList<DisplayEvent>();
+		events = new ArrayList<Event>();
 	}
 	
 	public Object getKey() {
@@ -22,7 +24,7 @@ public class EventGroupDisplayPanel {
 		return displayName;
 	}
 
-	public void addEvent(DisplayEvent nextEvent) {
+	public void addEvent(Event nextEvent) {
 		events.add(nextEvent);
 	}
 	
@@ -62,8 +64,8 @@ public class EventGroupDisplayPanel {
 		return events.get(0).getTimestamp();
 	}
 	
-	public DisplayEvent[] getEventsArray() {
-		DisplayEvent[] eventsArray = new DisplayEvent[events.size()];
+	public Event[] getEventsArray() {
+		Event[] eventsArray = new Event[events.size()];
 		return events.toArray(eventsArray);
 	}
 	

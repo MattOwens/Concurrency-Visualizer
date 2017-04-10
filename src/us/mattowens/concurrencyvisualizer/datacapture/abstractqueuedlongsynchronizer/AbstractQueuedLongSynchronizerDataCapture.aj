@@ -2,6 +2,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.abstractqueuedlongsynchro
 
 import java.util.concurrent.locks.AbstractQueuedLongSynchronizer;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 
@@ -73,45 +76,45 @@ public aspect AbstractQueuedLongSynchronizerDataCapture {
 		args(arg);
 	
 	after() returning(AbstractQueuedLongSynchronizer s) : create() {
-		AbstractQueuedLongSynchronizerEvent createEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event createEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.Create,s.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(AbstractQueuedLongSynchronizer s, long arg) : acquire(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.BeforeAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.BeforeAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) : acquire(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.AfterAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	before(AbstractQueuedLongSynchronizer s, long arg) : acquireShared(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.BeforeAcquireShared);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.BeforeAcquireShared, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) : acquireShared(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterAcquireShared);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.AfterAcquireShared, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -119,70 +122,69 @@ public aspect AbstractQueuedLongSynchronizerDataCapture {
 	after(AbstractQueuedLongSynchronizer s, long expect, long update) returning(boolean successful) : 
 		compareAndSetState(s, expect, update) {
 		
-		AbstractQueuedLongSynchronizerEvent updateEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.CompareAndSetState);
-		updateEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		updateEvent.setExpect(expect);
-		updateEvent.setUpdate(update);
-		updateEvent.setSuccessful(successful);
+		Event updateEvent = new Event(EventClass.AbstractQueuedLongSynchronizer, 
+				AbstractQueuedLongSynchronizerEventType.CompareAndSetState, s.toString());
+		updateEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		updateEvent.addValue(StringConstants.EXPECT, expect);
+		updateEvent.addValue(StringConstants.UPDATE, update);
+		updateEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(updateEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(boolean successful) : release(s, arg) {
-		AbstractQueuedLongSynchronizerEvent releaseEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.Release);
-		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		releaseEvent.setArg(arg);
-		releaseEvent.setSuccessful(successful);
+		Event releaseEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.Release, s.toString());
+		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		releaseEvent.addValue(StringConstants.ARG, arg);
+		releaseEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(releaseEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(boolean successful) : releaseShared(s, arg) {
-		AbstractQueuedLongSynchronizerEvent releaseEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.ReleaseShared);
-		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		releaseEvent.setArg(arg);
-		releaseEvent.setSuccessful(successful);
+		Event releaseEvent = new Event(EventClass.AbstractQueuedLongSynchronizer, 
+				AbstractQueuedLongSynchronizerEventType.ReleaseShared, s.toString());
+		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		releaseEvent.addValue(StringConstants.ARG, arg);
+		releaseEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(releaseEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long newState) : setState(s, newState) {
-		AbstractQueuedLongSynchronizerEvent updateEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.CompareAndSetState);
-		updateEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		updateEvent.setNewState(newState);
+		Event updateEvent = new Event(EventClass.AbstractQueuedLongSynchronizer, 
+				AbstractQueuedLongSynchronizerEventType.SetState, s.toString());
+		updateEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		updateEvent.addValue(StringConstants.NEW_STATE, newState);
 		
 		EventQueue.addEvent(updateEvent);
 	}
 	
 	before(AbstractQueuedLongSynchronizer s, long arg) : tryAcquire(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(boolean successful) : tryAcquire(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterTryAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setSuccessful(successful);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer, 
+				AbstractQueuedLongSynchronizerEventType.AfterTryAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	before(AbstractQueuedLongSynchronizer s, long arg, long nanosTimeout) : tryAcquireNanos(s, arg, nanosTimeout) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setNanosTimeout(nanosTimeout);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
+		acquireEvent.addValue(StringConstants.NANOS, nanosTimeout);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -190,31 +192,30 @@ public aspect AbstractQueuedLongSynchronizerDataCapture {
 	after(AbstractQueuedLongSynchronizer s, long arg, long nanosTimeout) returning(boolean successful) : 
 		tryAcquireNanos(s, arg, nanosTimeout) {
 		
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterTryAcquire);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setNanosTimeout(nanosTimeout);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.AfterTryAcquire, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(int tryAcquireResult) : tryAcquireShared(s, arg) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterTryAcquireShared);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setTryAcquireResult(tryAcquireResult);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer, 
+				AbstractQueuedLongSynchronizerEventType.AfterTryAcquireShared, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
+		acquireEvent.addValue(StringConstants.TRY_ACQUIRE_RESULT, tryAcquireResult);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	before(AbstractQueuedLongSynchronizer s, long arg, long nanosTimeout) : tryAcquireSharedNanos(s, arg, nanosTimeout) {
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquireShared);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setNanosTimeout(nanosTimeout);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.BeforeTryAcquireShared, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.ARG, arg);
+		acquireEvent.addValue(StringConstants.NANOS, nanosTimeout);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -222,30 +223,30 @@ public aspect AbstractQueuedLongSynchronizerDataCapture {
 	after(AbstractQueuedLongSynchronizer s, long arg, long nanosTimeout) returning(boolean successful) : 
 		tryAcquireSharedNanos(s, arg, nanosTimeout) {
 		
-		AbstractQueuedLongSynchronizerEvent acquireEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.AfterTryAcquireShared);
-		acquireEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		acquireEvent.setArg(arg);
-		acquireEvent.setNanosTimeout(nanosTimeout);
-		acquireEvent.setSuccessful(successful);
+		Event acquireEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.AfterTryAcquireShared, s.toString());
+		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		acquireEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(acquireEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(boolean successful) : tryRelease(s, arg) {
-		AbstractQueuedLongSynchronizerEvent releaseEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.TryRelease);
-		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		releaseEvent.setArg(arg);
+		Event releaseEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.TryRelease, s.toString());
+		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		releaseEvent.addValue(StringConstants.ARG, arg);
+		releaseEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(releaseEvent);
 	}
 	
 	after(AbstractQueuedLongSynchronizer s, long arg) returning(boolean successful) : tryReleaseShared(s, arg) {
-		AbstractQueuedLongSynchronizerEvent releaseEvent = new AbstractQueuedLongSynchronizerEvent(s.toString(),
-				AbstractQueuedLongSynchronizerEventType.TryReleaseShared);
-		releaseEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		releaseEvent.setArg(arg);
+		Event releaseEvent = new Event(EventClass.AbstractQueuedLongSynchronizer,
+				AbstractQueuedLongSynchronizerEventType.TryReleaseShared, s.toString());
+		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		releaseEvent.addValue(StringConstants.ARG, arg);
+		releaseEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(releaseEvent);
 	}

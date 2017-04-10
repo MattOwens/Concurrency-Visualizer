@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ReentrantReadWriteLockEvent extends Event {
 
 	private boolean fair;

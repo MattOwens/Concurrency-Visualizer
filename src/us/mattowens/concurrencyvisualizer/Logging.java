@@ -37,4 +37,8 @@ public class Logging {
 	public static void error(String message, Object... params) {
 		LOGGER.log(Level.SEVERE, message, params);
 	}
+	
+	public static void exception(Exception e) {
+		LOGGER.log(Level.SEVERE, e.toString(), e);
+	}
 }

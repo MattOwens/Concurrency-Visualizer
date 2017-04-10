@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.timer;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import java.util.Date;
 
+@Deprecated
 public class TimerEvent extends Event {
 	private TimerEventType eventType;
 	private Date startTime;

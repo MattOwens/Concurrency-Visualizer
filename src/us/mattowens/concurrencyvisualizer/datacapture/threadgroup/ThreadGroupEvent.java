@@ -2,6 +2,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.threadgroup;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ThreadGroupEvent extends Event {
 	
 	private int maxPriority;

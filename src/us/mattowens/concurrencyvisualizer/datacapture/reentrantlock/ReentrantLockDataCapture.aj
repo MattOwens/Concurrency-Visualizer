@@ -2,6 +2,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.reentrantlock;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 import java.util.concurrent.locks.Condition;
@@ -47,101 +50,100 @@ public aspect ReentrantLockDataCapture {
 	
 	
 	after() returning(ReentrantLock l) : create() {
-		ReentrantLockEvent createEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event createEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.Create, l.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	after(boolean isFair) returning(ReentrantLock l) : createFair(isFair) {
-		ReentrantLockEvent createEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		createEvent.setFair(isFair);
+		Event createEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.Create, l.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.FAIR, isFair);
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	after(ReentrantLock l) returning(boolean isLocked) : isLocked(l) {
-		ReentrantLockEvent event = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.IsLocked);
-		event.setJoinPointName(thisJoinPoint.getSignature().getName());
-		event.setLocked(isLocked);
+		Event event = new Event(EventClass.ReentrantLock, ReentrantLockEventType.IsLocked, l.toString());
+		event.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		event.addValue(StringConstants.LOCKED, isLocked);
 		
 		EventQueue.addEvent(event);
 	}
 	
 	before(ReentrantLock l) : lockPointcut(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.BeforeLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.BeforeLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(ReentrantLock l) : lockPointcut(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.AfterLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.AfterLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	before(ReentrantLock l) : lockInterruptibly(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.BeforeLockInterruptibly);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.BeforeLockInterruptibly, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(ReentrantLock l) : lockPointcut(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.AfterLockInterruptibly);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.AfterLockInterruptibly, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(ReentrantLock l) returning(Condition c) : newCondition(l) {
-		ReentrantLockEvent conditionEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.NewCondition);
-		conditionEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		conditionEvent.setNewCondition(c.toString());
+		Event conditionEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.NewCondition, l.toString());
+		conditionEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		conditionEvent.addValue(StringConstants.CONDITION, c.toString());
 		
 		EventQueue.addEvent(conditionEvent);
 	}
 	
 	before(ReentrantLock l) : tryLock(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.BeforeTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.BeforeTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(ReentrantLock l) returning(boolean hasLock) : tryLock(l) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.AfterTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setHasLock(hasLock);
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.AfterTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.SUCCESS, hasLock);
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	before(ReentrantLock l, long timeout, TimeUnit unit) : tryLockTimeout(l, timeout, unit) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.BeforeTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setTimeout(timeout);
-		lockEvent.setUnit(unit);
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.AfterTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.TIMEOUT, timeout);
+		lockEvent.addValue(StringConstants.TIME_UNIT, unit);
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(ReentrantLock l, long timeout, TimeUnit unit) returning(boolean hasLock) : tryLockTimeout(l, timeout, unit) {
-		ReentrantLockEvent lockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.AfterTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setHasLock(hasLock);
-		lockEvent.setTimeout(timeout);
-		lockEvent.setUnit(unit);
+		Event lockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.AfterTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.SUCCESS, hasLock);
+
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	before(ReentrantLock l) : unlockPointcut(l) {
-		ReentrantLockEvent unlockEvent = new ReentrantLockEvent(l.toString(), ReentrantLockEventType.Unlock);
-		unlockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event unlockEvent = new Event(EventClass.ReentrantLock, ReentrantLockEventType.Unlock, l.toString());
+		unlockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(unlockEvent);
 	}

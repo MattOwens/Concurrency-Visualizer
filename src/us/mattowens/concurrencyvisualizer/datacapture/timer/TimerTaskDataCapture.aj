@@ -2,6 +2,8 @@ package us.mattowens.concurrencyvisualizer.datacapture.timer;
 
 import java.util.TimerTask;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect TimerTaskDataCapture {
@@ -19,23 +21,25 @@ public aspect TimerTaskDataCapture {
 	
 	
 	after() returning(TimerTask t) : create() {
-		TimerTaskEvent createEvent = new TimerTaskEvent(t.toString(), 
-				TimerTaskEventType.Create);
+		Event createEvent = new Event(EventClass.TimerTask, 
+				TimerTaskEventType.Create, t.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(TimerTask t) : cancel(t) {
-		TimerTaskEvent cancelEvent = new TimerTaskEvent(t.toString(), 
-				TimerTaskEventType.Cancel);
+		Event cancelEvent = new Event(EventClass.TimerTask, 
+				TimerTaskEventType.Cancel, t.toString());
+		cancelEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(cancelEvent);
 	}
 	
 	before(TimerTask t) : run(t) {
-		TimerTaskEvent runEvent = new TimerTaskEvent(t.toString(), 
-				TimerTaskEventType.Run);
-		
+		Event runEvent = new Event(EventClass.TimerTask,  
+				TimerTaskEventType.Run, t.toString());
+		runEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(runEvent);
 	}
 

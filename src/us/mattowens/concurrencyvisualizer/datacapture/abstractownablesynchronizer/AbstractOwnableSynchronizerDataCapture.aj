@@ -2,6 +2,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.abstractownablesynchroniz
 
 import java.util.concurrent.locks.AbstractOwnableSynchronizer;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect AbstractOwnableSynchronizerDataCapture {
@@ -20,27 +23,27 @@ public aspect AbstractOwnableSynchronizerDataCapture {
 		
 	
 	after() returning(AbstractOwnableSynchronizer s) : create() {
-		AbstractOwnableSynchronizerEvent event = new AbstractOwnableSynchronizerEvent(s.toString(),
-				AbstractOwnableSynchronizerEventType.Create);
-		event.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event event = new Event(EventClass.AbstractOwnableSynchronizer,
+				AbstractOwnableSynchronizerEventType.Create, s.toString());
+		event.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(event);
 	}
 	
 	after(AbstractOwnableSynchronizer s) returning(Thread t) : getOwnerThread(s) {
-		AbstractOwnableSynchronizerEvent event = new AbstractOwnableSynchronizerEvent(s.toString(),
-				AbstractOwnableSynchronizerEventType.GetOwnerThread);
-		event.setJoinPointName(thisJoinPoint.getSignature().getName());
-		event.setThreadName(t.getName());
+		Event event = new Event(EventClass.AbstractOwnableSynchronizer,
+				AbstractOwnableSynchronizerEventType.GetOwnerThread, s.toString());
+		event.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		event.addValue(StringConstants.OWNER_THREAD,t.getName());
 		
 		EventQueue.addEvent(event);
 	}
 	
 	before(AbstractOwnableSynchronizer s, Thread t) : setOwnerThread(s, t) {
-		AbstractOwnableSynchronizerEvent event = new AbstractOwnableSynchronizerEvent(s.toString(),
-				AbstractOwnableSynchronizerEventType.SetOwnerThread);
-		event.setJoinPointName(thisJoinPoint.getSignature().getName());
-		event.setThreadName(t.getName());
+		Event event = new Event(EventClass.AbstractOwnableSynchronizer, 
+				AbstractOwnableSynchronizerEventType.SetOwnerThread, s.toString());
+		event.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		event.addValue(StringConstants.OWNER_THREAD, t.getName());
 		
 		EventQueue.addEvent(event);
 	}

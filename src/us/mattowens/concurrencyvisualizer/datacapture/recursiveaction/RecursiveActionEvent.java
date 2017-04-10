@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.recursiveaction;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class RecursiveActionEvent extends Event {
 	
 	private RecursiveActionEventType eventType;

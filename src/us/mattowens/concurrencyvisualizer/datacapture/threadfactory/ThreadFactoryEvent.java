@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.threadfactory;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ThreadFactoryEvent extends Event {
 	
 	private ThreadFactoryEventType eventType;

@@ -15,32 +15,34 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+
 public abstract class ZoomedExecutionPanel extends JPanel implements MouseListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ArrayList<DisplayEvent> events;
-	private HashMap<Rectangle2D, DisplayEvent> eventsByRectangle;
+	private ArrayList<Event> events;
+	private HashMap<Rectangle2D, Event> eventsByRectangle;
 	private double timeScalingMultiplier;
 	private long firstEventTimestamp;
 	
-	public ZoomedExecutionPanel(ArrayList<DisplayEvent> events) {
+	public ZoomedExecutionPanel(ArrayList<Event> events) {
 		this.events = events;
 		setLayout(null);
 		addMouseListener(this);
-		Collections.sort(events, new DisplayEventComparator());
+		Collections.sort(events, new EventComparator());
 		setScalingConstants();
 	}
 	
-	protected abstract String getEventLabel(DisplayEvent event);
+	protected abstract String getEventLabel(Event event);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		eventsByRectangle = new HashMap<Rectangle2D, DisplayEvent>();
+		eventsByRectangle = new HashMap<Rectangle2D, Event>();
 		showEvents(g);
 		drawTimeMarkers((Graphics2D) g);
 	}
@@ -51,7 +53,7 @@ public abstract class ZoomedExecutionPanel extends JPanel implements MouseListen
 		int eventYLocation = 0;;
 		
 		firstEventTimestamp = events.get(0).getTimestamp();
-		for(DisplayEvent event : events) {
+		for(Event event : events) {
 			
 			String eventLabel = getEventLabel(event);
 			int displayWidth = g.getFontMetrics().stringWidth(eventLabel);
@@ -96,8 +98,8 @@ public abstract class ZoomedExecutionPanel extends JPanel implements MouseListen
 		long minDifference = Long.MAX_VALUE;
 		
 		for(int i = 0; i < events.size() - 1; i++) {
-			 DisplayEvent firstEvent = events.get(i);
-			 DisplayEvent secondEvent = events.get(i+1);
+			 Event firstEvent = events.get(i);
+			 Event secondEvent = events.get(i+1);
 			 
 			 long timeDifference = secondEvent.getTimestamp() - firstEvent.getTimestamp();
 			 

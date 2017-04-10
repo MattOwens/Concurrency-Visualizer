@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.object;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class MonitorEvent extends Event {
 	private MonitorEventType eventType;
     private long timeout;

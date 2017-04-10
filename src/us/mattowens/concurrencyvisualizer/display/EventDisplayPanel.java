@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+
 public abstract class EventDisplayPanel extends JPanel implements MouseListener {
 
 	/**
@@ -34,7 +36,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	private CopyOnWriteArrayList<EventGroupDisplayPanel> eventGroupPanelsList;
 	
 	//Used by mouse listener to track mouse clicks
-	private HashMap<Rectangle2D, DisplayEvent> eventRectangles;
+	private HashMap<Rectangle2D, Event> eventRectangles;
 	
 	private long maxTimestamp;
 	private long minTimestamp;
@@ -56,14 +58,14 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 		addMouseListener(this);
 	}
 	
-	protected abstract Object getEventGroupKey(DisplayEvent event);
-	protected abstract String getEventGroupName(DisplayEvent fromEvent);
-	protected abstract ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<DisplayEvent> events);
+	protected abstract Object getEventGroupKey(Event event);
+	protected abstract String getEventGroupName(Event fromEvent);
+	protected abstract ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<Event> events);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		eventRectangles = new HashMap<Rectangle2D, DisplayEvent>();
+		eventRectangles = new HashMap<Rectangle2D, Event>();
 		Graphics2D g2 = (Graphics2D) g;
 		
 		for(EventGroupDisplayPanel threadPanel : eventGroupPanelsList) {
@@ -94,9 +96,9 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	}
 	
 	private void drawEventMarkers(Graphics2D g2, EventGroupDisplayPanel groupPanel) {
-		DisplayEvent previousEvent = null;
+		Event previousEvent = null;
 		
-		for(DisplayEvent nextEvent : groupPanel.getEventsArray()) {
+		for(Event nextEvent : groupPanel.getEventsArray()) {
 			if(previousEvent != null) {
 				Line2D.Double connectingLine = new Line2D.Double(groupPanel.getMidPoint(),
 						timestampToPosition(previousEvent.getTimestamp()), groupPanel.getMidPoint(), 
@@ -156,16 +158,16 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	
 
 	
-	public void addEvent(DisplayEvent event) {
-		if(!eventGroupPanelsMap.containsKey(getEventGroupKey(event))) {
-			addNewEventGroup(event);
+	public void addEvent(Event nextEvent) {
+		if(!eventGroupPanelsMap.containsKey(getEventGroupKey(nextEvent))) {
+			addNewEventGroup(nextEvent);
 		}
-		maxTimestamp = event.getTimestamp();
-		addDisplayEvent(event);
+		maxTimestamp = nextEvent.getTimestamp();
+		addDisplayEvent(nextEvent);
 	}
 	
 	//Adds a new column to the display for the thread name and id in the DisplayEvent fromEvent
-	private void addNewEventGroup(DisplayEvent fromEvent) {
+	private void addNewEventGroup(Event fromEvent) {
 		EventGroupDisplayPanel newGroupPanel = new EventGroupDisplayPanel(getEventGroupKey(fromEvent), 
 				getEventGroupName(fromEvent));
 		int numEventGroups = eventGroupPanelsList.size();
@@ -178,7 +180,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 	}
 	
 	//Adds a new event to the display
-	private void addDisplayEvent(DisplayEvent newEvent) {
+	private void addDisplayEvent(Event newEvent) {
 		if(minTimestamp == 0) {
 			minTimestamp = newEvent.getTimestamp();
 		}
@@ -234,7 +236,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 		Point clickPoint = e.getPoint();
 		
 	
-		ArrayList<DisplayEvent> coveringEvents = getEventsCoveringPoint(clickPoint);
+		ArrayList<Event> coveringEvents = getEventsCoveringPoint(clickPoint);
 		
 		if(coveringEvents.size() > 0) {
 
@@ -247,8 +249,8 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 		}
 	}
 
-	private ArrayList<DisplayEvent> getEventsCoveringPoint(Point clickPoint) {
-		ArrayList<DisplayEvent> eventsCovering = new ArrayList<DisplayEvent>();
+	private ArrayList<Event> getEventsCoveringPoint(Point clickPoint) {
+		ArrayList<Event> eventsCovering = new ArrayList<Event>();
 		
 		for(Rectangle2D rectangle : eventRectangles.keySet()) {
 			if(rectangle.contains(clickPoint)) {

@@ -17,10 +17,13 @@ import us.mattowens.concurrencyvisualizer.display.inputadapters.SocketInputAdapt
 public aspect MainCapture {
 	
 	private ConcurrencyVisualizerMainWindow mainWindow;
+	long start;
+	long end;
 
 	pointcut main() :
 		execution(void main(String[])) &&
-		!within(us.mattowens.concurrencyvisualizer..*);
+		!within(us.mattowens.concurrencyvisualizer..*) &&
+		!within(cvrunner..*);
 	
 	before() : main() {
 
@@ -68,6 +71,12 @@ public aspect MainCapture {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		start = System.nanoTime();
+	}
+	
+	after() : main() {
+		end = System.nanoTime();
+		System.out.println(end - start);
+		EventQueue.stopEventOutput();
 	}
 }

@@ -2,6 +2,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.runnable;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class RunnableEvent extends Event {
 	
 	private RunnableEventType eventType;

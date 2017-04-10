@@ -3,6 +3,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.timer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 import java.util.Date;
@@ -63,110 +66,110 @@ public aspect TimerDataCapture {
 		args(task, delay, period);
 	
 	after() returning(Timer t) : create() {
-		TimerEvent createEvent = new TimerEvent(t.toString(), TimerEventType.Create);
+		Event createEvent = new Event(EventClass.Timer, TimerEventType.Create, t.toString());
 		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	after(boolean isDaemon) returning(Timer t) : createDaemon(isDaemon) {
-		TimerEvent createEvent = new TimerEvent(t.toString(), TimerEventType.Create);
-		createEvent.setDaemon(isDaemon);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event createEvent = new Event(EventClass.Timer, TimerEventType.Create, t.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.DAEMON, isDaemon);
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	after(String name) returning(Timer t) : createName(name) {
-		TimerEvent createEvent = new TimerEvent(name, TimerEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event createEvent = new Event(EventClass.Timer, TimerEventType.Create, name);
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	after(String name, boolean isDaemon) returning(Timer t) :
 		createNameDaemon(name, isDaemon) {
-		TimerEvent createEvent = new TimerEvent(name, TimerEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		createEvent.setDaemon(isDaemon);
+		Event createEvent = new Event(EventClass.Timer, TimerEventType.Create, name);
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.DAEMON, isDaemon);
 		
 		EventQueue.addEvent(createEvent);
 	}
 		
 	after(Timer t) : cancel(t) {
-		TimerEvent cancelEvent = new TimerEvent(t.toString(), TimerEventType.Cancel);
-		cancelEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event cancelEvent = new Event(EventClass.Timer, TimerEventType.Cancel, t.toString());
+		cancelEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(cancelEvent);
 	}
 	
 	after(Timer t) returning(int numPurged) : purge(t) {
-		TimerEvent purgeEvent = new TimerEvent(t.toString(), TimerEventType.Purge);
-		purgeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		purgeEvent.setNumPurged(numPurged);
+		Event purgeEvent = new Event(EventClass.Timer, TimerEventType.Purge, t.toString());
+		purgeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		purgeEvent.addValue(StringConstants.NUM_PURGED, numPurged);
 		
 		
 		EventQueue.addEvent(purgeEvent);
 	}
 	
 	before(Timer t, TimerTask task, Date time) : scheduleSetTime(t, task, time) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setStartTime(time);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.START_TIME, time);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}
 	
 	before(Timer t, TimerTask task, long delay) : scheduleDelay(t, task, delay) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setDelay(delay);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.DELAY, delay);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}
 	
 	before(Timer t, TimerTask task, Date time, long period) :
 		schedulePeriodicSetTime(t, task, time, period) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setStartTime(time);
-		scheduleEvent.setPeriod(period);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.START_TIME, time);
+		scheduleEvent.addValue(StringConstants.PERIOD, period);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}
 	
 	before(Timer t, TimerTask task, long delay, long period) :
 		schedulePeriodicDelay(t, task, delay, period) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setDelay(delay);
-		scheduleEvent.setPeriod(period);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.DELAY, delay);
+		scheduleEvent.addValue(StringConstants.PERIOD, period);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}
 	
 	before(Timer t, TimerTask task, Date time, long period) :
 		scheduleAtFixedRateSetTime(t, task, time, period) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setStartTime(time);
-		scheduleEvent.setPeriod(period);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.START_TIME, time);
+		scheduleEvent.addValue(StringConstants.PERIOD, period);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}
 	
 	before(Timer t, TimerTask task, long delay, long period) :
 		scheduleAtFixedRateDelay(t, task, delay, period) {
-		TimerEvent scheduleEvent = new TimerEvent(t.toString(), TimerEventType.Schedule);
-		scheduleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		scheduleEvent.setTaskDescription(task.toString());
-		scheduleEvent.setDelay(delay);
-		scheduleEvent.setPeriod(period);
+		Event scheduleEvent = new Event(EventClass.Timer, TimerEventType.Schedule, t.toString());
+		scheduleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		scheduleEvent.addValue(StringConstants.TASK, task.toString());
+		scheduleEvent.addValue(StringConstants.DELAY, delay);
+		scheduleEvent.addValue(StringConstants.PERIOD, period);
 		
 		EventQueue.addEvent(scheduleEvent);
 	}

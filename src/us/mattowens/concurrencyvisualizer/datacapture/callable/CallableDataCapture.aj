@@ -1,12 +1,23 @@
 package us.mattowens.concurrencyvisualizer.datacapture.callable;
 
+import java.util.concurrent.Callable;
+
+import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
+
 public aspect CallableDataCapture {
 
-	 /*pointcut callPointcut(Callable c) :
-		call(Object Callable.call()) &&
-		target(c);
+	pointcut create() :
+		call(Callable.new());
 	
-	before(Callable c) : callPointcut(c) {
+	pointcut callPointcut() :
+		call(* Callable.call());
+
+	after() : create() {
+		System.out.println("There's a fucking callable being created");
+	}
+	before() : callPointcut() {
+		System.out.println("Matched call to Callable.call()");
+		Callable<?> c = (Callable<?>) thisJoinPoint.getTarget();
 		CallableEvent callableEvent = new CallableEvent(c.toString(),
 				CallableEventType.BeforeCall);
 		callableEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
@@ -14,7 +25,8 @@ public aspect CallableDataCapture {
 		EventQueue.addEvent(callableEvent);
 	}
 	
-	after(Callable c)  returning(Object result) : callPointcut(c) {
+	/*after()  returning(* result) : callPointcut() {
+		Callable<?> c = (Callable<?>) thisJoinPoint.getTarget();
 		CallableEvent callableEvent = new CallableEvent(c.toString(),
 				CallableEventType.AfterCall);
 		callableEvent.setJoinPointName(thisJoinPoint.getSignature().getName());

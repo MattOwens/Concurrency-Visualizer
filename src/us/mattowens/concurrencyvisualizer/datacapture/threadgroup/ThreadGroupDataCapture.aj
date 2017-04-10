@@ -1,5 +1,8 @@
 package us.mattowens.concurrencyvisualizer.datacapture.threadgroup;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect ThreadGroupDataCapture {
@@ -31,52 +34,52 @@ public aspect ThreadGroupDataCapture {
 		args(maxPriority);
 	
 	before(String name) : create(name) {
-		ThreadGroupEvent createEvent = new ThreadGroupEvent(name, 
-				ThreadGroupEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		Event createEvent = new Event(EventClass.ThreadGroup, 
+				ThreadGroupEventType.Create, name);
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(ThreadGroup parent, String name) : createWithParent(parent, name) {
-		ThreadGroupEvent createEvent = new ThreadGroupEvent(name, 
-				ThreadGroupEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
-		createEvent.setParentName(parent.getName());
+		Event createEvent = new Event(EventClass.ThreadGroup,  
+				ThreadGroupEventType.Create, name);
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
+		createEvent.addValue(StringConstants.PARENT, parent.getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(ThreadGroup g) : destroy(g) {
-		ThreadGroupEvent destroyEvent = new ThreadGroupEvent(g.getName(), 
-				ThreadGroupEventType.Destroy);
-		destroyEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		Event destroyEvent = new Event(EventClass.ThreadGroup,  
+				ThreadGroupEventType.Destroy, g.getName());
+		destroyEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
 		
 		EventQueue.addEvent(destroyEvent);
 	}
 	
 	before(ThreadGroup g) : interrupt(g) {
-		ThreadGroupEvent interruptEvent = new ThreadGroupEvent(g.getName(), 
-				ThreadGroupEventType.Interrupt);
-		interruptEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
+		Event interruptEvent = new Event(EventClass.ThreadGroup, 
+				ThreadGroupEventType.Interrupt, g.getName());
+		interruptEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
 		
 		EventQueue.addEvent(interruptEvent);
 	}
 	
 	before(ThreadGroup g, boolean daemon) : setDaemon(g, daemon) {
-		ThreadGroupEvent daemonEvent = new ThreadGroupEvent(g.getName(), 
-				ThreadGroupEventType.DaemonChange);
-		daemonEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
-		daemonEvent.setDameon(daemon);
+		Event daemonEvent = new Event(EventClass.ThreadGroup, 
+				ThreadGroupEventType.DaemonChange, g.getName());
+		daemonEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
+		daemonEvent.addValue(StringConstants.DAEMON, daemon);
 		
 		EventQueue.addEvent(daemonEvent);
 	}
 	
 	before(ThreadGroup g, int maxPriority) : setMaxPriority(g, maxPriority) {
-		ThreadGroupEvent priorityEvent = new ThreadGroupEvent(g.getName(), 
-				ThreadGroupEventType.PriorityChange);
-		priorityEvent.setJoinPointName(thisJoinPoint.getSignature().toString());
-		priorityEvent.setMaxPriority(maxPriority);
+		Event priorityEvent = new Event(EventClass.ThreadGroup,  
+				ThreadGroupEventType.PriorityChange, g.getName());
+		priorityEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().toString());
+		priorityEvent.addValue(StringConstants.MAX_PRIORITY, maxPriority);
 		
 		EventQueue.addEvent(priorityEvent);
 	}

@@ -3,6 +3,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.cyclicbarrier;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect CyclicBarrierDataCapture {
@@ -30,10 +33,10 @@ public aspect CyclicBarrierDataCapture {
 	
 	
 	after(int parties) returning(CyclicBarrier b) : create(parties) {
-		CyclicBarrierEvent createEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		createEvent.setParties(parties);
+		Event createEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.Create, b.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.PARTIES, parties);
 		
 		EventQueue.addEvent(createEvent);
 	}
@@ -41,28 +44,28 @@ public aspect CyclicBarrierDataCapture {
 	after(int parties, Runnable action) returning(CyclicBarrier b) : 
 		createAction(parties, action) {
 		
-		CyclicBarrierEvent createEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		createEvent.setParties(parties);
-		createEvent.setRunnable(action.toString());
+		Event createEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.Create, b.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.PARTIES, parties);
+		createEvent.addValue(StringConstants.RUNNABLE, action.toString());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(CyclicBarrier b) : await(b) {
-		CyclicBarrierEvent awaitEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.BeforeAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event awaitEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.BeforeAwait, b.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(awaitEvent);
 	}
 	
 	after(CyclicBarrier b) returning(int arrivalIndex): await(b) {
-		CyclicBarrierEvent awaitEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.AfterAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		awaitEvent.setArrivalIndex(arrivalIndex);
+		Event awaitEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.AfterAwait, b.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		awaitEvent.addValue(StringConstants.ARRIVAL, arrivalIndex);
 		
 		EventQueue.addEvent(awaitEvent);
 	}
@@ -70,11 +73,11 @@ public aspect CyclicBarrierDataCapture {
 	before(CyclicBarrier b, long timeout, TimeUnit unit) : 
 		awaitTimeout(b, timeout, unit) {
 		
-		CyclicBarrierEvent awaitEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.BeforeAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		awaitEvent.setTimeout(timeout);
-		awaitEvent.setTimeoutUnit(unit);
+		Event awaitEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.BeforeAwait, b.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		awaitEvent.addValue(StringConstants.TIMEOUT, timeout);
+		awaitEvent.addValue(StringConstants.TIME_UNIT, unit);
 		
 		EventQueue.addEvent(awaitEvent);
 	}
@@ -82,20 +85,18 @@ public aspect CyclicBarrierDataCapture {
 	after(CyclicBarrier b, long timeout, TimeUnit unit) returning(int arrivalIndex) : 
 		awaitTimeout(b, timeout, unit) {
 		
-		CyclicBarrierEvent awaitEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.AfterAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		awaitEvent.setTimeout(timeout);
-		awaitEvent.setTimeoutUnit(unit);
-		awaitEvent.setArrivalIndex(arrivalIndex);
+		Event awaitEvent = new Event(EventClass.CyclicBarrier, 
+				CyclicBarrierEventType.AfterAwait, b.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		awaitEvent.addValue(StringConstants.ARRIVAL, arrivalIndex);
 		
 		EventQueue.addEvent(awaitEvent);
 	}
 	
 	before(CyclicBarrier b) : reset(b) {
-		CyclicBarrierEvent resetEvent = new CyclicBarrierEvent(b.toString(), 
-				CyclicBarrierEventType.Reset);
-		resetEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event resetEvent = new Event(EventClass.CyclicBarrier,  
+				CyclicBarrierEventType.Reset, b.toString());
+		resetEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(resetEvent);
 	}

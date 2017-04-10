@@ -181,7 +181,7 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		Process process = Runtime.getRuntime().exec("java -cp lib\\*;lib\\aspectj1.8\\lib\\*;"
 				+ "aspectj_output.jar; " + mainClass);
 		
-		InputStream stdin = process.getErrorStream();
+		InputStream stdin = process.getInputStream();
 		InputStreamReader isr = new InputStreamReader(stdin);
 		BufferedReader br = new BufferedReader(isr);
 

@@ -1,5 +1,8 @@
 package us.mattowens.concurrencyvisualizer.datacapture.object;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect MonitorDataCapture {
@@ -33,87 +36,74 @@ public aspect MonitorDataCapture {
 	
 
 	before(Object o) : wait(o) {
-		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event beforeEvent = new Event(EventClass.Monitor, MonitorEventType.BeforeWait, o.toString());
+		beforeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(beforeEvent);
 	}
 	
 	after(Object o) : wait(o) {
-		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event afterEvent = new Event(EventClass.Monitor, MonitorEventType.AfterWait, o.toString());
+		afterEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(afterEvent);
 	}
 	
 	before(Object o, long timeout) : waitTimeout(o, timeout) {
-		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		beforeEvent.setTimeout(timeout);
+		Event beforeEvent = new Event(EventClass.Monitor, MonitorEventType.BeforeWait, o.toString());
+		beforeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		beforeEvent.addValue(StringConstants.TIMEOUT, timeout);
 		
 		EventQueue.addEvent(beforeEvent);	
 	}
 	
 	after(Object o, long timeout) : waitTimeout(o, timeout) {
-		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		afterEvent.setTimeout(timeout);
+		Event afterEvent = new Event(EventClass.Monitor, MonitorEventType.AfterWait, o.toString());
+		afterEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(afterEvent);
 	}
 	
 	before(Object o, long timeout, int nanos) : waitFinerTimeout(o, timeout, nanos) {
-		MonitorEvent beforeEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.BeforeWait);
-		beforeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		beforeEvent.setTimeout(timeout);
-		beforeEvent.setNanos(nanos);
+		Event beforeEvent = new Event(EventClass.Monitor, MonitorEventType.BeforeWait, o.toString());
+		beforeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		beforeEvent.addValue(StringConstants.TIMEOUT, timeout);
+		beforeEvent.addValue(StringConstants.NANOS, nanos);
 		
 		EventQueue.addEvent(beforeEvent);	
 	}
 	
 	after(Object o, long timeout, int nanos) : waitFinerTimeout(o, timeout, nanos) {
-		MonitorEvent afterEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.AfterWait);
-		afterEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		afterEvent.setTimeout(timeout);
-		afterEvent.setNanos(nanos);
+		Event afterEvent = new Event(EventClass.Monitor, MonitorEventType.AfterWait, o.toString());
+		afterEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(afterEvent);
 	}
 	
 	after(Object o) : notify(o) {
-		MonitorEvent notifyEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.Notify);
-		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event notifyEvent = new Event(EventClass.Monitor, MonitorEventType.Notify, o.toString());
+		notifyEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(notifyEvent);
 	}
 	
 	after(Object o) : notifyAll(o) {
-		MonitorEvent notifyEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.NotifyAll);
-		notifyEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event notifyEvent = new Event(EventClass.Monitor, MonitorEventType.NotifyAll, o.toString());
+		notifyEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(notifyEvent);
 	}
 	
 	before(Object o) : synchronizedMethod(o) {
-		MonitorEvent syncEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.BeforeSynchronized);
-		syncEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event syncEvent = new Event(EventClass.Monitor, MonitorEventType.BeforeSynchronized, o.toString());
+		syncEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(syncEvent);
 	}
 	
 	after(Object o) : synchronizedMethod(o) {
-		MonitorEvent syncEvent = new MonitorEvent(o.toString(),
-				MonitorEventType.AfterSynchronized);
-		syncEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event syncEvent = new Event(EventClass.Monitor, MonitorEventType.AfterSynchronized, o.toString());
+		syncEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(syncEvent);
 	}

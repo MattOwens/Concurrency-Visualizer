@@ -2,6 +2,8 @@ package us.mattowens.concurrencyvisualizer.display;
 
 import java.util.ArrayList;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+
 public class EventByTargetDisplayPanel extends EventDisplayPanel {
 
 	/**
@@ -10,17 +12,17 @@ public class EventByTargetDisplayPanel extends EventDisplayPanel {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected Object getEventGroupKey(DisplayEvent event) {
-		return event.getTargetDescription();
+	protected Object getEventGroupKey(Event event) {
+		return event.getTarget();
 	}
 
 	@Override
-	protected String getEventGroupName(DisplayEvent fromEvent) {
-		return fromEvent.getTargetDescription();
+	protected String getEventGroupName(Event fromEvent) {
+		return fromEvent.getTarget();
 	}
 
 	@Override
-	protected ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<DisplayEvent> events) {
+	protected ZoomedExecutionPanel createZoomedExecutionPanel(ArrayList<Event> events) {
 		return new TargetZoomedExecutionPanel(events);
 	}
 

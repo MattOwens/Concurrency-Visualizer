@@ -2,6 +2,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.exeutor;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ExecutorEvent extends Event {
 
 	private ExecutorEventType eventType;

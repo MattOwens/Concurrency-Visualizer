@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.abstractownablesynchroniz
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class AbstractOwnableSynchronizerEvent extends Event {
 
 	private AbstractOwnableSynchronizerEventType eventType;

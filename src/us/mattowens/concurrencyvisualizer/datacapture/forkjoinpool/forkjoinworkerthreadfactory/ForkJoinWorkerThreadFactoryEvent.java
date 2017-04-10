@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.forkjoinwork
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ForkJoinWorkerThreadFactoryEvent extends Event {
 
 	private ForkJoinWorkerThreadFactoryEventType eventType;

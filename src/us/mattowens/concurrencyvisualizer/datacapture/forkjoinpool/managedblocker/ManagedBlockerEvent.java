@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.managedblock
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class ManagedBlockerEvent extends Event {
 
 	private ManagedBlockerEventType eventType;

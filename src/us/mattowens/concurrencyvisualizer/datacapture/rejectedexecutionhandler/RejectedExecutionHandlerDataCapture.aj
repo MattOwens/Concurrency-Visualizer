@@ -3,6 +3,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.rejectedexecutionhandler;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect RejectedExecutionHandlerDataCapture {
@@ -18,11 +21,11 @@ public aspect RejectedExecutionHandlerDataCapture {
 	before(RejectedExecutionHandler h, Runnable r, ThreadPoolExecutor e) :
 		rejectedExecution(h, r, e) {
 		
-		RejectedExecutionHandlerEvent handleEvent = new RejectedExecutionHandlerEvent(
-				h.toString(), RejectedExecutionHandlerEventType.RejectedExecution);
-		handleEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		handleEvent.setRunnable(r.toString());
-		handleEvent.setThreadPoolExecutor(e.toString());
+		Event handleEvent = new Event(EventClass.RejectedExecutionHandler,
+				RejectedExecutionHandlerEventType.RejectedExecution, h.toString());
+		handleEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		handleEvent.addValue(StringConstants.RUNNABLE, r.toString());
+		handleEvent.addValue(StringConstants.EXECUTOR, e.toString());
 		
 		EventQueue.addEvent(handleEvent);
 	}

@@ -3,6 +3,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.countdownlatch;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect CountDownLatchDataCapture {
@@ -26,37 +29,37 @@ public aspect CountDownLatchDataCapture {
 	
 	
 	after(int count) returning(CountDownLatch l) : create(count) {
-		CountDownLatchEvent createEvent = new CountDownLatchEvent(l.toString(), 
-				CountDownLatchEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		createEvent.setCount(count);
+		Event createEvent = new Event(EventClass.CountDownLatch,  
+				CountDownLatchEventType.Create, l.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		createEvent.addValue(StringConstants.COUNT, count);
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(CountDownLatch l)  : await(l) {
-		CountDownLatchEvent awaitEvent = new CountDownLatchEvent(l.toString(), 
-				CountDownLatchEventType.BeforeAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event awaitEvent = new Event(EventClass.CountDownLatch, 
+				CountDownLatchEventType.BeforeAwait, l.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(awaitEvent);
 	}
 	
 	after(CountDownLatch l)  : await(l) {
-		CountDownLatchEvent awaitEvent = new CountDownLatchEvent(l.toString(), 
-				CountDownLatchEventType.AfterAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event awaitEvent = new Event(EventClass.CountDownLatch,  
+				CountDownLatchEventType.AfterAwait, l.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(awaitEvent);
 	}
 	
 	before(CountDownLatch l, long timeout, TimeUnit timeoutUnit)  
 		: awaitTimeout(l, timeout, timeoutUnit) {
-		CountDownLatchEvent awaitEvent = new CountDownLatchEvent(l.toString(), 
-				CountDownLatchEventType.BeforeAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		awaitEvent.setTimeout(timeout);
-		awaitEvent.setTimeUnit(timeoutUnit);
+		Event awaitEvent = new Event(EventClass.CountDownLatch, 
+				CountDownLatchEventType.BeforeAwait, l.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		awaitEvent.addValue(StringConstants.TIMEOUT, timeout);
+		awaitEvent.addValue(StringConstants.TIME_UNIT, timeoutUnit);
 		
 		EventQueue.addEvent(awaitEvent);
 	}
@@ -64,20 +67,18 @@ public aspect CountDownLatchDataCapture {
 	after(CountDownLatch l, long timeout, TimeUnit timeoutUnit)  
 		returning(boolean successful) : awaitTimeout(l, timeout, timeoutUnit) {
 			
-		CountDownLatchEvent awaitEvent = new CountDownLatchEvent(l.toString(), 
-				CountDownLatchEventType.AfterAwait);
-		awaitEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		awaitEvent.setTimeout(timeout);
-		awaitEvent.setTimeUnit(timeoutUnit);
-		awaitEvent.setSuccessful(successful);
+		Event awaitEvent = new Event(EventClass.CountDownLatch,  
+				CountDownLatchEventType.AfterAwait, l.toString());
+		awaitEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		awaitEvent.addValue(StringConstants.SUCCESS, successful);
 		
 		EventQueue.addEvent(awaitEvent);
 	}
 	
 	before(CountDownLatch l) : countDown(l) {
-		CountDownLatchEvent downEvent = new CountDownLatchEvent(l.toString(),
-				CountDownLatchEventType.CountDown);
-		downEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event downEvent = new Event(EventClass.CountDownLatch, 
+				CountDownLatchEventType.CountDown, l.toString());
+		downEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(downEvent);
 	}

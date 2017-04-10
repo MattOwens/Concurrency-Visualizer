@@ -2,6 +2,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.timer;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class TimerTaskEvent extends Event {
 	
 	private TimerTaskEventType eventType;

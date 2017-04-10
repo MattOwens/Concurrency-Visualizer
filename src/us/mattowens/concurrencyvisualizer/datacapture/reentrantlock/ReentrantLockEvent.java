@@ -3,7 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.reentrantlock;
 import java.util.concurrent.TimeUnit;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
-
+@Deprecated
 public class ReentrantLockEvent extends Event {
 
 	private ReentrantLockEventType eventType;

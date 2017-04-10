@@ -1,5 +1,7 @@
 package us.mattowens.concurrencyvisualizer.datacapture.runnable;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect RunnableDataCapture {
@@ -14,22 +16,22 @@ public aspect RunnableDataCapture {
 		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	after() returning(Runnable r) : create() {
-		RunnableEvent createEvent = new RunnableEvent(r.toString(), RunnableEventType.Create);
-		createEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event createEvent = new Event(EventClass.Runnable, RunnableEventType.Create, r.toString());
+		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(createEvent);
 	}
 	
 	before(Runnable r) : run(r) {
-		RunnableEvent runEvent = new RunnableEvent(r.toString(), RunnableEventType.BeforeRun);
-		runEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event runEvent = new Event(EventClass.Runnable, RunnableEventType.BeforeRun, r.toString());
+		runEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 
 		EventQueue.addEvent(runEvent);
 	}
 	
 	after(Runnable r) : run(r) {
-		RunnableEvent runEvent = new RunnableEvent(r.toString(), RunnableEventType.AfterRun);
-		runEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event runEvent = new Event(EventClass.Runnable, RunnableEventType.AfterRun, r.toString());
+		runEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 
 		EventQueue.addEvent(runEvent);
 	}

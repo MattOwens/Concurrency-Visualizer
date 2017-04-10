@@ -6,17 +6,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+
 public class DisplayEventFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 	
-	public DisplayEventFrame(DisplayEvent event) {
-		super(event.getEventType() + "@" + event.getTargetDescription(), true, true, false, false);
+	public DisplayEventFrame(Event event) {
+		super(event.getEventTypeLabel() + "@" + event.getTarget(), true, true, false, false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		addNewLabel("Event Class", event.getEventClass());
-		addNewLabel("Event Type", event.getEventType());
-		addNewLabel("Target", event.getTargetDescription());
+		addNewLabel("Event Type", event.getEventTypeLabel());
+		addNewLabel("Target", event.getTarget());
 		addNewLabel("Timestamp", event.getTimestamp());
-		addNewLabel("Thread Name", event.getThreadName());
+		//addNewLabel("Thread Name", event.getThreadName());
 		addNewLabel("Thread Id", event.getThreadId());
 		addNewLabel("Join Point", event.getJoinPointName());
 		

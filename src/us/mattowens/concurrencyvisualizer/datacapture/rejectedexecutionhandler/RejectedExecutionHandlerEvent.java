@@ -2,6 +2,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.rejectedexecutionhandler;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class RejectedExecutionHandlerEvent extends Event {
 
 	private RejectedExecutionHandlerEventType eventType;

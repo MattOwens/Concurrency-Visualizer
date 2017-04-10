@@ -16,6 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public class ConcurrencyVisualizerMainWindow extends JFrame {
@@ -26,6 +27,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private ConcurrencyVisualizerRunMode runMode;
+	private MultipleAccessInputEventQueue inputQueue;
 	private EventDisplayPanel[] displayPanels;
 	private JToolBar toolBar;
 	private Thread eventLoaderThread;
@@ -35,6 +37,7 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	
 	public ConcurrencyVisualizerMainWindow(ConcurrencyVisualizerRunMode runMode) {
 		this.runMode = runMode;
+		//inputQueue = new MultipleAccessInputEventQueue();
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		addWindowListener(new WindowAdapter() {
@@ -63,19 +66,29 @@ public class ConcurrencyVisualizerMainWindow extends JFrame {
 	 */
 	
 	private boolean addNextEvent() {
-		DisplayEvent nextEvent = InputEventQueue.getNextEvent();
-		
+		Event nextEvent = InputEventQueue.getNextEvent();
 		if(nextEvent == null) {
 			return false;
 		}
-		
 		addEvent(nextEvent);
 		return true;
+		/*DisplayEvent nextEvent;
+		
+		inputQueue.openForReading();
+		if(inputQueue.hasNextEvent()) {
+			nextEvent = inputQueue.getNextEvent();
+			inputQueue.closeReading();
+			
+			addEvent(nextEvent);
+			return true;
+		}
+		inputQueue.closeReading();
+		return false;*/
 	}
 	
-	private void addEvent(DisplayEvent event) {
+	private void addEvent(Event nextEvent) {
 		for(EventDisplayPanel panel : displayPanels) {
-			panel.addEvent(event);
+			panel.addEvent(nextEvent);
 		}
 	}
 

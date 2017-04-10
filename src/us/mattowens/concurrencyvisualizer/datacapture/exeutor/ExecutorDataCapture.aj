@@ -2,6 +2,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.exeutor;
 
 import java.util.concurrent.Executor;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect ExecutorDataCapture {
@@ -12,19 +15,19 @@ public aspect ExecutorDataCapture {
 		args(r);
 	
 	before(Executor e, Runnable r) : execute(e, r) {
-		ExecutorEvent executeEvent = new ExecutorEvent(e.toString(), 
-				ExecutorEventType.BeforeExecute);
-		executeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		executeEvent.setRunnable(r.toString());
+		Event executeEvent = new Event(EventClass.Executor, 
+				ExecutorEventType.BeforeExecute, e.toString());
+		executeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		executeEvent.addValue(StringConstants.RUNNABLE, r.toString());
 		
 		EventQueue.addEvent(executeEvent);
 	}
 	
 	after(Executor e, Runnable r) : execute(e, r) {
-		ExecutorEvent executeEvent = new ExecutorEvent(e.toString(), 
-				ExecutorEventType.AfterExecute);
-		executeEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		executeEvent.setRunnable(r.toString());
+		Event executeEvent = new Event(EventClass.Executor, 
+				ExecutorEventType.AfterExecute, e.toString());
+		executeEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		executeEvent.addValue(StringConstants.RUNNABLE,r.toString());
 		
 		EventQueue.addEvent(executeEvent);
 	}

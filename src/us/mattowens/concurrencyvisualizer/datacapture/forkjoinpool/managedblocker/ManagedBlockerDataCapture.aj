@@ -2,6 +2,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.managedblock
 
 import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect ManagedBlockerDataCapture {
@@ -15,27 +18,27 @@ public aspect ManagedBlockerDataCapture {
 		target(b);
 	
 	before(ManagedBlocker b) : block(b) {
-		ManagedBlockerEvent blockEvent = new ManagedBlockerEvent(b.toString(), 
-				ManagedBlockerEventType.BeforeBlock);
-		blockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event blockEvent = new Event(EventClass.ManagedBlocker, 
+				ManagedBlockerEventType.BeforeBlock, b.toString());
+		blockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(blockEvent);
 	}
 	
 	after(ManagedBlocker b) returning(boolean blockingUnnecessary) : block(b) {
-		ManagedBlockerEvent blockEvent = new ManagedBlockerEvent(b.toString(), 
-				ManagedBlockerEventType.AfterBlock);
-		blockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		blockEvent.setBlockingUnnecessary(blockingUnnecessary);
+		Event blockEvent = new Event(EventClass.ManagedBlocker,
+				ManagedBlockerEventType.AfterBlock, b.toString());
+		blockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		blockEvent.addValue(StringConstants.BLOCKING_UNNECESSARY, blockingUnnecessary);
 		
 		EventQueue.addEvent(blockEvent);
 	}
 	
 	after(ManagedBlocker b) returning(boolean blockingUnnecessary) : isReleasable(b) {
-		ManagedBlockerEvent blockEvent = new ManagedBlockerEvent(b.toString(), 
-				ManagedBlockerEventType.IsReleasable);
-		blockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		blockEvent.setBlockingUnnecessary(blockingUnnecessary);
+		Event blockEvent = new Event(EventClass.ManagedBlocker, 
+				ManagedBlockerEventType.IsReleasable, b.toString());
+		blockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		blockEvent.addValue(StringConstants.BLOCKING_UNNECESSARY, blockingUnnecessary);
 		
 		EventQueue.addEvent(blockEvent);
 	}

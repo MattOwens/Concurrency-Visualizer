@@ -29,6 +29,17 @@ public class DiningPhilosophers {
 		threadC.start();
 		threadD.start();
 		threadE.start();
+		
+		try {
+			threadA.join();
+			threadB.join();
+			threadC.join();
+			threadD.join();
+			threadE.join();
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	static class Philosopher implements Runnable {
@@ -68,7 +79,6 @@ public class DiningPhilosophers {
 		
 		private void eat() {
 			try {
-				System.out.println("Eat");
 				Thread.sleep(10);
 			} catch(InterruptedException e) { }
 		}

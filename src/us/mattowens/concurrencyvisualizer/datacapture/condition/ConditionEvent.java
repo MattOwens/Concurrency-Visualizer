@@ -4,6 +4,7 @@ import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
 
+@Deprecated
 public class ConditionEvent extends Event {
 
 	private ConditionEventType eventType;

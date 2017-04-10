@@ -3,6 +3,9 @@ package us.mattowens.concurrencyvisualizer.datacapture.reentrantreadwritelock;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 public aspect ReentrantReadWriteLockDataCapture {
@@ -27,36 +30,36 @@ public aspect ReentrantReadWriteLockDataCapture {
 	
 	
 	after() returning(ReentrantReadWriteLock l) : create() {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.Create);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.Create, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(boolean fair) returning(ReentrantReadWriteLock l) : createFair(fair) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.Create);
-		newEvent.setFair(fair);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.Create, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.FAIR, fair);
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock l) returning(ReentrantReadWriteLock.ReadLock readLock) :
 		getReadLock(l) {
 		
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.GetReadLock);
-		newEvent.setReadLock(readLock.toString());
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.GetReadLock, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.READ_LOCK, readLock.toString());
 	}
 	
 	after(ReentrantReadWriteLock l) returning(ReentrantReadWriteLock.WriteLock writeLock) :
 		getWriteLock(l) {
 		
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.GetWriteLock);
-		newEvent.setWriteLock(writeLock.toString());
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.GetWriteLock, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.WRITE_LOCK, writeLock.toString());
 	}
 	
 	
@@ -84,71 +87,70 @@ public aspect ReentrantReadWriteLockDataCapture {
 	
 	
 	before(ReentrantReadWriteLock.ReadLock l) : lockRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeLockRead);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.ReadLock l) : lockRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterLockRead);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.ReadLock l) : lockInterruptiblyRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeLockInterruptiblyRead);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeLockInterruptiblyRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.ReadLock l) : lockInterruptiblyRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterLockInterruptiblyRead);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock, 
+				ReentrantReadWriteLockEventType.AfterLockInterruptiblyRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.ReadLock l) : tryLockRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeTryLockRead);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeTryLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.ReadLock l) returning(boolean hasLock) : tryLockRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterTryLockRead);
-		newEvent.setHasLock(hasLock);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterTryLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.SUCCESS, hasLock);
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.ReadLock l, long timeout, TimeUnit unit) : tryLockTimeRead(l, timeout, unit) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeTryLockRead);
-		newEvent.setTimeout(timeout);
-		newEvent.setTimeoutUnit(unit);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeTryLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.TIMEOUT, timeout);
+		newEvent.addValue(StringConstants.TIME_UNIT, unit);
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.ReadLock l, long timeout, TimeUnit unit) 
 		returning(boolean hasLock) : tryLockTimeRead(l, timeout, unit) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterTryLockRead);
-		newEvent.setTimeout(timeout);
-		newEvent.setHasLock(hasLock);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterTryLockRead, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.SUCCESS, hasLock);
 		EventQueue.addEvent(newEvent);
 	}
 		
 	after(ReentrantReadWriteLock.ReadLock l) : unlockRead(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.UnlockRead, l.toString());
 		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.UnlockRead);
 		EventQueue.addEvent(newEvent);
 	}
 	
@@ -177,71 +179,70 @@ public aspect ReentrantReadWriteLockDataCapture {
 		target(l);
 	
 	before(ReentrantReadWriteLock.WriteLock l) : lockWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeLockWrite);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.WriteLock l) : lockWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterLockWrite);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.WriteLock l) : lockInterruptiblyWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeLockInterruptiblyWrite);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock, 
+				ReentrantReadWriteLockEventType.BeforeLockInterruptiblyWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.WriteLock l) : lockInterruptiblyWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterLockInterruptiblyWrite);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterLockInterruptiblyWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.WriteLock l) : tryLockWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeTryLockWrite);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeTryLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.WriteLock l) returning(boolean hasLock) : tryLockWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterTryLockWrite);
-		newEvent.setHasLock(hasLock);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterTryLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.SUCCESS, hasLock);
 		EventQueue.addEvent(newEvent);
 	}
 	
 	before(ReentrantReadWriteLock.WriteLock l, long timeout, TimeUnit unit) : tryLockTimeWrite(l, timeout, unit) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.BeforeTryLockWrite);
-		newEvent.setTimeout(timeout);
-		newEvent.setTimeoutUnit(unit);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.BeforeTryLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.TIMEOUT, timeout);
+		newEvent.addValue(StringConstants.TIME_UNIT, unit);
 		EventQueue.addEvent(newEvent);
 	}
 	
 	after(ReentrantReadWriteLock.WriteLock l, long timeout, TimeUnit unit) 
 		returning(boolean hasLock) : tryLockTimeWrite(l, timeout, unit) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
-		newEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.AfterTryLockWrite);
-		newEvent.setTimeout(timeout);
-		newEvent.setHasLock(hasLock);
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.AfterTryLockWrite, l.toString());
+		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newEvent.addValue(StringConstants.SUCCESS, hasLock);
 		EventQueue.addEvent(newEvent);
 	}
 		
 	after(ReentrantReadWriteLock.WriteLock l) : unlockWrite(l) {
-		ReentrantReadWriteLockEvent newEvent = new ReentrantReadWriteLockEvent(l.toString());
+		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,
+				ReentrantReadWriteLockEventType.UnlockWrite, l.toString());
 		newEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
-		newEvent.setEventType(ReentrantReadWriteLockEventType.UnlockRead);
 		EventQueue.addEvent(newEvent);
 	}
 }

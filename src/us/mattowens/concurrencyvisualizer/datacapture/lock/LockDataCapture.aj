@@ -2,12 +2,16 @@ package us.mattowens.concurrencyvisualizer.datacapture.lock;
 
 import java.util.concurrent.locks.Lock;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.TimeUnit;
 
 public aspect LockDataCapture {
+
 
 	pointcut lockPointcut(Lock l) :
 		call(void java.util.concurrent.locks.Lock.lock()) &&
@@ -35,78 +39,76 @@ public aspect LockDataCapture {
 		target(l);
 	
 	before(Lock l) : lockPointcut(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.BeforeLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.BeforeLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l) : lockPointcut(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.AfterLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.AfterLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	before(Lock l) : lockInterruptibly(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.BeforeLockInterruptibly);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.BeforeLockInterruptibly, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l) : lockInterruptibly(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.AfterLockInterruptibly);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.AfterLockInterruptibly, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l) returning(Condition c) : newCondition(l) {
-		LockEvent newConditionEvent = new LockEvent(l.toString(), LockEventType.NewCondition);
-		newConditionEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		newConditionEvent.setConditionDescription(c.toString());
+		Event newConditionEvent = new Event(EventClass.Lock, LockEventType.NewCondition, l.toString());
+		newConditionEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		newConditionEvent.addValue(StringConstants.CONDITION, c.toString());
 		
 		EventQueue.addEvent(newConditionEvent);
 	}
 	
 	before(Lock l) : tryLock(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.BeforeTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.BeforeTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l) returning(boolean hasAccess) : tryLock(l) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.AfterTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setHasAccess(hasAccess);
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.AfterTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.SUCCESS, hasAccess);
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	before(Lock l, long time, TimeUnit unit) : tryLockTimeout(l, time, unit) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.BeforeTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setTimeout(time);
-		lockEvent.setTimeUnit(unit);
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.BeforeTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.TIMEOUT, time);
+		lockEvent.addValue(StringConstants.TIME_UNIT, unit);
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l, long time, TimeUnit unit) returning(boolean hasAccess) : tryLockTimeout(l, time, unit) {
-		LockEvent lockEvent = new LockEvent(l.toString(), LockEventType.AfterTryLock);
-		lockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
-		lockEvent.setTimeout(time);
-		lockEvent.setTimeUnit(unit);
-		lockEvent.setHasAccess(hasAccess);
+		Event lockEvent = new Event(EventClass.Lock, LockEventType.AfterTryLock, l.toString());
+		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
+		lockEvent.addValue(StringConstants.SUCCESS, hasAccess);
 		
 		EventQueue.addEvent(lockEvent);
 	}
 	
 	after(Lock l) : unlockPointcut(l) {
-		LockEvent unlockEvent = new LockEvent(l.toString(), LockEventType.AfterLock);
-		unlockEvent.setJoinPointName(thisJoinPoint.getSignature().getName());
+		Event unlockEvent = new Event(EventClass.Lock, LockEventType.AfterLock, l.toString());
+		unlockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
 		EventQueue.addEvent(unlockEvent);
 	}

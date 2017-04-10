@@ -3,6 +3,7 @@ package us.mattowens.concurrencyvisualizer.datacapture.abstractqueuedsynchronize
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
+@Deprecated
 public class AbstractQueuedSynchronizerEvent extends Event {
 
 	private AbstractQueuedSynchronizerEventType eventType;
