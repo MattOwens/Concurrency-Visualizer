@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -178,7 +179,19 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 		}
 		config.save();
 		
-		Process process = Runtime.getRuntime().exec("java -cp lib\\*;lib\\aspectj1.8\\lib\\*;"
+		ProcessBuilder pb = new ProcessBuilder("java", "-cp", "lib\\*;lib\\aspectj1.8\\lib\\*;"
+				+ "aspectj_output.jar; ", mainClass);
+		pb.redirectOutput(Redirect.INHERIT);
+		pb.redirectError(Redirect.INHERIT);
+		Process process = pb.start();
+		/*try {
+			int exitVal = process.waitFor();
+			System.out.println("Process finished");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		/*Process process = Runtime.getRuntime().exec("java -cp lib\\*;lib\\aspectj1.8\\lib\\*;"
 				+ "aspectj_output.jar; " + mainClass);
 		
 		InputStream stdin = process.getInputStream();
@@ -189,14 +202,14 @@ public class ConcurrencyVisualizerLiveMode extends JFrame {
 
 		while ( (line = br.readLine()) != null)
 		     System.out.println(line);
-
+		
 		try {
 			int exitVal = process.waitFor();
 			System.out.println("Process finished");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 

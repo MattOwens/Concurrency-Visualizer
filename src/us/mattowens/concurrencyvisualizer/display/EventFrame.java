@@ -8,10 +8,10 @@ import javax.swing.JLabel;
 
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
-public class DisplayEventFrame extends JInternalFrame {
+public class EventFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 	
-	public DisplayEventFrame(Event event) {
+	public EventFrame(Event event) {
 		super(event.getEventTypeLabel() + "@" + event.getTarget(), true, true, false, false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		addNewLabel("Event Class", event.getEventClass());

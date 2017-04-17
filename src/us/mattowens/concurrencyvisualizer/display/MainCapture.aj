@@ -6,12 +6,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 
+import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.RunConfiguration;
 import us.mattowens.concurrencyvisualizer.StringConstants;
 import us.mattowens.concurrencyvisualizer.datacapture.DatabaseOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
 import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
 import us.mattowens.concurrencyvisualizer.datacapture.SocketOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.thread.ThreadEventType;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.SocketInputAdapter;
 
 public aspect MainCapture {
@@ -65,11 +69,9 @@ public aspect MainCapture {
 			configFile.deleteOnExit();
 
 		} catch (IOException e) {
-			// TODO Show user an error message about this
-			e.printStackTrace();
+			Logging.exception(e);;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logging.exception(e);
 		}
 		start = System.nanoTime();
 	}
@@ -77,6 +79,6 @@ public aspect MainCapture {
 	after() : main() {
 		end = System.nanoTime();
 		System.out.println(end - start);
-		EventQueue.stopEventOutput();
+		EventQueue.indicateChildProgramFinished();
 	}
 }

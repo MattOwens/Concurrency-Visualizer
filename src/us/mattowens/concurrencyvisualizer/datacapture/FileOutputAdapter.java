@@ -35,20 +35,19 @@ public class FileOutputAdapter implements OutputAdapter {
 		try {
 			outputWriter.write(JSONValue.toJSONString(eventMap) + "\n");
 		} catch(IOException e) {
-			Logging.error(e.toString(), e);
+			Logging.exception(e);
 		}
 
 	}
 	
 	@Override
 	public void cleanup() {
-		
 		if(outputWriter != null) {
 			try {
 				outputWriter.flush();
 				outputWriter.close();
 			} catch (IOException e) {
-				Logging.error(e.toString(), e);
+				Logging.exception(e);
 			} finally {
 				outputWriter = null;
 			}

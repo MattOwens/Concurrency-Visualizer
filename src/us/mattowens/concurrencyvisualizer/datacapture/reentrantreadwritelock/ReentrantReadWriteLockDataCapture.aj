@@ -14,19 +14,24 @@ public aspect ReentrantReadWriteLockDataCapture {
 	 * Parent class
 	 */
 	pointcut create() :
-		call(ReentrantReadWriteLock.new());
+		call(ReentrantReadWriteLock.new()) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut createFair(boolean fair) :
 		call(ReentrantReadWriteLock.new(boolean)) &&
-		args(fair);
+		args(fair) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut getReadLock(ReentrantReadWriteLock l) :
 		call(ReentrantReadWriteLock.ReadLock ReentrantReadWriteLock.readLock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 
 	pointcut getWriteLock(ReentrantReadWriteLock l) :
 		call(ReentrantReadWriteLock.WriteLock ReentrantReadWriteLock.writeLock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	
 	after() returning(ReentrantReadWriteLock l) : create() {
@@ -66,24 +71,33 @@ public aspect ReentrantReadWriteLockDataCapture {
 	//ReadLock operations
 	pointcut lockRead(ReentrantReadWriteLock.ReadLock l) :
 		call(void ReentrantReadWriteLock.ReadLock.lock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut lockInterruptiblyRead(ReentrantReadWriteLock.ReadLock l) :
 		call(void ReentrantReadWriteLock.ReadLock.lockInterruptibly()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut tryLockRead(ReentrantReadWriteLock.ReadLock l) :
 		call(boolean ReentrantReadWriteLock.ReadLock.tryLock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut tryLockTimeRead(ReentrantReadWriteLock.ReadLock l, long timeout, TimeUnit unit) :
 		call(boolean ReentrantReadWriteLock.ReadLock.tryLock(long, TimeUnit)) &&
 		target(l) &&
-		args(timeout, unit);
+		args(timeout, unit) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut unlockRead(ReentrantReadWriteLock.ReadLock l) :
 		call(void ReentrantReadWriteLock.ReadLock.unlock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	
 	before(ReentrantReadWriteLock.ReadLock l) : lockRead(l) {
@@ -159,24 +173,34 @@ public aspect ReentrantReadWriteLockDataCapture {
 	//WriteLock operations
 	pointcut lockWrite(ReentrantReadWriteLock.WriteLock l) :
 		call(void ReentrantReadWriteLock.WriteLock.lock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut lockInterruptiblyWrite(ReentrantReadWriteLock.WriteLock l) :
 		call(void ReentrantReadWriteLock.WriteLock.lockInterruptibly()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut tryLockWrite(ReentrantReadWriteLock.WriteLock l) :
 		call(boolean ReentrantReadWriteLock.WriteLock.tryLock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut tryLockTimeWrite(ReentrantReadWriteLock.WriteLock l, long timeout, TimeUnit unit) :
 		call(boolean ReentrantReadWriteLock.WriteLock.tryLock(long, TimeUnit)) &&
 		target(l) &&
-		args(timeout, unit);
+		args(timeout, unit) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut unlockWrite(ReentrantReadWriteLock.WriteLock l) :
 		call(void ReentrantReadWriteLock.WriteLock.unlock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	before(ReentrantReadWriteLock.WriteLock l) : lockWrite(l) {
 		Event newEvent = new Event(EventClass.ReentrantReadWriteLock,

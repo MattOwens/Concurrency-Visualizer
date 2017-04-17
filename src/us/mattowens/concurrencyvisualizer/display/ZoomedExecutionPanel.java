@@ -127,7 +127,7 @@ public abstract class ZoomedExecutionPanel extends JPanel implements MouseListen
 		
 		for(Rectangle2D hitBox : eventsByRectangle.keySet()) {
 			if(hitBox.contains(clickPoint)) {
-				DisplayEventFrame eventFrame = new DisplayEventFrame(eventsByRectangle.get(hitBox));
+				EventFrame eventFrame = new EventFrame(eventsByRectangle.get(hitBox));
 				eventFrame.setSize(eventFrame.getPreferredSize());
 				eventFrame.setLocation(clickPoint);
 				eventFrame.setVisible(true);

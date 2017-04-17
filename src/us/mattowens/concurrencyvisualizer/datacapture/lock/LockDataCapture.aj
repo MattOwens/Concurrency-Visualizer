@@ -15,29 +15,36 @@ public aspect LockDataCapture {
 
 	pointcut lockPointcut(Lock l) :
 		call(void java.util.concurrent.locks.Lock.lock()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut lockInterruptibly(Lock l) :
 		call(void Lock.lockInterruptibly()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	
 	pointcut newCondition(Lock l) :
 		call(Condition Lock.newCondition()) &&
-		target(l);
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
 	
 	pointcut tryLock(Lock l) :
 		call(boolean Lock.tryLock()) &&
-		target(l);
-	
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	pointcut tryLockTimeout(Lock l, long time, TimeUnit unit) : 
 		call(boolean Lock.tryLock(long, TimeUnit)) &&
 		target(l) &&
-		args(time, unit);
-	
+		args(time, unit) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	pointcut unlockPointcut(Lock l) :
 		call(void Lock.unlock()) &&
-		target(l);
-	
+		target(l) &&
+		!within(us.mattowens.concurrencyvisualizer..*);
+
 	before(Lock l) : lockPointcut(l) {
 		Event lockEvent = new Event(EventClass.Lock, LockEventType.BeforeLock, l.toString());
 		lockEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());

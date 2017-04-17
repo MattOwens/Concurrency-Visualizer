@@ -7,7 +7,6 @@ import org.json.simple.parser.ParseException;
 
 import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
-import us.mattowens.concurrencyvisualizer.display.DisplayEvent;
 import us.mattowens.concurrencyvisualizer.display.InputEventQueue;
 import us.mattowens.concurrencyvisualizer.display.MultipleAccessInputEventQueue;
 
@@ -44,7 +43,7 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 				}
 			} catch(IOException e) {
 				//Happens when stream is closed
-				Logging.warning(e.toString(), e);
+				Logging.exception(e);
 				break; //I think this should be okay
 			} catch (ParseException e) {
 				Logging.exception(e);
@@ -70,7 +69,7 @@ public class SocketInputAdapter implements Runnable, InputAdapter {
 				socket.close();
 			}
 		} catch(IOException e) {
-			Logging.error(e.toString(), e);
+			Logging.exception(e);
 		}
 	}
 
