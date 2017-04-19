@@ -44,13 +44,13 @@ public class DatabaseOutputAdapter implements OutputAdapter {
 		try {
 			PreparedStatement stmt = conn.prepareStatement(insertEvent);
 			stmt.setInt(1, runId);
-			stmt.setString(2, eventToOutput.getClassName());
+			stmt.setString(2, eventToOutput.getEventClassString());
 			stmt.setLong(3, eventToOutput.getTimestamp());
 			stmt.setString(4, JSONValue.toJSONString(eventToOutput.collapseToMap()));
 			stmt.executeUpdate();
 			stmt.close();
 		} catch (SQLException e) {
-			Logging.error("Inserting event into database: " + e.getMessage(), e);
+			Logging.exception(e);
 		}
 
 	}
@@ -60,7 +60,7 @@ public class DatabaseOutputAdapter implements OutputAdapter {
 		try {
 			conn.close();
 		} catch (SQLException e) {
-			Logging.error("Closing database connection: " + e.getMessage(), e);
+			Logging.exception(e);
 		}
 
 	}
@@ -94,7 +94,7 @@ public class DatabaseOutputAdapter implements OutputAdapter {
 				return conn;
 			}
 		} catch (SQLException e) {
-			Logging.error("Could not create database: " + e.getMessage(), e);
+			Logging.exception(e);
 		}
 		return null;
 	}
@@ -118,7 +118,7 @@ public class DatabaseOutputAdapter implements OutputAdapter {
 			stmt.execute(runTable);
 			stmt.execute(eventTable);
 		} catch(SQLException e) {
-			Logging.error("Could not create database tables: " + e.getMessage(), e);
+			Logging.exception(e);
 		}
 	}
 	
