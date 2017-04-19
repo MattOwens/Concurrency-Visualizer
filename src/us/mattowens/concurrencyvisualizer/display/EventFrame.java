@@ -14,7 +14,7 @@ public class EventFrame extends JInternalFrame {
 	public EventFrame(Event event) {
 		super(event.getEventTypeLabel() + "@" + event.getTarget(), true, true, false, false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		addNewLabel("Event Class", event.getEventClass());
+		addNewLabel("Event Class", event.getEventClassString());
 		addNewLabel("Event Type", event.getEventTypeLabel());
 		addNewLabel("Target", event.getTarget());
 		addNewLabel("Timestamp", event.getTimestamp());

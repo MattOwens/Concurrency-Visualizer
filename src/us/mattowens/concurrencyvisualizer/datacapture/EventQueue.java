@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.StringConstants;
 import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.OutputAdapter;
 
 
@@ -21,7 +22,6 @@ public final class EventQueue {
 	
 	private static boolean childProgramFinished = false;
 	private static int numEventsAdded = 0;
-	private static Object numEventsLock = new Object();
 	private static HashMap<Long, Queue<Event>> eventQueues = new HashMap<Long, Queue<Event>>();
 	private static ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	
@@ -39,16 +39,22 @@ public final class EventQueue {
 		
 		if(queue == null) {
 			queue = new LinkedList<Event>();
+			
 			//Need to lock for writing to add new thread
 			readWriteLock.writeLock().lock();
 			eventQueues.put(threadId, queue);
 			readWriteLock.writeLock().unlock();
 			
+			//Need to send control signal with thread name
+			Event controlSignalEvent = new Event(EventClass.ControlSignal, 
+					ControlSignalEventType.NewThread, "");
+			controlSignalEvent.addValue(StringConstants.JOIN_POINT, "");
+			controlSignalEvent.addValue(StringConstants.THREAD_NAME, Thread.currentThread().getName());
+			queue.add(controlSignalEvent);
+			
 		}
 		queue.add(newEvent);
-		/*synchronized(numEventsLock) {
-			numEventsAdded++;
-		}*/
+
 		} catch(Exception e) {
 			Logging.exception(e);
 		}

@@ -1,13 +1,18 @@
 package us.mattowens.concurrencyvisualizer.display;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
+import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.InputAdapter;
 
 public class InputEventQueue {
 	
 	private static final InputEventQueue singletonEventQueue = new InputEventQueue();
+	private static final HashMap<Long, String> threadNames = new HashMap<Long, String>();
 	
 	private ConcurrentLinkedQueue<Event> eventQueue;
 	private InputAdapter inputAdapter;
@@ -28,7 +33,20 @@ public class InputEventQueue {
 	}
 	
 	public static void addEvent(Event event) {
-		singletonEventQueue.eventQueue.add(event);
+		if(event.getEventClass() == EventClass.ControlSignal) {
+			handleControlSignal(event);
+		} else {
+			event.setThreadName(threadNames.get(event.getThreadId()));
+			singletonEventQueue.eventQueue.add(event);
+		}
+	}
+	
+	private static void handleControlSignal(Event controlSignal) {
+		//Well this is ugly
+		if(controlSignal.getEventTypeLabel().equals(ControlSignalEventType.NewThread.getString())) {
+			threadNames.put(controlSignal.getThreadId(), 
+					(String)controlSignal.getValue(StringConstants.THREAD_NAME));
+		}
 	}
 	
 	/***

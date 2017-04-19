@@ -9,12 +9,12 @@ import java.sql.SQLException;
 import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.RunConfiguration;
 import us.mattowens.concurrencyvisualizer.StringConstants;
-import us.mattowens.concurrencyvisualizer.datacapture.DatabaseOutputAdapter;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
-import us.mattowens.concurrencyvisualizer.datacapture.FileOutputAdapter;
-import us.mattowens.concurrencyvisualizer.datacapture.SocketOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.DatabaseOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.FileOutputAdapter;
+import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.SocketOutputAdapter;
 import us.mattowens.concurrencyvisualizer.datacapture.thread.ThreadEventType;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.SocketInputAdapter;
 

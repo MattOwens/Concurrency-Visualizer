@@ -61,7 +61,7 @@ public class EventTypeDecoder {
 			FROM_INT_MAP.put(EventClass.Timer, TimerEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.TimerTask, TimerTaskEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.RecursiveAction, RecursiveActionEventType.class.getMethod(METHOD_NAME, long.class));
-
+			FROM_INT_MAP.put(EventClass.ControlSignal, ControlSignalEventType.class.getMethod(METHOD_NAME, long.class));
 		} catch (Exception e) {
 			Logging.exception(e);
 		}

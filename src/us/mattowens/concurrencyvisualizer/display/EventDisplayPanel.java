@@ -114,7 +114,7 @@ public abstract class EventDisplayPanel extends JPanel implements MouseListener 
 			
 			Rectangle2D eventRectangle = new Rectangle2D.Double(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
 			eventRectangles.put(eventRectangle, nextEvent);
-			g2.setColor(EventColors.getColor(nextEvent.getEventClass()));
+			g2.setColor(EventColors.getColor(nextEvent.getEventClassString()));
 			g2.draw(eventRectangle);
 			
 			previousEvent = nextEvent;

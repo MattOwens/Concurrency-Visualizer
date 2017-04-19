@@ -62,7 +62,7 @@ public abstract class ZoomedExecutionPanel extends JPanel implements MouseListen
 			}
 			
 			eventYLocation = (int)(timeScalingMultiplier * (event.getTimestamp()-firstEventTimestamp)) + 20;
-			g.setColor(EventColors.getColor(event.getEventClass()));
+			g.setColor(EventColors.getColor(event.getEventClassString()));
 			g.drawString(eventLabel, 100, eventYLocation);
 			
 			Rectangle2D eventHitBox = new Rectangle2D.Double(0, eventYLocation - 12, displayWidth + 50, 15);

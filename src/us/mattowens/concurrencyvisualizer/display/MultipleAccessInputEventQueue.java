@@ -122,9 +122,9 @@ public class MultipleAccessInputEventQueue {
 		Event nextEvent;
 		do{
 			nextEvent = getNextEvent();
-		} while(hasNextEvent() && !nextEvent.getEventClass().equals(eventClass));
+		} while(hasNextEvent() && !nextEvent.getEventClassString().equals(eventClass));
 		
-		return nextEvent.getEventClass().equals(eventClass) ? nextEvent : null;
+		return nextEvent.getEventClassString().equals(eventClass) ? nextEvent : null;
 	}
 
 }

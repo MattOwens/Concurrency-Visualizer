@@ -78,6 +78,7 @@ public class Event  implements JSONSerializable {
 	public Event(String jsonDescription, int becauseItCantBeTheSame) throws ParseException {
 		try {
 		eventMap = (LinkedHashMap<String, Object>)jsonParser.parse(jsonDescription, containerFactory);
+		
 		//Using remove here so we don't get duplicated when we iterate over the map later
 		timestamp = (long) eventMap.remove(StringConstants.TIMESTAMP);
 		threadId = (long) eventMap.remove(StringConstants.THREAD_ID);
@@ -135,8 +136,12 @@ public class Event  implements JSONSerializable {
 		return className;
 	}
 	
-	public String getEventClass() {
+	public String getEventClassString() {
 		return String.valueOf(eventClass);
+	}
+	
+	public EventClass getEventClass() {
+		return eventClass;
 	}
 	
 	public String getEventTypeLabel() {
@@ -145,6 +150,10 @@ public class Event  implements JSONSerializable {
 	
 	public String getTarget() {
 		return target;
+	}
+	
+	public Object getValue(String key) {
+		return eventMap.containsKey(key) ? eventMap.get(key) : null;
 	}
 	
 	public Map<String, Object> getEventMap() {
