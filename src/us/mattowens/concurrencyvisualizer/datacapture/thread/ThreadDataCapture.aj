@@ -1,6 +1,7 @@
 package us.mattowens.concurrencyvisualizer.datacapture.thread;
 
 import us.mattowens.concurrencyvisualizer.StringConstants;
+import us.mattowens.concurrencyvisualizer.datacapture.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;
@@ -253,8 +254,14 @@ public aspect ThreadDataCapture {
 		EventQueue.addEvent(daemonEvent);
 	}
 	
-	//Record before so we get both names in the event
 	before(Thread t, String name) : setName(t, name) {
+		//Send control signal so display gets the new name
+		Event controlSignal = new Event(EventClass.ControlSignal, ControlSignalEventType.NewThread, "");
+		controlSignal.setJoinPointName("");
+		controlSignal.addValue(StringConstants.THREAD_NAME, name);
+		EventQueue.addEvent(controlSignal);
+		
+		//Send event that gets displayed
 		Event nameEvent = new Event(EventClass.Thread, ThreadEventType.NameChange, t.getName());
 		nameEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		nameEvent.addValue(StringConstants.NEW_NAME, name);
