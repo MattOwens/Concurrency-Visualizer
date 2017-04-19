@@ -1,4 +1,6 @@
-package us.mattowens.concurrencyvisualizer.datacapture;
+package us.mattowens.concurrencyvisualizer.datacapture.outputadapters;
+
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
 public interface OutputAdapter {
 	

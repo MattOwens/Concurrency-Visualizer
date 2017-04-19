@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.datacapture;
+package us.mattowens.concurrencyvisualizer.datacapture.outputadapters;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.simple.JSONValue;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
 public class SocketOutputAdapter implements OutputAdapter {
 	

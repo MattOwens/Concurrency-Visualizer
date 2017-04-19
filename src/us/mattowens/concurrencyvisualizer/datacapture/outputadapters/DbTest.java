@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.datacapture;
+package us.mattowens.concurrencyvisualizer.datacapture.outputadapters;
 
 import java.sql.SQLException;
 

@@ -1,4 +1,4 @@
-package us.mattowens.concurrencyvisualizer.datacapture;
+package us.mattowens.concurrencyvisualizer.datacapture.outputadapters;
 
 import java.io.File;
 import java.sql.Connection;
@@ -11,6 +11,7 @@ import java.sql.Statement;
 import org.json.simple.JSONValue;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.datacapture.Event;
 
 public class DatabaseOutputAdapter implements OutputAdapter {
 	public static final String DB_LOCATION = "run_data\\concurrency_visualizer.db";

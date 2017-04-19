@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import us.mattowens.concurrencyvisualizer.Logging;
+import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.OutputAdapter;
 
 
 public final class EventQueue {
