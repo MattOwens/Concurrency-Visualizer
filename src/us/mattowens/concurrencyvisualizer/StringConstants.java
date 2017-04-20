@@ -60,6 +60,8 @@ public  class StringConstants {
 	public static final String DELAY = "Delay";
 	public static final String PERIOD = "Period";
 	public static final String COMPLETED_NORMALLY = "Completed Normally";
+	public static final String BLOCKER = "Blocker";
+	public static final String THREAD = "Thread";
 	
 	/*
 	 * Control Signal Events

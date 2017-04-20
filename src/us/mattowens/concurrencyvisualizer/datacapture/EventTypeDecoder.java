@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import us.mattowens.concurrencyvisualizer.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.datacapture.abstractownablesynchronizer.AbstractOwnableSynchronizerEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.abstractqueuedlongsynchronizer.AbstractQueuedLongSynchronizerEventType;
@@ -16,6 +17,7 @@ import us.mattowens.concurrencyvisualizer.datacapture.exeutor.ExecutorEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.forkjoinworkerthreadfactory.ForkJoinWorkerThreadFactoryEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.forkjoinpool.managedblocker.ManagedBlockerEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.lock.LockEventType;
+import us.mattowens.concurrencyvisualizer.datacapture.locksupport.LockSupportEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.object.MonitorEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.phaser.PhaserEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.recursiveaction.RecursiveActionEventType;
@@ -62,6 +64,7 @@ public class EventTypeDecoder {
 			FROM_INT_MAP.put(EventClass.TimerTask, TimerTaskEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.RecursiveAction, RecursiveActionEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.ControlSignal, ControlSignalEventType.class.getMethod(METHOD_NAME, long.class));
+			FROM_INT_MAP.put(EventClass.LockSupport, LockSupportEventType.class.getMethod(METHOD_NAME, long.class));
 		} catch (Exception e) {
 			Logging.exception(e);
 		}

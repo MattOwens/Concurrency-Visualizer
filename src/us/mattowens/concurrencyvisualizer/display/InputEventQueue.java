@@ -3,8 +3,8 @@ package us.mattowens.concurrencyvisualizer.display;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import us.mattowens.concurrencyvisualizer.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.StringConstants;
-import us.mattowens.concurrencyvisualizer.datacapture.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.display.inputadapters.InputAdapter;

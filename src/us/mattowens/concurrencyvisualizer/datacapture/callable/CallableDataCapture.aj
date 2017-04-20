@@ -13,7 +13,7 @@ public aspect CallableDataCapture {
 		call(* Callable.call());
 
 	after() : create() {
-		System.out.println("There's a fucking callable being created");
+		System.out.println("There's a callable being created");
 	}
 	before() : callPointcut() {
 		System.out.println("Matched call to Callable.call()");

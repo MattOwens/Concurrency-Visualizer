@@ -1,7 +1,7 @@
 package us.mattowens.concurrencyvisualizer.datacapture.thread;
 
+import us.mattowens.concurrencyvisualizer.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.StringConstants;
-import us.mattowens.concurrencyvisualizer.datacapture.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.Event;
 import us.mattowens.concurrencyvisualizer.datacapture.EventClass;
 import us.mattowens.concurrencyvisualizer.datacapture.EventQueue;

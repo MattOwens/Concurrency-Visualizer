@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import us.mattowens.concurrencyvisualizer.ControlSignalEventType;
 import us.mattowens.concurrencyvisualizer.Logging;
 import us.mattowens.concurrencyvisualizer.StringConstants;
 import us.mattowens.concurrencyvisualizer.datacapture.outputadapters.OutputAdapter;

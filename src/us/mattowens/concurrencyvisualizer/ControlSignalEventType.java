@@ -1,7 +1,9 @@
-package us.mattowens.concurrencyvisualizer.datacapture;
+package us.mattowens.concurrencyvisualizer;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import us.mattowens.concurrencyvisualizer.datacapture.EventType;
 
 
 public enum ControlSignalEventType implements EventType {

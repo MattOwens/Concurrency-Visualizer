@@ -27,7 +27,8 @@ public enum EventClass {
 	Timer(20),
 	TimerTask(21),
 	RecursiveAction(22),
-	ControlSignal(23);
+	ControlSignal(23),
+	LockSupport(24);
 	
 	private static final Map<Long, EventClass> LOOKUP = new HashMap<Long, EventClass>();
 	private long classCode;
