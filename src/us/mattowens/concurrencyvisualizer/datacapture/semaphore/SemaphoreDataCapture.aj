@@ -68,10 +68,7 @@ public aspect SemaphoreDataCapture {
 	
 	
 	
-	after(int permits) returning(Semaphore s) : create(permits) {
-		//JavaSemaphore newSemaphore = new JavaSemaphore(permits);
-		//semaphoreStates.put(s, newSemaphore);
-		
+	after(int permits) returning(Semaphore s) : create(permits) {		
 		Event createEvent = new Event(EventClass.Semaphore, SemaphoreEventType.Create, s.toString());
 		createEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		createEvent.addValue(StringConstants.PERMITS, permits);
@@ -82,7 +79,6 @@ public aspect SemaphoreDataCapture {
 	before(Semaphore s) : acquire(s) {
 		Event acquireEvent = new Event(EventClass.Semaphore, SemaphoreEventType.BeforeAcquire, s.toString());
 		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
-		//semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -91,19 +87,13 @@ public aspect SemaphoreDataCapture {
 		Event acquireEvent = new Event(EventClass.Semaphore, SemaphoreEventType.AfterAcquire, s.toString());
 		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		
-		//JavaSemaphore semaState = semaphoreStates.get(s);
-		//semaState.permitsAcquired(1);
-		//semaState.removeThreadFromWaitingQueue(Thread.currentThread());
-		
 		EventQueue.addEvent(acquireEvent);
-
 	}
 	
 	before(Semaphore s, int permits) : acquireMany(s, permits) {
 		Event acquireEvent = new Event(EventClass.Semaphore, SemaphoreEventType.BeforeAcquire, s.toString());
 		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		acquireEvent.addValue(StringConstants.PERMITS, permits);
-		//semaphoreStates.get(s).addThreadToWaitingQueue(Thread.currentThread());
 		
 		EventQueue.addEvent(acquireEvent);
 	}
@@ -111,10 +101,6 @@ public aspect SemaphoreDataCapture {
 	after(Semaphore s, int permits) : acquireMany(s, permits) {
 		Event acquireEvent = new Event(EventClass.Semaphore, SemaphoreEventType.AfterAcquire, s.toString());
 		acquireEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
-		
-		//JavaSemaphore semaState = semaphoreStates.get(s);
-		//semaState.permitsAcquired(permits);
-		//semaState.removeThreadFromWaitingQueue(Thread.currentThread());
 		
 		EventQueue.addEvent(acquireEvent);
 
@@ -196,9 +182,7 @@ public aspect SemaphoreDataCapture {
 	before(Semaphore s) : release(s) {
 		Event releaseEvent = new Event(EventClass.Semaphore, SemaphoreEventType.Release, s.toString());
 		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
-		
-		//semaphoreStates.get(s).permitsReleased(1);
-		
+				
 		EventQueue.addEvent(releaseEvent);
 	}
 	
@@ -206,9 +190,7 @@ public aspect SemaphoreDataCapture {
 		Event releaseEvent = new Event(EventClass.Semaphore, SemaphoreEventType.Release, s.toString());
 		releaseEvent.setJoinPointName(thisJoinPointStaticPart.getSignature().getName());
 		releaseEvent.addValue(StringConstants.PERMITS, permits);
-		
-		//semaphoreStates.get(s).permitsReleased(permits);
-		
+				
 		EventQueue.addEvent(releaseEvent);
 	}
 	

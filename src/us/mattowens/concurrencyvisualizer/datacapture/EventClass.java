@@ -28,7 +28,8 @@ public enum EventClass {
 	TimerTask(21),
 	RecursiveAction(22),
 	ControlSignal(23),
-	LockSupport(24);
+	LockSupport(24),
+	ForkJoinPool(25);
 	
 	private static final Map<Long, EventClass> LOOKUP = new HashMap<Long, EventClass>();
 	private long classCode;

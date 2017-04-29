@@ -18,7 +18,7 @@ public class EventFrame extends JInternalFrame {
 		addNewLabel("Event Type", event.getEventTypeLabel());
 		addNewLabel("Target", event.getTarget());
 		addNewLabel("Timestamp", event.getTimestamp());
-		//addNewLabel("Thread Name", event.getThreadName());
+		addNewLabel("Thread Name", event.getThreadName());
 		addNewLabel("Thread Id", event.getThreadId());
 		addNewLabel("Join Point", event.getJoinPointName());
 		

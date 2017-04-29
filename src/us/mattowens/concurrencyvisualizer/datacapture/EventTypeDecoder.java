@@ -31,6 +31,7 @@ import us.mattowens.concurrencyvisualizer.datacapture.threadfactory.ThreadFactor
 import us.mattowens.concurrencyvisualizer.datacapture.threadgroup.ThreadGroupEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.timer.TimerEventType;
 import us.mattowens.concurrencyvisualizer.datacapture.timer.TimerTaskEventType;
+import us.mattowens.concurrencyvisualizer.sampleprograms.ForkJoinPool.ForkJoinPoolEventType;
 
 public class EventTypeDecoder {
 	private static final String METHOD_NAME = "fromCode";
@@ -65,6 +66,7 @@ public class EventTypeDecoder {
 			FROM_INT_MAP.put(EventClass.RecursiveAction, RecursiveActionEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.ControlSignal, ControlSignalEventType.class.getMethod(METHOD_NAME, long.class));
 			FROM_INT_MAP.put(EventClass.LockSupport, LockSupportEventType.class.getMethod(METHOD_NAME, long.class));
+			FROM_INT_MAP.put(EventClass.ForkJoinPool, ForkJoinPoolEventType.class.getMethod(METHOD_NAME, long.class));
 		} catch (Exception e) {
 			Logging.exception(e);
 		}
